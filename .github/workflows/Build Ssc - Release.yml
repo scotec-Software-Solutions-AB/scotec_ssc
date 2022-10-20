@@ -1,4 +1,4 @@
-name: Build Psc - Release
+name: Build Ssc - Release
 
 on: [workflow_dispatch]
 
