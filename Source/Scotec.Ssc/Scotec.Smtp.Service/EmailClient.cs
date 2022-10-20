@@ -30,8 +30,8 @@ namespace Scotec.Smtp.Service
             // receivers need to be separated by commas
             using var message = new MailMessage
             {
-                From = new MailAddress(email.From),
-                To = { email.To },
+                From = new MailAddress(email.From ?? _smtpServerConfiguration.LoginUsername, "Contact Form"),
+                To = { email.To ?? _smtpServerConfiguration.LoginUsername },
                 Subject = email.Subject,
                 Body = email.Body,
             };
@@ -49,7 +49,7 @@ namespace Scotec.Smtp.Service
                 message.Bcc.Add(email.Bcc);
             }
 
-            message.IsBodyHtml = true;
+            message.IsBodyHtml = false;
             //mail.AlternateViews.Add(GetEmbeddedImage("logo.jpg", mail.Body));
 
             try
@@ -77,7 +77,8 @@ namespace Scotec.Smtp.Service
                     UserName = _smtpServerConfiguration.LoginUsername,
                     Password = _smtpServerConfiguration.LoginPassword
                 },
-                EnableSsl = true
+                EnableSsl = true, 
+                DeliveryFormat = SmtpDeliveryFormat.International,
             };
             return client;
         }
