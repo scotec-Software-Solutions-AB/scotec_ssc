@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Name: Name of the project to generate with business object generator
+		 TargetPath: The path where to create the project
+     Version: The version of the generated project	-->
+<?XMLDatabase Name="Scotec.XMLDatabase.Test" Namespace="Scotec.XMLDatabase.Test" ProjectFolder="" Version="1.3.1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:systecs.safra.1.0" targetNamespace="urn:scotec.ssc.1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Scotec.XMLDatabase.Base.xsd"/>
+	<xs:include schemaLocation="Scotec.XMLDatabase.Units.xsd"/>
+	<xs:complexType name="Scotec.XMLDatabase.Test.RootType">
+		<xs:sequence>
+			<xs:element name="Companies" type="Scotec.XMLDatabase.Test.CompanyListType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Test.CompanyType">
+		<xs:sequence>
+			<xs:element name="Customers" type="Scotec.XMLDatabase.Test.PersonListType"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="Scotec.XMLDatabase.Base.IdentifierType" use="required"/>
+		<xs:attribute name="Name" type="Scotec.XMLDatabase.Base.StringType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Test.PersonType">
+		<xs:sequence>
+			<xs:element name="Weight" type="Scotec.XMLDatabase.Units.MassValueType"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="Scotec.XMLDatabase.Base.IdentifierType" use="required"/>
+		<xs:attribute name="Name" type="Scotec.XMLDatabase.Base.StringType" use="required"/>
+		<xs:attribute name="FirstName" type="Scotec.XMLDatabase.Base.StringType" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Test.PersonListType">
+		<xs:sequence>
+			<xs:element name="Person" type="Scotec.XMLDatabase.Test.PersonType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Test.CompanyListType">
+		<xs:sequence>
+			<xs:element name="Company" type="Scotec.XMLDatabase.Test.CompanyType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Root" type="Scotec.XMLDatabase.Test.RootType"/>
+</xs:schema>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Name: Name of the project to generate with business object generator
+		 TargetPath: The path where to create the project
+     Version: The version of the generated project	-->
+<?XMLDatabase Name="Scotec.XMLDatabase.Base" Namespace="Scotec.XMLDatabase.Base" ProjectFolder="Scotec.XMLDatabase.Base" Version="1.3.1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:systecs.safra.1.0" targetNamespace="urn:scotec.ssc.1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:simpleType name="Scotec.XMLDatabase.Base.AnnotationType">
+		<xs:annotation>
+			<xs:documentation>Used for annotations</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.AnyURIType">
+		<xs:restriction base="xs:anyURI"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.Base64BinaryType">
+		<xs:restriction base="xs:base64Binary"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.BooleanType">
+		<xs:restriction base="xs:boolean"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.ByteType">
+		<xs:restriction base="xs:byte"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.ContentType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Binary"/>
+			<xs:enumeration value="Definition"/>
+			<xs:enumeration value="Description"/>
+			<xs:enumeration value="Documentation"/>
+			<xs:enumeration value="Execution"/>
+			<xs:enumeration value="Graphic"/>
+			<xs:enumeration value="Implementation"/>
+			<xs:enumeration value="Information"/>
+			<xs:enumeration value="Library"/>
+			<xs:enumeration value="Model"/>
+			<xs:enumeration value="Object"/>
+			<xs:enumeration value="Text"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.DateType">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.DateTimeType">
+		<xs:restriction base="xs:dateTime"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.DecimalType">
+		<xs:restriction base="xs:decimal"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.DoubleType">
+		<xs:restriction base="xs:double"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.FloatType">
+		<xs:restriction base="xs:float"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.GuidType" id="Scotec.XMLDatabase.Base.GuidType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.UserDefinedType"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.IdentifierType">
+		<xs:annotation>
+			<xs:documentation>Identifier.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:ID"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.IdentifierRefType">
+		<xs:annotation>
+			<xs:documentation>Reference to an identifier.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:IDREF"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.IntType">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.IntegerType">
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.LongType">
+		<xs:restriction base="xs:long"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.NCNameType">
+		<xs:restriction base="xs:NCName"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.NameType">
+		<xs:restriction base="xs:Name"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.ShortType">
+		<xs:restriction base="xs:short"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.StringType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.TimeType">
+		<xs:restriction base="xs:time"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.TokenType">
+		<xs:restriction base="xs:token"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.UByteType">
+		<xs:restriction base="xs:unsignedByte"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.UIntType">
+		<xs:restriction base="xs:unsignedInt"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.ULongType">
+		<xs:restriction base="xs:unsignedLong"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.UserDefinedType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.UShortType">
+		<xs:restriction base="xs:unsignedShort"/>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Base.VendorType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType"/>
+	</xs:simpleType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.DirectoryType">
+		<xs:attribute name="id" type="Scotec.XMLDatabase.Base.IdentifierType" use="required"/>
+		<xs:attribute name="path" type="Scotec.XMLDatabase.Base.StringType" use="required">
+			<xs:annotation>
+				<xs:documentation>Complete or relative path. The path could also contain macros such as 
+"%PROJECTPATH%". However, the client is responsible to resolve the macro.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" type="Scotec.XMLDatabase.Base.NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>A directory can be referenced by its name. Typically used in SCOOP-IX.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="content" type="Scotec.XMLDatabase.Base.ContentType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Describes the data typically contained in the directory</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.DirectoryRefType">
+		<xs:annotation>
+			<xs:documentation>referencs to a directory</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Base.ReferenceType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.DirectoryListType">
+		<xs:annotation>
+			<xs:documentation>List of directories</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="directory" type="Scotec.XMLDatabase.Base.DirectoryType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.DirectoryRefListType">
+		<xs:annotation>
+			<xs:documentation>List of references to directories</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="directoryRef" type="Scotec.XMLDatabase.Base.DirectoryRefType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.FileType">
+		<xs:annotation>
+			<xs:documentation>File type</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="path" type="Scotec.XMLDatabase.Base.DirectoryType">
+				<xs:annotation>
+					<xs:documentation>The directory containing the file.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pathRef" type="Scotec.XMLDatabase.Base.DirectoryRefType">
+				<xs:annotation>
+					<xs:documentation>A reference to the directory containing the file.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="id" type="Scotec.XMLDatabase.Base.IdentifierType" use="required"/>
+		<xs:attribute name="name" type="Scotec.XMLDatabase.Base.StringType" use="required">
+			<xs:annotation>
+				<xs:documentation>File name and extension</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="content" type="Scotec.XMLDatabase.Base.ContentType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Describes the data type. Normally the type is related to the file extension. The enums can be extended for other applications. However, they should be neither renamed nor removed. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="creationDateTime" type="Scotec.XMLDatabase.Base.DateType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The file creation date and time</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="createdBy" type="Scotec.XMLDatabase.Base.StringType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The user that created the file</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="lastModificationDateTime" type="Scotec.XMLDatabase.Base.DateType" use="optional"/>
+		<xs:attribute name="lastModifiedBy" type="Scotec.XMLDatabase.Base.StringType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The user that modified the file last</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="checksum" type="Scotec.XMLDatabase.Base.LongType" use="optional">
+			<xs:annotation>
+				<xs:documentation>A file checksum</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="fileSize" type="Scotec.XMLDatabase.Base.LongType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The file size</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.FileRefType">
+		<xs:annotation>
+			<xs:documentation>Reference to a file</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Base.ReferenceType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.FileListType">
+		<xs:annotation>
+			<xs:documentation>List of files</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="file" type="Scotec.XMLDatabase.Base.FileType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.FileRefListType">
+		<xs:annotation>
+			<xs:documentation>List of references to files</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="fileRef" type="Scotec.XMLDatabase.Base.FileRefType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.ReferenceType">
+		<xs:annotation>
+			<xs:documentation>Contains a reference to an object. If this reference object contains a null reference (there is an instance of the reference object, but it does not reference another object) the idRef attribute must be removed. The idRef attribute cannot be set to an empty ID ("") because this is not allowed in the schema.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="idRef" type="Scotec.XMLDatabase.Base.IdentifierRefType">
+			<xs:annotation>
+				<xs:documentation>Reference ID to an referencable object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="location" type="Scotec.XMLDatabase.Base.StringType" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.SourceFileReferenceType">
+		<xs:annotation>
+			<xs:documentation>A reference to a file containing additional attributes such as line and column number.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="fileRef" type="Scotec.XMLDatabase.Base.FileRefType"/>
+		</xs:sequence>
+		<xs:attribute name="line" type="Scotec.XMLDatabase.Base.IntType"/>
+		<xs:attribute name="column" type="Scotec.XMLDatabase.Base.IntType"/>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.SourceFileReferenceListType">
+		<xs:annotation>
+			<xs:documentation>Contains source file references</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="sourceFileRef" type="Scotec.XMLDatabase.Base.SourceFileReferenceType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.ToolType">
+		<xs:annotation>
+			<xs:documentation>Tool information for any kinf of tool.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="version" type="Scotec.XMLDatabase.Base.VersionType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tool version</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="descriptionFile" type="Scotec.XMLDatabase.Base.FileType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="Scotec.XMLDatabase.Base.IdentifierType" use="required"/>
+		<xs:attribute name="kind" type="Scotec.XMLDatabase.Base.StringType" use="required">
+			<xs:annotation>
+				<xs:documentation>tool kind</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="vendor" type="Scotec.XMLDatabase.Base.VendorType" use="required">
+			<xs:annotation>
+				<xs:documentation>Tool vendor</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" type="Scotec.XMLDatabase.Base.NameType" use="required">
+			<xs:annotation>
+				<xs:documentation>Name of the tool</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="family" type="Scotec.XMLDatabase.Base.NameType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Name of a tool suite this tool belongs too</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Base.VersionType">
+		<xs:annotation>
+			<xs:documentation>Version information</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="major" type="Scotec.XMLDatabase.Base.IntType" use="required">
+			<xs:annotation>
+				<xs:documentation>The major version number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="minor" type="Scotec.XMLDatabase.Base.IntType" use="required">
+			<xs:annotation>
+				<xs:documentation>The minor version number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="revision" type="Scotec.XMLDatabase.Base.IntType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The revision number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="date" type="Scotec.XMLDatabase.Base.DateType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The date when the version has been created.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="info" type="Scotec.XMLDatabase.Base.StringType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Additional version information, e.g. special build, etc</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

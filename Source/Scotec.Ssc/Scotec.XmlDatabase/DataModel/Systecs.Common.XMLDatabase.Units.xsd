@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Name: Name of the project to generate with business object generator
+		 TargetPath: The path where to create the project
+     Version: The version of the generated project	-->
+<?XMLDatabase Name="Scotec.XMLDatabase.Units" Namespace="Scotec.XMLDatabase.Units" ProjectFolder="Scotec.XMLDatabase.Units" Version="4.0.1.0" TemplateType="Units"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:scotec.ssc.1.0" targetNamespace="urn:scotec.ssc.1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Scotec.XMLDatabase.Base.xsd"/>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.AccelerationType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="MeterPerSquareSecond"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.AngleType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Radiant"/>
+			<xs:enumeration value="Degree"/>
+			<xs:enumeration value="Gon"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.AreaType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="SquareMeter"/>
+			<xs:enumeration value="SquareMillimeter"/>
+			<xs:enumeration value="SquareCentimeter"/>
+			<xs:enumeration value="SquareFeet"/>
+			<xs:enumeration value="SquareInch"/>
+			<xs:enumeration value="SquareYard"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.DensityType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="KilogramPerCubicMeter"/>
+			<xs:enumeration value="GramPerMilliliter"/>
+			<xs:enumeration value="GramPerCubicCentimeter"/>
+			<xs:enumeration value="GrainPerGallon"/>
+			<xs:enumeration value="OuncePerCubicInch"/>
+			<xs:enumeration value="PoundPerCubicInch"/>
+			<xs:enumeration value="PoundPerCubicFeet"/>
+			<xs:enumeration value="GramPerLiter"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.DynamicViscosityType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="PascalSeconds"/>
+			<xs:enumeration value="MilliPascalSeconds"/>
+			<xs:enumeration value="Centipoise"/>
+			<xs:enumeration value="Poise"/>
+			<xs:enumeration value="KilogramPerMeterHour"/>
+			<xs:enumeration value="PoundPerFeetHour"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.ForceType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Newton"/>
+			<xs:enumeration value="Dyne"/>
+			<xs:enumeration value="PoundForce"/>
+			<xs:enumeration value="KilogramForce"/>
+			<xs:enumeration value="KiloNewton"/>
+			<xs:enumeration value="Kilopond"/>
+			<xs:enumeration value="OunceForce"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.KinematicViscosityType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="SquareMeterPerSecond"/>
+			<xs:enumeration value="SquareMillimeterPerSecond"/>
+			<xs:enumeration value="Stokes"/>
+			<xs:enumeration value="Centistokes"/>
+			<xs:enumeration value="SayboltUniversalSecond"/>
+			<xs:enumeration value="SquareFeetPerSecond"/>
+			<xs:enumeration value="SquareInchPerSecond"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.LengthType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Meter"/>
+			<xs:enumeration value="Millimeter"/>
+			<xs:enumeration value="Centimeter"/>
+			<xs:enumeration value="Micrometer"/>
+			<xs:enumeration value="Feet"/>
+			<xs:enumeration value="Inch"/>
+			<xs:enumeration value="Yard"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.LoudnessType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="dB"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.MassType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Kilogram"/>
+			<xs:enumeration value="Gram"/>
+			<xs:enumeration value="Milligram"/>
+			<xs:enumeration value="Tonne"/>
+			<xs:enumeration value="Ounce"/>
+			<xs:enumeration value="Pound"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.MassFlowRateType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="KilogramPerSecond"/>
+			<xs:enumeration value="KilogramPerHour"/>
+			<xs:enumeration value="KilogramPerMinute"/>
+			<xs:enumeration value="TonnePerHour"/>
+			<xs:enumeration value="PoundPerHour"/>
+			<xs:enumeration value="PoundPerMinute"/>
+			<xs:enumeration value="PoundPerSecond"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.MassFluxType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="KilogramPerSecondSquareMeter"/>
+			<xs:enumeration value="PoundPerSecondSquareInch"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.MolarMassType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="KilogramPerKilomole"/>
+			<xs:enumeration value="GramPerMole"/>
+			<xs:enumeration value="PoundPerMole"/>
+			<xs:enumeration value="PoundPerPoundmole"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.PressureType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Bar"/>
+			<xs:enumeration value="Pascal"/>
+			<xs:enumeration value="KiloPascal"/>
+			<xs:enumeration value="MegaPascal"/>
+			<xs:enumeration value="PoundPerSquareInch"/>
+			<xs:enumeration value="PoundPerSquareFeet"/>
+			<xs:enumeration value="InchesOfMercury"/>
+			<xs:enumeration value="MillimeterOfMercury"/>
+			<xs:enumeration value="InchesOfWater"/>
+			<xs:enumeration value="FeetOfWater"/>
+			<xs:enumeration value="MillimeterOfWater"/>
+			<xs:enumeration value="Atmosphere"/>
+			<xs:enumeration value="TechnicalAtmosphere"/>
+			<xs:enumeration value="Torr"/>
+			<xs:enumeration value="KilogramPerSquareCentimeter"/>
+			<xs:enumeration value="KipsPerSquareInch"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.SensitivityType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="CoulombPerBar"/>
+			<xs:enumeration value="PicoCoulombPerBar"/>
+			<xs:enumeration value="CoulombPerPascal"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.SpecificEnthalpyType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="JoulePerKilogram"/>
+			<xs:enumeration value="KiloJoulePerKilogram"/>
+			<xs:enumeration value="BtuPerPound"/>
+			<xs:enumeration value="CaloriePerGram"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.SpecificVolumeType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="CubicMeterPerKilogram"/>
+			<xs:enumeration value="CubicCentimeterPerGram"/>
+			<xs:enumeration value="CubicInchPerOunce"/>
+			<xs:enumeration value="CubicFeetPerPound"/>
+			<xs:enumeration value="CubicInchPerPound"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.SpecificWeightType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="NewtonPerCubicMeter"/>
+			<xs:enumeration value="PoundForcePerCubicFeet"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.TemperatureType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Kelvin"/>
+			<xs:enumeration value="DegreeCelsius"/>
+			<xs:enumeration value="DegreeFahrenheit"/>
+			<xs:enumeration value="DegreeRankine"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.TimeType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Microsecond"/>
+			<xs:enumeration value="Millisecond"/>
+			<xs:enumeration value="Second"/>
+			<xs:enumeration value="Minute"/>
+			<xs:enumeration value="Hour"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.VelocityType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="MeterPerSecond"/>
+			<xs:enumeration value="KilometerPerHour"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.VoltageType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="Volt"/>
+			<xs:enumeration value="Millivolt"/>
+			<xs:enumeration value="Kilovolt"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.VolumeType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="CubicMeter"/>
+			<xs:enumeration value="Liter"/>
+			<xs:enumeration value="Deciliter"/>
+			<xs:enumeration value="Centiliter"/>
+			<xs:enumeration value="Milliliter"/>
+			<xs:enumeration value="CubicFeet"/>
+			<xs:enumeration value="CubicInch"/>
+			<xs:enumeration value="CubicYard"/>
+			<xs:enumeration value="GallonUS"/>
+			<xs:enumeration value="GallonUK"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Scotec.XMLDatabase.Units.VolumeFlowRateType">
+		<xs:restriction base="Scotec.XMLDatabase.Base.StringType">
+			<xs:enumeration value="CubicMeterPerSecond"/>
+			<xs:enumeration value="CubicMeterPerMinute"/>
+			<xs:enumeration value="CubicMeterPerHour"/>
+			<xs:enumeration value="LitersPerHour"/>
+			<xs:enumeration value="LitersPerMinute"/>
+			<xs:enumeration value="MilliliterPerMinute"/>
+			<xs:enumeration value="MilliliterPerSecond"/>
+			<xs:enumeration value="CubicFeetPerMinute"/>
+			<xs:enumeration value="CubicFeetPerHour"/>
+			<xs:enumeration value="CubicFeetPerSecond"/>
+			<xs:enumeration value="GallonPerMinuteUS"/>
+			<xs:enumeration value="GallonPerMinuteUK"/>
+			<xs:enumeration value="GallonPerHourUS"/>
+			<xs:enumeration value="GallonPerHourUK"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.AccelerationValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.AccelerationType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.AngleValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.AngleType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.AreaValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.AreaType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.DensityValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.DensityType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.DynamicViscosityValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.DynamicViscosityType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.ForceValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.ForceType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.KinematicViscosityValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.KinematicViscosityType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.LengthValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.LengthType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.LoudnessValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.LoudnessType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.MassValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.MassType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.MassFlowRateValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.MassFlowRateType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.MassFluxValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.MassFluxType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.MolarMassValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.MolarMassType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.PressureValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.PressureType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.SensitivityValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.SensitivityType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.SpecificEnthalpyValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.SpecificEnthalpyType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.SpecificVolumeValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.SpecificVolumeType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.SpecificWeightValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.SpecificWeightType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.TemperatureValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.TemperatureType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.TimeValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.TimeType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.ValueType" abstract="true">
+		<xs:attribute name="SIValue" type="Scotec.XMLDatabase.Base.DoubleType" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.VelocityValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.VelocityType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.VoltageValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.VoltageType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.VolumeValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.VolumeType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Scotec.XMLDatabase.Units.VolumeFlowRateValueType">
+		<xs:complexContent>
+			<xs:extension base="Scotec.XMLDatabase.Units.ValueType">
+				<xs:attribute name="Unit" type="Scotec.XMLDatabase.Units.VolumeFlowRateType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
