@@ -8,5 +8,7 @@ namespace Scotec.Web.Robots.Sitemap
         double? Priority { get; set; }
 
         DateTime? LastModified { get; set; }
+
+        string Protocoll { get; set; }
     }
 }

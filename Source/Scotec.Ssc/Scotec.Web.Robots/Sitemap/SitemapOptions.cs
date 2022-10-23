@@ -15,5 +15,6 @@ namespace Scotec.Web.Robots.Sitemap
 
         public DateTime? LastModified { get; set; }
 
+        public string Protocoll { get; set; } = "https://";
     }
 }

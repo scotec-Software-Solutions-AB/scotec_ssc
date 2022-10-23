@@ -14,10 +14,12 @@ namespace Scotec.Web.Robots.Sitemap
     {
         IEnumerable<ISitemapEntryProvider> _entryProviders;
         IHttpContextAccessor _httpContextAccessor;
+        private ISitemapOptions _options;
 
-        public SitemapProvider(IEnumerable<ISitemapEntryProvider> entryProviders, IHttpContextAccessor httpContextAccessor)
+        public SitemapProvider(IEnumerable<ISitemapEntryProvider> entryProviders, ISitemapOptions options, IHttpContextAccessor httpContextAccessor)
         {
             _entryProviders = entryProviders;
+            _options = options;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -35,7 +37,7 @@ namespace Scotec.Web.Robots.Sitemap
                     var url = new XElement(xmlNamespace + "url");
                     urlSet.Add(url);
 
-                    url.Add(new XElement(xmlNamespace+ "loc", host + entry.Location));
+                    url.Add(new XElement(xmlNamespace+ "loc", _options.Protocoll + host + entry.Location));
                     if(entry.LastModified != null)
                         url.Add(new XElement(xmlNamespace + "lastmod", entry.LastModified.Value.ToString("yyyy-MM-dd")));
                     if (entry.ChangeFrequency != null)
