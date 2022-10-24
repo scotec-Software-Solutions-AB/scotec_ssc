@@ -10,7 +10,7 @@
 		<Authors>$(CompanyName)</Authors>
 		<Company>$(CompanyName)</Company>
 		<Copyright>$(CompanyName)</Copyright>
-		<Description>Helpful Linq extensions.</Description>
+		<Description>Base classes that can be used to imlement transaction handling in non-DB applications.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPublishable>True</IsPublishable>
 		<PackageIcon>Logo.png</PackageIcon>

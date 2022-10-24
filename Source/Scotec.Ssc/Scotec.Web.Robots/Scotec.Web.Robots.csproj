@@ -10,7 +10,7 @@
 		<Authors>$(CompanyName)</Authors>
 		<Company>$(CompanyName)</Company>
 		<Copyright>$(CompanyName)</Copyright>
-		<Description>Helpful Linq extensions.</Description>
+		<Description>Generates robosts.txt and sitemap.xml for web applications.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPublishable>True</IsPublishable>
 		<PackageIcon>Logo.png</PackageIcon>

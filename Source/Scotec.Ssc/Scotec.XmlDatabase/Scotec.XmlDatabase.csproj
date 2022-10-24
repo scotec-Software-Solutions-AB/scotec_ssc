@@ -10,7 +10,7 @@
 		<Authors>$(CompanyName)</Authors>
 		<Company>$(CompanyName)</Company>
 		<Copyright>$(CompanyName)</Copyright>
-		<Description>Helpful Linq extensions.</Description>
+		<Description>Wrapper for XML files that supports transactional operations.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPublishable>True</IsPublishable>
 		<PackageIcon>Logo.png</PackageIcon>
