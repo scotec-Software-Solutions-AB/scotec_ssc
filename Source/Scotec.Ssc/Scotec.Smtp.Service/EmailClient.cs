@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Net;
+using MimeKit;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace Scotec.Smtp.Service
 {
@@ -27,37 +28,37 @@ namespace Scotec.Smtp.Service
             if (!_smtpServerConfiguration.SendingEnabled)
                 return true;
 
-            // receivers need to be separated by commas
-            using var message = new MailMessage
+            using var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Contact", email.From ?? _smtpServerConfiguration.LoginUsername));
+            message.To.Add(new MailboxAddress("Olaf Meyer", email.To ?? _smtpServerConfiguration.LoginUsername));
+            message.Subject = email.Subject;
+            message.Body = new TextPart("plain")
             {
-                From = new MailAddress(email.From ?? _smtpServerConfiguration.LoginUsername, "Contact Form"),
-                To = { email.To ?? _smtpServerConfiguration.LoginUsername },
-                Subject = email.Subject,
-                Body = email.Body,
+                Text = email.Body
             };
-            if (email.Attachment != null)
-            {
-                message.Attachments.Add(new Attachment(new MemoryStream(email.Attachment), "Attachment.name", "text/calendar"));
-            }
+
+            //if (email.Attachment != null)
+            //{
+            //    message.Attachments.Add(new Attachment(new MemoryStream(email.Attachment), "Attachment.name", "text/???"));
+            //}
             if (!string.IsNullOrEmpty(email.Cc))
             {
-                message.CC.Add(email.Cc);
+                message.Cc.Add(new MailboxAddress("", email.Cc));
             }
 
             if (!string.IsNullOrEmpty(email.Bcc))
             {
-                message.Bcc.Add(email.Bcc);
+                message.Bcc.Add(new MailboxAddress("", email.Bcc));
             }
-
-            message.IsBodyHtml = false;
-            //mail.AlternateViews.Add(GetEmbeddedImage("logo.jpg", mail.Body));
 
             try
             {
                 using var smtpClient = CreateSmtpClient();
+
                 smtpClient.Send(message);
+                smtpClient.Disconnect(true);
             }
-            catch (SmtpException e)
+            catch (Exception e)
             {
                 _logger.LogWarning($"Could not send email. Reason: {e.Message}");
                 return false;
@@ -68,18 +69,11 @@ namespace Scotec.Smtp.Service
 
         private SmtpClient CreateSmtpClient()
         {
-            var client = new SmtpClient
-            {
-                Host = _smtpServerConfiguration.Server,
-                Port = _smtpServerConfiguration.Port,
-                Credentials = new NetworkCredential
-                {
-                    UserName = _smtpServerConfiguration.LoginUsername,
-                    Password = _smtpServerConfiguration.LoginPassword
-                },
-                EnableSsl = true, 
-                DeliveryFormat = SmtpDeliveryFormat.International,
-            };
+            var client = new SmtpClient();
+            //client.LocalDomain = "scotec-software.com";
+            client.Connect(_smtpServerConfiguration.Server, _smtpServerConfiguration.Port, SecureSocketOptions.StartTls);
+            client.Authenticate(_smtpServerConfiguration.LoginUsername, _smtpServerConfiguration.LoginPassword);
+
             return client;
         }
     }
