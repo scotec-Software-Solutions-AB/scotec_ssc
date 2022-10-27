@@ -17,7 +17,7 @@ namespace Scotec.Smtp.Service
             _logger = logger;
         }
 
-        public Task AddEmailAsync(Email email)
+        public Task AddEmailAsync(EmailMessage email)
         {
             Task.Run(() =>
             {

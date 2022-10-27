@@ -8,6 +8,6 @@ namespace Scotec.Smtp.Service
 {
     public interface IEmailClient
     {
-        bool SendEmail(Email email);
+        bool SendEmail(EmailMessage email);
     }
 }

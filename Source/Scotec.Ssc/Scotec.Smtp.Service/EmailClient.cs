@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Scotec.Extensions.Linq;
 
 namespace Scotec.Smtp.Service
 {
@@ -23,14 +24,16 @@ namespace Scotec.Smtp.Service
             _smtpServerConfiguration = configuration?.GetSection(SMTP_SERVER_SECTION).Get<SmtpServerConfiguration>();
         }
 
-        public bool SendEmail(Email email)
+        public bool SendEmail(EmailMessage email)
         {
             if (!_smtpServerConfiguration.SendingEnabled)
                 return true;
 
             using var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Contact", email.From ?? _smtpServerConfiguration.LoginUsername));
-            message.To.Add(new MailboxAddress("Olaf Meyer", email.To ?? _smtpServerConfiguration.LoginUsername));
+            message.From.Add(email.From);
+            email.To.ForAll(to => message.To.Add(to));
+            email.Cc.ForAll(cc => message.Cc.Add(cc));
+            email.Bcc.ForAll(bcc => message.Bcc.Add(bcc));
             message.Subject = email.Subject;
             message.Body = new TextPart("plain")
             {
@@ -41,16 +44,6 @@ namespace Scotec.Smtp.Service
             //{
             //    message.Attachments.Add(new Attachment(new MemoryStream(email.Attachment), "Attachment.name", "text/???"));
             //}
-            if (!string.IsNullOrEmpty(email.Cc))
-            {
-                message.Cc.Add(new MailboxAddress("", email.Cc));
-            }
-
-            if (!string.IsNullOrEmpty(email.Bcc))
-            {
-                message.Bcc.Add(new MailboxAddress("", email.Bcc));
-            }
-
             try
             {
                 using var smtpClient = CreateSmtpClient();

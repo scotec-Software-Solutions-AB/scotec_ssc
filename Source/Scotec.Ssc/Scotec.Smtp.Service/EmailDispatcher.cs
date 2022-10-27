@@ -19,7 +19,7 @@ namespace Scotec.Smtp.Service
             _logger = logger;
         }
 
-        public bool SendEmail(Email email)
+        public bool SendEmail(EmailMessage email)
         {
             var emailClient = _services.GetService<IEmailClient>();
             return emailClient.SendEmail(email);

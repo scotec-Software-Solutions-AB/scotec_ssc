@@ -8,6 +8,6 @@ namespace Scotec.Smtp.Service
 {
     public interface IEmailBuffer
     {
-        Task AddEmailAsync(Email email);
+        Task AddEmailAsync(EmailMessage email);
     }
 }
