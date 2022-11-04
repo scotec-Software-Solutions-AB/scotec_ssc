@@ -1,11 +1,11 @@
 # scotec Software Solutions AB
 
+Today, the development of new applications is hardly conceivable without open source software. The use of ready-made software components reduces development time and lowers costs.
 
-Die Entwicklung neuer Anwendungen ist heute ohne Open Source Software kaum noch denkbar. Der Einsatz fertiger Software-Komponenten verringert die Entwicklungszeit und senkt die Kosten.
+We also rely on open source in our development and would like to give something back to the community. We have therefore decided to publish reusable code from our projects.
 
-Auch wir setzen in unserer Entwicklung auf Open Source und möchten gerne etwas an die Community zurückgeben. Wir haben uns daher entschlossen, wiederverwndbaren Code aus unseren Projekten zu veröffentlichen.
+Our libraries are constantly updated and improved. The individual components are initially tailored to the use-cases in our projects. Suggestions for improvements or extensions are welcome.
 
-Unsere Bibliotheken werden laufend aktualisiert und verbessert. Die einzelnen Komponenten sind zunächst auf die Use-cases in unseren Projekten zugeschnitten. Anregungen für Verbesserungen oder Erweiterungen sind herzlich willkommen.
+Feel free to visit us on our [website](https://www.scotec-software.com).
 
-Besuchen Sie uns auch gerne auf unserer [Website](https://www.scotec-software.com).
-
+Translated with www.DeepL.com/Translator (free version)
