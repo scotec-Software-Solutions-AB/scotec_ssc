@@ -21,18 +21,7 @@ namespace Scotec.Smtp.Service
             _logger = logger;
         }
 
-        public async Task SendEmail(string to, string from, string subject, string body)
-        {
-            await SendEmail(new Email
-            {
-                From = from,
-                To = to,
-                Subject = subject,
-                Body = body
-            });
-        }
-
-        public Task SendEmail(Email email)
+        public Task SendEmail(EmailMessage email)
         {
             return _emailBuffer.AddEmailAsync(email);
         }

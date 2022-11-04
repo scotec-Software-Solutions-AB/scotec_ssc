@@ -20,7 +20,7 @@
 		<RepositoryUrl>https://github.com/scotec-Software-Solutions-AB/scotec_ssc</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<SignAssembly>False</SignAssembly>
-		<Title>Sotec.Web.Robots</Title>
+		<Title>Scotec.Web.Robots</Title>
 
 	</PropertyGroup>
 

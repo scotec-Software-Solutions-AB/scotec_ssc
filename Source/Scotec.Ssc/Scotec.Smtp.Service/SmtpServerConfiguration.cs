@@ -13,6 +13,8 @@ namespace Scotec.Smtp.Service
         public int Port { get; set; }
         public string LoginUsername { get; set; }
         public string LoginPassword { get; set; }
-        public string Sender { get; set; }
+        public string From { get; set; } = string.Empty;
+        public string To { get; set; } = string.Empty;
+
     }
 }

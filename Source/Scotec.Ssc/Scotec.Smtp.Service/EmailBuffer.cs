@@ -17,12 +17,14 @@ namespace Scotec.Smtp.Service
             _logger = logger;
         }
 
-        public async Task AddEmailAsync(Email email)
+        public Task AddEmailAsync(EmailMessage email)
         {
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 _emailDispatcher.SendEmail(email);
             });
+
+            return Task.CompletedTask;
         }
     }
 }

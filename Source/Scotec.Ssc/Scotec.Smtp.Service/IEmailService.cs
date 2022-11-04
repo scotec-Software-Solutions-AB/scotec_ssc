@@ -8,8 +8,6 @@ namespace Scotec.Smtp.Service
 {
     public interface IEmailService
     {
-        Task SendEmail(string to, string from, string subject, string body);
-
-        Task SendEmail(Email email);
+        Task SendEmail(EmailMessage email);
     }
 }
