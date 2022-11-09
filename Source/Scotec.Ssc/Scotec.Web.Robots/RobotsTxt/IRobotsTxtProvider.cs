@@ -1,7 +1,6 @@
-﻿namespace Scotec.Web.Robots.RobotsTxt
+﻿namespace Scotec.Web.Robots.RobotsTxt;
+
+public interface IRobotsTxtProvider
 {
-    public interface IRobotsTxtProvider
-    {
-        Task<RobotsTxtResult> GetResultAsync(CancellationToken cancellationToken);
-    }
+    Task<RobotsTxtResult> GetResultAsync(CancellationToken cancellationToken);
 }

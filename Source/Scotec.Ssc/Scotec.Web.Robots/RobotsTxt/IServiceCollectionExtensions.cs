@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Scotec.Web.Robots.RobotsTxt
+namespace Scotec.Web.Robots.RobotsTxt;
+
+public static class ServiceCollectionExtensions
 {
-    public static class IServiceCollectionExtensions
+    public static void AddRobotsTxt(this IServiceCollection services, Action<RobotsTxtBuilder> action)
     {
-        public static void AddRobotsTxt(this IServiceCollection services, Action<RobotsTxtBuilder> action)
-        {
-            services.AddSingleton<IRobotsTxtProvider>(new RobotsTxtProvider(action));
-        }
+        services.AddSingleton<IRobotsTxtProvider>(new RobotsTxtProvider(action));
     }
 }

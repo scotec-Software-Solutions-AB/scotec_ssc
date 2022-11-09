@@ -1,93 +1,90 @@
-﻿
-namespace Scotec.Web.Robots.RobotsTxt
+﻿namespace Scotec.Web.Robots.RobotsTxt;
+
+public abstract class UserAgentOption
 {
-    public abstract class UserAgentOption
+    protected UserAgentOption(string content)
     {
-        protected UserAgentOption(string content)
-        {
-            Content = content;
-        }
-
-        public string Content { get; set; }
-
-        protected abstract string GetPrefix();
-
-        public override string ToString()
-        {
-            return $"{GetPrefix()} {Content}".Trim();
-        }
+        Content = content;
     }
 
-    public class UserAgentNameOption : UserAgentOption
-    {
-        public UserAgentNameOption(string name) : base(name)
-        {
-        }
+    public string Content { get; set; }
 
-        protected override string GetPrefix()
-        {
-            return "User-agent:";
-        }
+    protected abstract string GetPrefix();
+
+    public override string ToString()
+    {
+        return $"{GetPrefix()} {Content}".Trim();
+    }
+}
+
+public class UserAgentNameOption : UserAgentOption
+{
+    public UserAgentNameOption(string name) : base(name)
+    {
     }
 
-    public class UserAgentCrawlDelayOption : UserAgentOption
+    protected override string GetPrefix()
     {
-        public UserAgentCrawlDelayOption(int crawlDelay) : base(crawlDelay.ToString())
-        {
-        }
+        return "User-agent:";
+    }
+}
 
-        protected override string GetPrefix()
-        {
-            return "Crawl-delay:";
-        }
+public class UserAgentCrawlDelayOption : UserAgentOption
+{
+    public UserAgentCrawlDelayOption(int crawlDelay) : base(crawlDelay.ToString())
+    {
     }
 
-
-    public class UserAgentCommentOption : UserAgentOption
+    protected override string GetPrefix()
     {
-        public UserAgentCommentOption(string comment) : base(comment)
-        {
-        }
+        return "Crawl-delay:";
+    }
+}
 
-        protected override string GetPrefix()
-        {
-            return "#";
-        }
+public class UserAgentCommentOption : UserAgentOption
+{
+    public UserAgentCommentOption(string comment) : base(comment)
+    {
     }
 
-    public class UserAgentAllowOption : UserAgentOption
+    protected override string GetPrefix()
     {
-        public UserAgentAllowOption(string allow) : base(allow)
-        {
-        }
+        return "#";
+    }
+}
 
-        protected override string GetPrefix()
-        {
-            return "Allow:";
-        }
+public class UserAgentAllowOption : UserAgentOption
+{
+    public UserAgentAllowOption(string allow) : base(allow)
+    {
     }
 
-    public class UserAgentDisallowOption : UserAgentOption
+    protected override string GetPrefix()
     {
-        public UserAgentDisallowOption(string disallow) : base(disallow)
-        {
-        }
+        return "Allow:";
+    }
+}
 
-        protected override string GetPrefix()
-        {
-            return "Disallow:";
-        }
+public class UserAgentDisallowOption : UserAgentOption
+{
+    public UserAgentDisallowOption(string disallow) : base(disallow)
+    {
     }
 
-    public class UserAgentEmptyLineOption : UserAgentOption
+    protected override string GetPrefix()
     {
-        public UserAgentEmptyLineOption() : base(String.Empty)
-        {
-        }
+        return "Disallow:";
+    }
+}
 
-        protected override string GetPrefix()
-        {
-            return String.Empty;
-        }
+public class UserAgentEmptyLineOption : UserAgentOption
+{
+    public UserAgentEmptyLineOption() : base(string.Empty)
+    {
+    }
+
+    protected override string GetPrefix()
+    {
+        return string.Empty;
     }
 }

@@ -1,111 +1,96 @@
 ﻿#region
 
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 #endregion
 
 
-namespace Scotec.Math
+namespace Scotec.Math;
+
+internal sealed class Fraction
 {
-    internal sealed class Fraction
+    private const double Epsilon = 0.00000001;
+
+    private long _denominator;
+    private long _integer;
+    private long _numerator;
+
+    public Fraction(double value)
     {
-        private const double Epsilon = 0.00000001;
+        ConvertToFraction(value);
+    }
 
-        private long _denominator;
-        private long _integer;
-        private long _numerator;
+    private void ConvertToFraction(double value)
+    {
+        // For further information see: 
+        // Algorithm To Convert A Decimal To A Fraction
+        // by John Kennedy
+        // Mathematics Department
+        // Santa Monica College
 
-        public Fraction( double value )
+        if (Equals(value, System.Math.Round(value)))
         {
-            ConvertToFraction( value );
+            _integer = (long)value;
+            return;
         }
 
-        private void ConvertToFraction( double value )
+
+        var valueLocal = value;
+
+        var negative = valueLocal < 0.0;
+        if (negative) valueLocal = System.Math.Abs(valueLocal);
+
+
+        var z = new List<double> { double.NaN, valueLocal };
+        var dominator = new List<int> { 0, 1 };
+        var nominator = new List<int> { int.MinValue, (int)System.Math.Round(valueLocal) };
+
+        var i = 1;
+        do
         {
-            // For further information see: 
-            // Algorithm To Convert A Decimal To A Fraction
-            // by John Kennedy
-            // Mathematics Department
-            // Santa Monica College
+            if (z[i] - (int)z[i] < Epsilon)
+                break;
 
-            if( Equals( value, System.Math.Round( value ) ) )
-            {
-                _integer = (long)value;
-                return;
-            }
+            z.Add(1.0 / (z[i] - (int)z[i]));
+            dominator.Add(dominator[i] * (int)z[i + 1] + dominator[i - 1]);
+            nominator.Add((int)System.Math.Round(valueLocal * dominator[i + 1]));
 
+            i++;
+        } while (i < 20);
 
-            var valueLocal = value;
-
-            var negative = valueLocal < 0.0;
-            if( negative )
-            {
-                valueLocal = System.Math.Abs( valueLocal );
-            }
-
-
-            var z = new List<double> {double.NaN, valueLocal};
-            var dominator = new List<int> {0, 1};
-            var nominator = new List<int> {int.MinValue, (int)System.Math.Round( valueLocal )};
-
-            var i = 1;
-            do
-            {
-                if( z[i] - (int)z[i] < Epsilon )
-                    break;
-
-                z.Add( 1.0 / (z[i] - (int)z[i]) );
-                dominator.Add( dominator[i] * (int)z[i + 1] + dominator[i - 1] );
-                nominator.Add( (int)System.Math.Round( valueLocal * dominator[i + 1] ) );
-
-                i++;
-            } while( i < 20 );
-
-            _denominator = dominator.Last();
-            _numerator = nominator.Last();
-            _integer = 0;
-            while( _numerator > _denominator ) // numerator to integer
-            {
-                _integer++;
-                _numerator = _numerator - _denominator;
-            }
-
-            if( negative )
-                _integer = -1 * _integer;
+        _denominator = dominator.Last();
+        _numerator = nominator.Last();
+        _integer = 0;
+        while (_numerator > _denominator) // numerator to integer
+        {
+            _integer++;
+            _numerator = _numerator - _denominator;
         }
 
-        public double ToDouble()
-        {
-            var doubleValue = _numerator / (double)_denominator;
+        if (negative)
+            _integer = -1 * _integer;
+    }
 
-            if( _integer < 0 )
-            {
-                return -1.0 * (System.Math.Abs( _integer ) + doubleValue);
-            }
+    public double ToDouble()
+    {
+        var doubleValue = _numerator / (double)_denominator;
 
-            return _integer + doubleValue;
-        }
+        if (_integer < 0) return -1.0 * (System.Math.Abs(_integer) + doubleValue);
 
-        public override string ToString()
-        {
-            return ToString( CultureInfo.InvariantCulture );
-        }
+        return _integer + doubleValue;
+    }
 
-        public string ToString( CultureInfo cultureInfo )
-        {
-            if( _numerator == 0 )
-            {
-                return _integer.ToString( cultureInfo );
-            }
+    public override string ToString()
+    {
+        return ToString(CultureInfo.InvariantCulture);
+    }
 
-            if( _integer == 0 && _numerator != 0 )
-            {
-                return $"{_numerator}/{_denominator}";
-            }
+    public string ToString(CultureInfo cultureInfo)
+    {
+        if (_numerator == 0) return _integer.ToString(cultureInfo);
 
-            return $"{_integer} {_numerator}/{_denominator}";
-        }
+        if (_integer == 0 && _numerator != 0) return $"{_numerator}/{_denominator}";
+
+        return $"{_integer} {_numerator}/{_denominator}";
     }
 }
