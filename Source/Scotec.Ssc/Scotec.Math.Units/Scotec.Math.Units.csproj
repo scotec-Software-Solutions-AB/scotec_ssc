@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	
+
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -24,7 +24,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Scotec.Math\Scotec.Math.csproj" />
+		<ProjectReference Include="..\Scotec.Math\Scotec.Math.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

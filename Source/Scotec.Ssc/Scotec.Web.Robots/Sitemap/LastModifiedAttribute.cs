@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Scotec.Web.Robots.Sitemap;
 
-namespace Scotec.Web.Robots.Sitemap
+public class LastModifiedAttribute : Attribute
 {
-    public class LastModifiedAttribute : Attribute
+    public LastModifiedAttribute()
     {
-        public LastModifiedAttribute()
-        {
-            LastModified = DateTime.UtcNow.ToString("yyyy-MM-dd");
-        }
+        LastModified = DateTime.UtcNow.ToString("yyyy-MM-dd");
+    }
 
-        public LastModifiedAttribute(string lastModified)
-        {
-            LastModified = lastModified;
-        }
+    public LastModifiedAttribute(string lastModified)
+    {
+        LastModified = lastModified;
+    }
 
-        public string LastModified { get; set; }
+    public string LastModified { get; set; }
 
-        public DateTime AsDateTime() => DateTime.Parse(LastModified);
+    public DateTime AsDateTime()
+    {
+        return DateTime.Parse(LastModified);
     }
 }

@@ -1,6 +1,5 @@
-﻿namespace Scotec.Math
+﻿namespace Scotec.Math;
+
+public abstract class InterpolationBase
 {
-    public abstract class InterpolationBase
-    {
-    }
 }

@@ -1,33 +1,33 @@
-﻿using Scotec.Web.Robots.RobotsTxt;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Scotec.Web.Robots.RobotsTxt;
 
-namespace Scotec.Web.Robots.Middleware
+namespace Scotec.Web.Robots.Middleware;
+
+public class RobotsTxtMiddleware
 {
-    public class RobotsTxtMiddleware
+    private readonly RequestDelegate _next;
+    private readonly IRobotsTxtProvider _robotsTxtProvider;
+
+    public RobotsTxtMiddleware(IRobotsTxtProvider robotsTxtProvider, RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-        private IRobotsTxtProvider _robotsTxtProvider;
+        _robotsTxtProvider = robotsTxtProvider;
+        _next = next;
+    }
 
-        public RobotsTxtMiddleware(IRobotsTxtProvider robotsTxtProvider, RequestDelegate next)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        if (context.Request.Path.StartsWithSegments("/robots.txt"))
         {
-            _robotsTxtProvider = robotsTxtProvider;
-            _next = next;
+            var result = await _robotsTxtProvider.GetResultAsync(context.RequestAborted);
+
+            context.Response.ContentType = "text/plain";
+            context.Response.Headers.Add("Cache-Control", $"max-age={result.MaxAge.TotalSeconds}");
+
+            await context.Response.Body.WriteAsync(result.Content, context.RequestAborted);
+
+            return;
         }
-        public async Task InvokeAsync(HttpContext context)
-        {
-            if (context.Request.Path.StartsWithSegments($"/robots.txt"))
-            {
-                var result = await _robotsTxtProvider.GetResultAsync(context.RequestAborted);
 
-                context.Response.ContentType = "text/plain";
-                context.Response.Headers.Add("Cache-Control", $"max-age={result.MaxAge.TotalSeconds}");
-
-                await context.Response.Body.WriteAsync(result.Content, context.RequestAborted);
-
-                return;
-            }
-                
-            await _next(context);
-        }
+        await _next(context);
     }
 }

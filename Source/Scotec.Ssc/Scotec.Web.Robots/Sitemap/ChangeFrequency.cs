@@ -1,20 +1,18 @@
-﻿
-namespace Scotec.Web.Robots.Sitemap
+﻿namespace Scotec.Web.Robots.Sitemap;
+
+public enum ChangeFrequency
 {
-    public enum ChangeFrequency
-    {
-        Always,
+    Always,
 
-        Hourly,
+    Hourly,
 
-        Daily,
+    Daily,
 
-        Weekly,
+    Weekly,
 
-        Monthly,
+    Monthly,
 
-        Yearly,
+    Yearly,
 
-        Never,
-    }
+    Never
 }

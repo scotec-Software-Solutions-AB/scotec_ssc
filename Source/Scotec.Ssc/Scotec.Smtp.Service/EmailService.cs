@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 
-namespace Scotec.Smtp.Service
+namespace Scotec.Smtp.Service;
+
+public class EmailService : IEmailService
 {
-    public class EmailService : IEmailService
+    private readonly IEmailBuffer _emailBuffer;
+    private readonly ILogger _logger;
+    public IConfiguration _configuration;
+
+    public EmailService(IEmailBuffer emailBuffer, IConfiguration configuration, ILogger<EmailService> logger)
     {
-        private readonly ILogger _logger;
-        public IConfiguration _configuration;
-        private readonly IEmailBuffer _emailBuffer;
+        _emailBuffer = emailBuffer;
+        _configuration = configuration;
+        _logger = logger;
+    }
 
-        public EmailService(IEmailBuffer emailBuffer, IConfiguration configuration, ILogger<EmailService> logger)
-        {
-            _emailBuffer = emailBuffer;
-            _configuration = configuration;
-            _logger = logger;
-        }
-
-        public Task SendEmail(EmailMessage email)
-        {
-            return _emailBuffer.AddEmailAsync(email);
-        }
+    public Task SendEmail(EmailMessage email)
+    {
+        return _emailBuffer.AddEmailAsync(email);
     }
 }

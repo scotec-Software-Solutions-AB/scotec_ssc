@@ -1,52 +1,48 @@
 ﻿using System.Text;
 
-namespace Scotec.Web.Robots.RobotsTxt
+namespace Scotec.Web.Robots.RobotsTxt;
+
+public class RobotsTxtBuilder
 {
-    public class RobotsTxtBuilder
+    private readonly List<Action<UserAgentOptionsBuilder>> _actions = new();
+    private readonly List<string> _siteMapUrls = new();
+
+    public int? CrawlDelay { get; set; }
+
+    public TimeSpan MaxAge { get; private set; } = TimeSpan.FromDays(1);
+
+    public RobotsTxtBuilder AddUserAgent(Action<UserAgentOptionsBuilder> action)
     {
-        private List<string> _siteMapUrls = new();
-        private List<Action<UserAgentOptionsBuilder>> _actions = new();
-        
-        public int? CrawlDelay { get; set; }
-        
-        public  TimeSpan MaxAge { get; private set; } = TimeSpan.FromDays(1);
+        _actions.Add(action);
+        return this;
+    }
 
-        public RobotsTxtBuilder AddUserAgent(Action<UserAgentOptionsBuilder> action)
+    public RobotsTxtBuilder AddSiteMapUrl(string siteMapUrl)
+    {
+        _siteMapUrls.Add(siteMapUrl);
+        return this;
+    }
+
+    public RobotsTxtBuilder SetMaxAge(TimeSpan maxAge)
+    {
+        MaxAge = maxAge;
+        return this;
+    }
+
+
+    public StringBuilder Build()
+    {
+        var robotsTxt = new StringBuilder();
+        foreach (var action in _actions)
         {
-            _actions.Add(action);
-            return this;
+            var optionBuilder = new UserAgentOptionsBuilder();
+            action(optionBuilder);
+
+            robotsTxt.AppendLine(optionBuilder.Build());
         }
 
-        public RobotsTxtBuilder AddSiteMapUrl(string siteMapUrl)
-        {
-            _siteMapUrls.Add(siteMapUrl);
-            return this;
-        }
+        foreach (var url in _siteMapUrls) robotsTxt.AppendLine($"Sitemap: {url}");
 
-        public RobotsTxtBuilder SetMaxAge(TimeSpan maxAge)
-        {
-            MaxAge = maxAge;
-            return this;
-        }
-
-
-        public StringBuilder Build()
-        {
-            var robotsTxt = new StringBuilder();
-            foreach (var action in _actions)
-            {
-                var optionBuilder = new UserAgentOptionsBuilder();
-                action(optionBuilder);
-
-                robotsTxt.AppendLine(optionBuilder.Build());
-            }
-
-            foreach(var url in _siteMapUrls)
-            {
-                robotsTxt.AppendLine($"Sitemap: {url}");
-            }
-
-            return robotsTxt;
-        }
+        return robotsTxt;
     }
 }

@@ -1,14 +1,12 @@
-﻿
-namespace Scotec.Web.Robots.Sitemap
+﻿namespace Scotec.Web.Robots.Sitemap;
+
+public interface ISitemapEntry
 {
-    public interface ISitemapEntry
-    {
-        string Location { get; set; }
+    string Location { get; set; }
 
-        DateTime? LastModified { get; set; }
+    DateTime? LastModified { get; set; }
 
-        ChangeFrequency? ChangeFrequency { get; set; }
+    ChangeFrequency? ChangeFrequency { get; set; }
 
-        double? Priority { get; set; }
-    }
+    double? Priority { get; set; }
 }
