@@ -9,3 +9,8 @@ Unsere Bibliotheken werden laufend aktualisiert und verbessert. Die einzelnen Ko
 
 Besuchen Sie uns auch gerne auf unserer [Website](https://www.scotec-software.com).
 
+## Unsere Komponenten
+
+### Scotec.Web.Robots
+
+Todo...
