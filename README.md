@@ -14,6 +14,13 @@ Feel free to visit us on our [website](https://www.scotec-software.com).
 ## Our components
 
 ### Scotec.Web.Robots
+Generates dynamic robots.txt and sitemap.xml files for Blazor websites.
 
+### Scotec.Extensions.Linq
 Todo...
 
+### Scotec.Math
+Todo...
+
+### Scotec.Math.Units
+Todo...
