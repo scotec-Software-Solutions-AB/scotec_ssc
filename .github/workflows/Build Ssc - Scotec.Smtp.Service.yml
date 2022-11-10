@@ -1,4 +1,4 @@
-name: Build Ssc - Develop
+name: Build Ssc - Smtp Service
 
 on: [workflow_dispatch]
 
