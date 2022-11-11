@@ -13,4 +13,17 @@ Besuchen Sie uns auch gerne auf unserer [Website](https://www.scotec-software.co
 
 ### Scotec.Web.Robots
 
+Generiert dynamische robots.txt and sitemap.xml Dateien für Blazor Websites.
+
+### Scotec.Smtp.Service
+
+Komponente zum asynchronen Versenden von E-Mails. Die E-Mails können z.B. in einer Datenbank zwischen gespeichert werden
+
+### Scotec.Extensions.Linq
+Hilfreiche Linq Erweiterungen.
+
+### Scotec.Math
+Todo...
+
+### Scotec.Math.Units
 Todo...
