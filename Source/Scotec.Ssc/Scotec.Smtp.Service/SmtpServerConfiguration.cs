@@ -2,7 +2,7 @@
 
 public class SmtpServerConfiguration
 {
-    public bool SendingEnabled { get; set; }
+    public bool SendingEnabled { get; set; } = true;
     public string Server { get; set; }
     public int Port { get; set; }
     public string LoginUsername { get; set; }

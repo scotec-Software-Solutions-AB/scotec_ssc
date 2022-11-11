@@ -2,5 +2,4 @@
 
 public interface IEmailDispatcher
 {
-    bool SendEmail(EmailMessage email);
 }

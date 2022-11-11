@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Scotec.Smtp.Service;
 
@@ -7,17 +6,16 @@ public class EmailService : IEmailService
 {
     private readonly IEmailBuffer _emailBuffer;
     private readonly ILogger _logger;
-    public IConfiguration _configuration;
 
-    public EmailService(IEmailBuffer emailBuffer, IConfiguration configuration, ILogger<EmailService> logger)
+    public EmailService(IEmailBuffer emailBuffer, ILogger<EmailService> logger)
     {
         _emailBuffer = emailBuffer;
-        _configuration = configuration;
         _logger = logger;
     }
 
     public Task SendEmail(EmailMessage email)
     {
+        _logger.LogTrace("Forwarding email to buffer.");
         return _emailBuffer.AddEmailAsync(email);
     }
 }
