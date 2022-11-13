@@ -33,7 +33,7 @@ public class LookupTable2D
         {
             line = line.Substring(line.IndexOf(columnSeparator) + 1);
             var xValues = line.Split(columnSeparator);
-            columns.AddRange(xValues.Select(s => double.Parse(s)));
+            columns.AddRange(xValues.Select(double.Parse));
         }
 
         while ((line = file.ReadLine()) != null)
@@ -58,11 +58,11 @@ public class LookupTable2D
 
     public double[] Rows =>
         // Cache the array for better performance.
-        _rowsArray ?? (_rowsArray = _rows.ToArray());
+        _rowsArray ??= _rows.ToArray();
 
     public double[] Columns =>
         // Cache the array for better performance.
-        _columnsArray ?? (_columnsArray = _columns.ToArray());
+        _columnsArray ??= _columns.ToArray();
 
     public double MinimumRowValue()
     {
@@ -71,7 +71,7 @@ public class LookupTable2D
 
     public double MaximumRowValue()
     {
-        return _rows[_rows.Length - 1];
+        return _rows[^1];
     }
 
     public double MinimumColumnValue()
@@ -81,7 +81,7 @@ public class LookupTable2D
 
     public double MaximumColumnValue()
     {
-        return _columns[_columns.Length - 1];
+        return _columns[^1];
     }
 
     public double GetInterpolatedValue(double rowValue, double columnValue)

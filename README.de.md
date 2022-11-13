@@ -23,7 +23,9 @@ Komponente zum asynchronen Versenden von E-Mails. Die E-Mails können z.B. in ei
 Hilfreiche Linq Erweiterungen.
 
 ### Scotec.Math
-Todo...
+- double extension
+- 1 dimentional lookup Table
+- 1 dimentional lookup Table
 
 ### Scotec.Math.Units
 Todo...
