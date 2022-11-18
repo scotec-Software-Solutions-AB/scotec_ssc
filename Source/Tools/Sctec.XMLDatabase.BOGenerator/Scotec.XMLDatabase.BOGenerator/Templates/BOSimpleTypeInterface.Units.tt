@@ -1,0 +1,36 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BOSimpleTypeInterface" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.SimpleTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System;
+using Scotec.XMLDatabase;
+
+<#
+	var valueType = "Scotec.Framework.Math.Units."+ typeDescriptor.EnumType + ".Units";
+#>
+
+namespace <#= typeDescriptor.ProjectDescriptor.Namespace #>
+{
+	public partial interface <#= typeDescriptor.TypeName #>
+	{
+
+		#region Properties
+
+		<#= valueType #> Value{get;set;}
+
+		<#= valueType #> DefaultValue{get;}
+
+		#endregion Properties
+
+
+		#region Methods
+
+		bool Validate(<#= valueType #> value);
+
+		#endregion Methods
+
+	}
+}
+

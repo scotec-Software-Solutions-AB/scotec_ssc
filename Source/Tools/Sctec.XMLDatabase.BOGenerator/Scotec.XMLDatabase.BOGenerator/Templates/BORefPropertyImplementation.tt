@@ -1,0 +1,45 @@
+﻿<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ObjectTypeDescriptor" #>
+<#@ parameter name="property" type="Scotec.XMLDatabase.BOGenerator.Descriptors.PropertyDescriptor" #>
+
+		private const string <#= GetConstPropertyName(property.FieldName) #> = "<#= property.FieldName #>";		
+		<#= property.ReturnType.FullName #> <#= typeDescriptor.TypeName #>.<#= property.Name #>
+		{
+			get
+			{
+				try
+				{
+					return BusinessSession.Factory.GetBusinessObject(DataObject.GetReference(<#= GetConstPropertyName(property.FieldName) #>)) as <#= property.ReturnType.FullName #>;
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+			set
+			{
+				try
+				{
+					var reference = DataObject.GetReference(<#= GetConstPropertyName(property.FieldName) #>);
+					var dataObject = (value!=null) ? ((BusinessObject)value).DataObject : null;
+
+					if(reference == dataObject)
+						return;
+										
+					DataObject.SetReference(<#= GetConstPropertyName(property.FieldName) #>, (value!=null) ? ((BusinessObject)value).DataObject : null);
+					AddModifiedProperty(<#= GetConstPropertyName(property.FieldName) #>);
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+		}
+

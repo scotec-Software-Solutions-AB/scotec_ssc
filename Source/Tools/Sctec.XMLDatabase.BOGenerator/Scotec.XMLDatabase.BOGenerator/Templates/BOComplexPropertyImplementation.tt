@@ -1,0 +1,22 @@
+﻿<#@ parameter name="returnValueType" type="System.String" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ObjectTypeDescriptor" #>
+<#@ parameter name="property" type="Scotec.XMLDatabase.BOGenerator.Descriptors.PropertyDescriptor" #>
+
+		<#= returnValueType #> <#= typeDescriptor.TypeName #>.<#= property.Name #>
+		{
+			get
+			{
+				try
+				{
+					return (<#= property.ReturnType.FullName #>)BusinessSession.Factory.GetBusinessObject(DataObject.GetDataObject("<#= property.FieldName #>"));
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+		}

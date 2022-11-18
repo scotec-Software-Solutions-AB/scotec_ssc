@@ -1,0 +1,197 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BOSimpleTypeImplementation" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.SimpleTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System;
+using Scotec.XMLDatabase;
+
+<#
+	var valueType = "Scotec.Framework.Math.Units."+ typeDescriptor.EnumType + ".Units";
+#>
+
+namespace <#= typeDescriptor.ProjectDescriptor.Namespace #>
+{
+	public partial class <#= typeDescriptor.TypeNameImplementation #> : BusinessAttribute, <#= typeDescriptor.FullName #>
+	{
+
+		#region Private Members
+
+
+		#endregion Private Members
+
+
+		#region Constructors
+
+		public <#= typeDescriptor.TypeNameImplementation #>()
+		{
+		}
+
+		#endregion Constructors
+
+
+		#region Properties
+
+		<#= valueType #> <#= typeDescriptor.TypeName #>.Value
+		{
+			get
+			{
+				try
+				{
+					string val = (<#= typeDescriptor.DataType #>)DataAttribute.Value;
+
+					if(val.Length == 0)
+						return new <#= valueType #>();
+
+					return (<#= valueType #>)System.Enum.Parse(typeof(<#= valueType #>), val);
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+			set
+			{
+				try
+				{
+					DataAttribute.Value = (<#= typeDescriptor.DataType #>)value.ToString();
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+		}
+
+		<#= valueType #> <#= typeDescriptor.TypeName #>.DefaultValue
+		{
+			get
+			{
+				try
+				{
+					string val = (<#= typeDescriptor.DataType #>)DataAttribute.DefaultValue;
+
+					if(val.Length == 0)
+						return new <#= valueType #>();
+
+					return (<#= valueType #>)System.Enum.Parse(typeof(<#= valueType #>), val);
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+		}
+
+		// Override abstract Value property of BusinessObject implementation.
+		public override object Value
+		{
+			get
+			{
+				try
+				{
+					return  ((<#= typeDescriptor.TypeName #>)this).Value;
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+			set
+			{
+				try
+				{
+					((<#= typeDescriptor.TypeName #>)this).Value = (<#= valueType #>)value;
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+		}
+
+		// Override abstract DefaultValue property of BusinessObject implementation.
+		public override object DefaultValue
+		{
+			get
+			{
+				try
+				{
+					return  ((<#= typeDescriptor.TypeName #>)this).DefaultValue;
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+		}
+
+
+		#endregion Properties
+
+
+		#region Interface Implementations
+
+		bool <#= typeDescriptor.TypeName #>.Validate(<#= valueType #> value)
+		{
+			try
+			{
+				return DataAttribute.Validate(value.ToString());
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+		// Override abstract Validate method of BusinessObject implementation.
+		public override bool Validate(object value)
+		{
+			try
+			{
+				return ((<#= typeDescriptor.TypeName #>)this).Validate((<#= valueType #>)value);
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+		#endregion Interface Implementations
+
+	}
+}
+

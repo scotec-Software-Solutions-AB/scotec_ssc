@@ -1,0 +1,28 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BORefTypeImplementation" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.RefTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System;
+using Scotec.XMLDatabase;
+
+
+namespace <#= typeDescriptor.Namespace #>
+{
+	public partial class <#= typeDescriptor.TypeNameImplementation #> : <#= typeDescriptor.BaseType.FullNameImplementation #>, <#= typeDescriptor.FullName #>
+	{
+		#region Interface Implementations
+
+		public override T Apply<T>(IVisitor<T> visitor)
+		{
+			var specificVisitor = visitor as <#= typeDescriptor.TypeName #>Visitor<T>;
+			
+			return (specificVisitor != null) ? specificVisitor.Visit(this) : base.Apply(visitor);
+		}
+
+		#endregion Interface Implementations
+
+	}
+}
+

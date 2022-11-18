@@ -1,0 +1,112 @@
+﻿<#@ parameter name="returnValueType" type="System.String" #>
+<#@ parameter name="isNullable" type="System.Boolean" #>
+<#@ parameter name="isId" type="System.Boolean" #>
+<#@ parameter name="isOptionalString" type="System.Boolean" #>
+<#@ parameter name="property" type="Scotec.XMLDatabase.BOGenerator.Descriptors.PropertyDescriptor" #>
+
+		private const string <#= GetConstPropertyName(property.FieldName) #> = "<#= property.FieldName #>";		
+		<#= returnValueType #><#= isNullable ? "?" : "" #> <#= typeDescriptor.TypeName #>.<#= property.Name #>
+		{
+			get
+			{
+				try
+				{
+<#
+		if(isNullable || isOptionalString)
+		{
+#>
+					if(DataObject.HasAttribute(<#= GetConstPropertyName(property.FieldName) #>))
+						return ((<#= property.ReturnType.FullName #>)BusinessSession.Factory.GetBusinessAttribute(DataObject.GetAttribute(<#= GetConstPropertyName(property.FieldName) #>))).Value;
+					return null;
+<#
+		}
+		else
+		{
+#>
+					return ((<#= property.ReturnType.FullName #>)BusinessSession.Factory.GetBusinessAttribute(DataObject.GetAttribute(<#= GetConstPropertyName(property.FieldName) #>))).Value;
+<#
+		}
+#>
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+<#
+		if(!isId)
+		{
+#>
+			set
+			{
+				try
+				{
+<#
+			if(isNullable || isOptionalString)
+			{
+#>
+					if(value == null)
+					{
+						if(DataObject.HasAttribute(<#= GetConstPropertyName(property.FieldName) #>))
+						{
+							DataObject.DeleteAttribute(<#= GetConstPropertyName(property.FieldName) #>);
+							AddModifiedProperty( <#= GetConstPropertyName(property.FieldName) #> );
+						}
+					}
+					else
+					{
+						if(DataObject.HasAttribute(<#= GetConstPropertyName(property.FieldName) #>))
+						{
+							var attribute = (<#= property.ReturnType.FullName #>)BusinessSession.Factory.GetBusinessAttribute(DataObject.GetAttribute(<#= GetConstPropertyName(property.FieldName) #>));
+							if(attribute.Value == (<#= returnValueType #>)value)
+								return;
+
+							attribute.Value = (<#= returnValueType #>)value;
+							AddModifiedProperty(<#= GetConstPropertyName(property.FieldName) #>);
+						}
+						else
+						{
+							((<#= property.ReturnType.FullName #>)BusinessSession.Factory.GetBusinessAttribute(DataObject.CreateAttribute(<#= GetConstPropertyName(property.FieldName) #>))).Value = (<#= returnValueType #>)value;
+							AddModifiedProperty(<#= GetConstPropertyName(property.FieldName) #>);
+						}
+					}
+<#
+			}
+			else
+			{
+				if(returnValueType == "System.String")
+				{
+#>
+					if(value == null)
+						throw new ArgumentException("Value must not be null.");
+<#
+				}
+#>
+					var attribute = (<#= property.ReturnType.FullName #>)BusinessSession.Factory.GetBusinessAttribute(DataObject.GetAttribute(<#= GetConstPropertyName(property.FieldName) #>));
+					
+					if(attribute.Value == (<#= returnValueType #>)value)
+						return;
+					
+					attribute.Value = (<#= returnValueType #>)value;
+					AddModifiedProperty(<#= GetConstPropertyName(property.FieldName) #>);
+<#
+			}
+#>
+				}
+				catch(Scotec.XMLDatabase.DataException e)
+				{
+					throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+				}
+				catch(Exception e)
+				{
+					throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+				}
+			}
+<#
+		}	
+#>
+		}

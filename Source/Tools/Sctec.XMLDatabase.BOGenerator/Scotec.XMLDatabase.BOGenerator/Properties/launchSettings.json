@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Scotec.XMLDatabase.BOGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "-s \"C:\\Projects\\scotec\\Scotec.Core.Controller\\Schemas\\Configuration\\Scotec.Core.Controller.Configuration.xsd\" -o \"C:\\Projects\\scotec\\Scotec.Core.Controller\\Source\\DataModel\" -r \"C:\\Projects\\scotec\\Scotec.Core.Controller\\Source"
+    }
+  }
+}

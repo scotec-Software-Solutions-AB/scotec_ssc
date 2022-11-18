@@ -1,0 +1,29 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.InterfaceProject" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ parameter name="projectDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ProjectDescriptor" #>
+<#@ parameter name="projectId" type="System.String" #>
+<#@ parameter name="userFiles" type="System.Collections.Generic.IList<System.String>" #>
+<#@ parameter name="frameworkVersion" type="System.String" #>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace><#= projectDescriptor.Name #></RootNamespace>
+  </PropertyGroup>
+
+    <ItemGroup>
+    <#
+		foreach(var project in projectDescriptor.ReferencedProjects)
+		{
+#>
+        <ProjectReference Include="..\<#= project.Name #>"\<#= project.Name #>".Contracts />
+<#
+		}
+#>
+
+  </ItemGroup>
+
+
+</Project>

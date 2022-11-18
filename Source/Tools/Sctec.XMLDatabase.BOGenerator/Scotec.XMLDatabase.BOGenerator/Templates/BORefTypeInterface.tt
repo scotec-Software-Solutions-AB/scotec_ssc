@@ -1,0 +1,23 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BORefTypeInterface" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.RefTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System;
+using Scotec.XMLDatabase;
+
+
+namespace <#= typeDescriptor.Namespace #>
+{
+	public partial interface <#= typeDescriptor.TypeName #> : <#= typeDescriptor.BaseType.FullName #>
+	{
+
+	}
+
+	public interface <#= typeDescriptor.TypeName #>Visitor<T> : Scotec.XMLDatabase.IVisitor<T>
+	{
+		T Visit(<#= typeDescriptor.TypeName #> visitable);
+	}
+}
+

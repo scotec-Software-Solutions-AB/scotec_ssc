@@ -1,0 +1,338 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BOComplexTypeImplementation" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator.Descriptors" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ObjectTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System;
+using Scotec.XMLDatabase;
+
+
+namespace <#= typeDescriptor.Namespace #>
+{
+	public<#= typeDescriptor.IsAbstract ? " abstract " : " " #>partial class <#= typeDescriptor.TypeNameImplementation #> : <#= typeDescriptor.BaseType != null ? typeDescriptor.BaseType.FullNameImplementation : "BusinessObject" #>, <#= typeDescriptor.FullName #>
+	{
+		#region Properties
+
+<#
+	foreach(var property in typeDescriptor.Properties.Values)
+	{
+		bool isRefType = false;
+		var complexProperty = property as Scotec.XMLDatabase.BOGenerator.Descriptors.ComplexPropertyDescriptor;
+		if(property is Scotec.XMLDatabase.BOGenerator.Descriptors.ComplexPropertyDescriptor)
+			isRefType = ((Scotec.XMLDatabase.BOGenerator.Descriptors.ComplexPropertyDescriptor)property).IsRefType;
+		
+		var simpleReturnType = property.ReturnType as SimpleTypeDescriptor;
+		var complexReturnType = property.ReturnType as ComplexTypeDescriptor;
+		bool isId = property.Name == "Id";
+		bool isOptional = property.IsOptional;
+
+		string returnValueType;
+		if(simpleReturnType != null)
+			returnValueType = simpleReturnType.IsEnum ? simpleReturnType.Namespace + "." + simpleReturnType.EnumType : simpleReturnType.ValueType;
+		else
+			returnValueType = complexReturnType.FullName;
+
+		bool isOptionalString = isOptional && returnValueType == "System.String";
+		var isNullable = (simpleReturnType != null && isOptional && !isOptionalString);
+#>
+<#
+		if(!isRefType)
+		{
+#>
+<#
+			if(complexProperty == null)
+			{
+#>
+		<#@ include file="BOSimplePropertyImplementation.tt" mode="method" #>
+<#
+			}
+			else
+			{
+#>
+		<#@ include file="BOComplexPropertyImplementation.tt" mode="method" #>
+<#
+			}
+		}
+		else
+		{
+#>
+		<#@ include file="BORefPropertyImplementation.tt" mode="method" #>
+<#
+		}
+	}
+#>
+		#endregion Properties
+
+
+		#region Interface Implementations
+
+<#
+	foreach(var property in typeDescriptor.Properties.Values)
+	{
+		var complexProperty = property as ComplexPropertyDescriptor;
+		if(complexProperty == null)
+			continue;
+
+		var simpleReturnType = property.ReturnType as SimpleTypeDescriptor;
+		var complexReturnType = property.ReturnType as ComplexTypeDescriptor;
+
+
+		string returnValueType;
+		if(simpleReturnType != null)
+			returnValueType = simpleReturnType.IsEnum ? simpleReturnType.Namespace + "." + simpleReturnType.EnumType : simpleReturnType.ValueType;
+		else
+			returnValueType = complexReturnType.FullName;
+
+		bool isOptional = property.IsOptional;
+		bool isChoise = complexProperty != null ? complexProperty.IsChoise : false;
+		bool isAbstract = complexReturnType != null ? complexReturnType.IsAbstract : false;
+		bool isSealed = complexReturnType != null ? complexReturnType.IsSealed : false;
+		bool isRefType = complexProperty != null ? complexProperty.IsRefType : false;
+
+		if(isOptional || isChoise)
+		{
+#>
+		bool  <#= typeDescriptor.TypeName #>.Has<#= property.Name #>()
+		{
+			try
+			{
+				return DataObject.HasDataObject("<#= property.FieldName #>");
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+<#
+		}
+#>
+<#
+		if(isOptional && !isAbstract && !isRefType)
+		{
+#>
+		<#= returnValueType #> <#= typeDescriptor.TypeName #>.Create<#= property.Name #>()
+		{
+			try
+			{
+				AddModifiedProperty( "<#= property.FieldName #>" );
+				return (<#= property.ReturnType.FullName #>)BusinessSession.Factory.GetBusinessObject(DataObject.CreateDataObject("<#= property.FieldName #>"));
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+<#
+		}
+#>
+<#
+		if(isOptional && !isAbstract && isRefType)
+		{
+#>
+		void <#= typeDescriptor.TypeName #>.Create<#= property.Name #>()
+		{
+			try
+			{
+				AddModifiedProperty( "<#= property.FieldName #>" );
+				BusinessSession.Factory.GetBusinessObject(DataObject.CreateDataObject("<#= property.FieldName #>"));
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+<#
+		}
+#>
+<#
+		if(isOptional && complexReturnType != null && !isSealed && !isRefType && !isChoise)
+		{
+#>
+		T<#= property.Name #> <#= typeDescriptor.TypeName #>.Create<#= property.Name #><T<#= property.Name #>>()
+		{
+			try
+			{
+				Type type = typeof(T<#= property.Name #>);
+				string typeName = string.Format("{0}.{1}Type", type.Namespace, type.Name.Substring(1));
+
+				AddModifiedProperty( "<#= property.FieldName #>" );
+				return (T<#= property.Name #>)BusinessSession.Factory.GetBusinessObject(DataObject.CreateDataObject("<#= property.FieldName #>", typeName));
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+<#
+		}
+#>
+<#
+		if(isOptional && complexReturnType != null && !isSealed && isRefType && !isChoise)
+		{
+#>
+		void <#= typeDescriptor.TypeName #>.Create<#= property.Name #><T<#= property.Name #>>()
+		{
+			try
+			{
+				Type type = typeof(T<#= property.Name #>);
+				string typeName = string.Format("{0}.{1}Type", type.Namespace, type.Name.Substring(1));
+				BusinessSession.Factory.GetBusinessObject(DataObject.CreateDataObject("axisPointsRef", typeName));
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+<#
+		}
+
+#>
+<#
+		if(isOptional)
+		{
+#>
+		void  <#= typeDescriptor.TypeName #>.Delete<#= property.Name #>()
+		{
+			try
+			{
+				AddModifiedProperty( "<#= property.FieldName #>" );
+				DataObject.DeleteDataObject("<#= property.FieldName #>");
+			}
+			catch(Scotec.XMLDatabase.DataException e)
+			{
+				throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+			}
+			catch(Exception e)
+			{
+				throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+			}
+		}
+
+<#
+		}
+#>
+<#
+		if(isChoise)
+		{
+			if(!isSealed && !isRefType)
+			{
+#>
+		//T<#= property.Name #> Choose<#= property.Name #><T<#= property.Name #>>() where T<#= property.Name #> : <#= property.ReturnType.FullName #>
+		//{
+		// 	AddModifiedProperty( "<#= property.FieldName #>" );
+		//	return (T<#= property.Name #>) Choose<T<#= property.Name #>>("<#= property.FieldName #>");
+		//}
+
+<#
+			}
+			else if(!isSealed && isRefType)
+			{
+#>
+		//T<#= property.Name #> Choose<#= property.Name #><T<#= property.Name #>>() where T<#= property.Name #> : <#= property.ReturnType.FullName #>Ref
+		//{
+		//	AddModifiedProperty( "<#= property.FieldName #>" );
+		//	return (T<#= property.Name #>) ChooseT<#= property.Name #>("<#= property.FieldName #>");
+		//}
+
+<#
+			}
+			if(!isAbstract && !isRefType)
+			{
+#>
+		<#= property.ReturnType.FullName #> <#= typeDescriptor.TypeName #>.Choose<#= property.Name #>()
+		{
+			AddModifiedProperty( "<#= property.FieldName #>" );
+			return (<#= property.ReturnType.FullName #>) Choose("<#= property.FieldName #>");
+		}
+
+<#
+			}
+			else if(isRefType)
+			{
+#>
+		<#= property.ReturnType.FullName #>Ref <#= typeDescriptor.TypeName #>.Choose<#= property.Name #>()
+		{
+			AddModifiedProperty( "<#= property.FieldName #>" );
+			return (<#= property.ReturnType.FullName #>Ref) Choose("<#= property.FieldName #>");
+		}
+
+<#
+			}
+		}
+#>
+
+<#
+	}
+#>
+<#
+		if(typeDescriptor.BaseType == null)
+		{
+#>
+
+		public virtual TResult Apply<TResult>(IVisitor<TResult> visitor)
+		{
+			var specificVisitor = visitor as <#= typeDescriptor.TypeName #>Visitor<TResult>;
+			if (specificVisitor != null)
+				return specificVisitor.Visit(this);
+
+			var objectVisitor = visitor as IObjectVisitor<TResult>;
+			
+			if (objectVisitor != null)
+				return objectVisitor.Visit(this);
+			throw new NotSupportedException("Visitor of type " + visitor.GetType().FullName + " does not support visiting objects of type " + GetType().FullName + '.');
+		}
+
+<#
+		}
+		else
+		{
+#>
+		public override TResult Apply<TResult>(IVisitor<TResult> visitor)
+		{
+			var specificVisitor = visitor as <#= typeDescriptor.TypeName #>Visitor<TResult>;
+			return (specificVisitor != null) ? specificVisitor.Visit(this) : base.Apply(visitor);
+		}
+
+<#
+		}
+#>
+		#endregion Interface Implementations
+
+	}
+}
+
+<#+
+
+string GetConstPropertyName(string propertyName)
+{
+	return propertyName.ToUpperInvariant() + "_PROPERTY_NAME";
+}
+
+#>
