@@ -8,7 +8,7 @@ using System;
 using Scotec.XMLDatabase;
 
 <#
-	var valueType = "Scotec.Framework.Math.Units."+ typeDescriptor.EnumType + ".Units";
+	var valueType = "Scotec.Math.Units."+ typeDescriptor.EnumType + ".Units";
 #>
 
 namespace <#= typeDescriptor.ProjectDescriptor.Namespace #>

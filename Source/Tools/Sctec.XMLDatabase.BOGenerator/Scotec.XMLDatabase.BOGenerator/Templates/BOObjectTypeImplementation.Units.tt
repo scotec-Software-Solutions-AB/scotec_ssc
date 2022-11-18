@@ -30,7 +30,7 @@ namespace <#= typeDescriptor.Namespace #>
 
 		string returnValueType;
 		if(simpleReturnType != null)
-			returnValueType = simpleReturnType.IsEnum ? "Scotec.Framework.Math.Units." + simpleReturnType.EnumType + ".Units" : simpleReturnType.ValueType;
+			returnValueType = simpleReturnType.IsEnum ? "Scotec.Math.Units." + simpleReturnType.EnumType + ".Units" : simpleReturnType.ValueType;
 		else
 			returnValueType = complexReturnType.FullName;
 
@@ -47,19 +47,19 @@ namespace <#= typeDescriptor.Namespace #>
 #>
 		<#@ include file="BOSimplePropertyImplementation.tt" mode="method" #>
 <#
-				if(simpleReturnType != null && returnValueType.StartsWith("Scotec.Framework.Math.Units"))
+				if(simpleReturnType != null && returnValueType.StartsWith("Scotec.Math.Units"))
 				{
 #>
 	    
-		public Scotec.Framework.Math.Units.<#= simpleReturnType.EnumType #> Value
+		public Scotec.Math.Units.<#= simpleReturnType.EnumType #> Value
 	    {
 	        get
 	        {
 	            var siValue = ((<#= typeDescriptor.FullName #>)this).SIValue;
 
-	            return siValue == null ? null : new Scotec.Framework.Math.Units.<#= simpleReturnType.EnumType #>(siValue.Value);
+	            return siValue == null ? null : new Scotec.Math.Units.<#= simpleReturnType.EnumType #>(siValue.Value);
 	        }
-	        set { ((<#= typeDescriptor.FullName #>)this).SIValue = value?[Scotec.Framework.Math.Units.<#= simpleReturnType.EnumType #>.SIUnit]; }
+	        set { ((<#= typeDescriptor.FullName #>)this).SIValue = value?[Scotec.Math.Units.<#= simpleReturnType.EnumType #>.SIUnit]; }
 	    }
 <#
 				}

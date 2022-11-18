@@ -28,7 +28,7 @@ namespace <#= typeDescriptor.Namespace #>
 
 		string returnValueType;
 		if(simpleReturnType != null)
-			returnValueType = simpleReturnType.IsEnum ? "Scotec.Framework.Math.Units." + simpleReturnType.EnumType + ".Units" : simpleReturnType.ValueType;
+			returnValueType = simpleReturnType.IsEnum ? "Scotec.Math.Units." + simpleReturnType.EnumType + ".Units" : simpleReturnType.ValueType;
 		else
 			returnValueType = complexReturnType.FullName;
 		var isNullable = (simpleReturnType != null && isOptional && returnValueType != "System.String");
@@ -36,10 +36,10 @@ namespace <#= typeDescriptor.Namespace #>
 #>
 		<#= returnValueType #><#= isNullable ? "?" : "" #> <#= property.Name #> { get; <#= ((simpleReturnType != null || isRefType) && !isId) ? "set; ": "" #>}
 <#
-		if(simpleReturnType != null && returnValueType.StartsWith("Scotec.Framework.Math.Units"))
+		if(simpleReturnType != null && returnValueType.StartsWith("Scotec.Math.Units"))
 		{
 #>
-		Scotec.Framework.Math.Units.<#= simpleReturnType.EnumType #> Value { get; set; }
+		Scotec.Math.Units.<#= simpleReturnType.EnumType #> Value { get; set; }
 <#
 		}
 	}
