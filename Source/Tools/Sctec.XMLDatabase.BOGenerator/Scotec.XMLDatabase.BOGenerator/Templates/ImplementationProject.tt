@@ -3,14 +3,40 @@
 <#@ import namespace="System" #>
 <#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
 <#@ parameter name="projectDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ProjectDescriptor" #>
-<#@ parameter name="projectId" type="System.String" #>
-<#@ parameter name="userFiles" type="System.Collections.Generic.IList<System.String>" #>
-<#@ parameter name="frameworkVersion" type="System.String" #>
+<#@ parameter name="targetFramework" type="System.String" #>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework><#= targetFramework #></TargetFramework>
     <RootNamespace><#= projectDescriptor.Name #></RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Scotec.XmlDatabase" Version="0.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\\<#= projectDescriptor.ProjectFolder #>.Contracts\\<#= projectDescriptor.Name #>.Contracts.csproj" />
+<#
+	foreach(var project in projectDescriptor.ReferencedProjects)
+	{
+#>
+    <ProjectReference Include="..\\<#= project.ProjectFolder #>.Contracts\\<#= project.Name #>.Contracts.csproj" />
+<#
+	}
+#>
+  </ItemGroup>
+
+  <ItemGroup>
+<#
+	foreach(var project in projectDescriptor.ReferencedProjects)
+	{
+#>
+    <ProjectReference Include="..\\<#= project.ProjectFolder #>\\<#= project.Name #>.csproj" />
+<#
+	}
+#>
+  </ItemGroup>
+
 
 </Project>

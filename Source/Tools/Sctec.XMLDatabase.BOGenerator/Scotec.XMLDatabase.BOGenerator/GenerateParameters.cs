@@ -138,7 +138,7 @@ namespace Scotec.XMLDatabase.BOGenerator
             Console.WriteLine( string.Format( "Reference folder: {0}", _refDirectory ) );
 
             if( string.IsNullOrEmpty( _targetFramework ) )
-                _targetFramework = "4.6";
+                _targetFramework = "net6.0";
 
             Console.WriteLine();
         }
