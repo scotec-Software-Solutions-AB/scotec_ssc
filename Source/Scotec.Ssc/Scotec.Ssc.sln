@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.XmlDatabase", "Scote
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Events.WeakEvents", "Scotec.Events.WeakEvents\Scotec.Events.WeakEvents.csproj", "{4B861FBD-0694-4CB9-AD32-ABF46AAA464D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scotec.Smtp.Service", "Scotec.Smtp.Service\Scotec.Smtp.Service.csproj", "{89A17167-34D6-48D5-95BE-4ED364EAFBFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Smtp.Service", "Scotec.Smtp.Service\Scotec.Smtp.Service.csproj", "{89A17167-34D6-48D5-95BE-4ED364EAFBFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Queues", "Scotec.Queues\Scotec.Queues.csproj", "{F703A5CC-B597-4D1C-B585-31D8232AD7E6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.RingBuffer", "Scotec.RingBuffer\Scotec.RingBuffer.csproj", "{DF9693FA-286F-49C6-A121-A1F58C5F06EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{89A17167-34D6-48D5-95BE-4ED364EAFBFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89A17167-34D6-48D5-95BE-4ED364EAFBFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89A17167-34D6-48D5-95BE-4ED364EAFBFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F703A5CC-B597-4D1C-B585-31D8232AD7E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F703A5CC-B597-4D1C-B585-31D8232AD7E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F703A5CC-B597-4D1C-B585-31D8232AD7E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F703A5CC-B597-4D1C-B585-31D8232AD7E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF9693FA-286F-49C6-A121-A1F58C5F06EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF9693FA-286F-49C6-A121-A1F58C5F06EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF9693FA-286F-49C6-A121-A1F58C5F06EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF9693FA-286F-49C6-A121-A1F58C5F06EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

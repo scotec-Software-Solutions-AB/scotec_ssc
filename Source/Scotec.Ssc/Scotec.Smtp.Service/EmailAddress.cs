@@ -22,6 +22,6 @@ public class EmailAddress
 
     public static implicit operator MailboxAddress(EmailAddress address)
     {
-        return new(address.Name, address.Email);
+        return new MailboxAddress(address.Name, address.Email);
     }
 }

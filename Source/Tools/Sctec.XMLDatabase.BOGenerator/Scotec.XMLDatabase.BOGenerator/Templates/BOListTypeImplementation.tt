@@ -1,0 +1,18 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BOListTypeImplementation" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ListTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System;
+using Scotec.XMLDatabase;
+
+
+namespace <#= typeDescriptor.Namespace #>
+{
+	public partial class <#= typeDescriptor.TypeNameImplementation #> : BusinessObjectList<<#= typeDescriptor.ItemType.FullName #>>, <#= typeDescriptor.FullName #>
+	{
+
+	}
+}
+

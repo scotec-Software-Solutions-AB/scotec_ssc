@@ -1,0 +1,19 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BORefListTypeInterface" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.RefListTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System.Collections.Generic;
+using System;
+using Scotec.XMLDatabase;
+
+
+namespace <#= typeDescriptor.Namespace #>
+{
+	public partial interface <#= typeDescriptor.TypeName #> : IBusinessObjectRefList<<#= typeDescriptor.ItemType.FullName #>>
+	{
+
+	}
+}
+

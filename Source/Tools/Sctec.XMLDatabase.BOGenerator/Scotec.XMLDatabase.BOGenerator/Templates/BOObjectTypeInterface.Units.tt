@@ -1,0 +1,165 @@
+﻿<#@ template language="C#" classname="Scotec.XMLDatabase.BOGenerator.BOComplexTypeInterface" #>
+<#@ assembly name="Scotec.XMLDatabase.BOGenerator.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator" #>
+<#@ import namespace="Scotec.XMLDatabase.BOGenerator.Descriptors" #>
+<#@ parameter name="typeDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ObjectTypeDescriptor" #>
+<#@ parameter name="generateInfo" type="Scotec.XMLDatabase.BOGenerator.GenerateParameters" #>
+using System;
+using Scotec.XMLDatabase;
+
+
+namespace <#= typeDescriptor.Namespace #>
+{
+	public partial interface <#= typeDescriptor.TypeName #> : <#= typeDescriptor.BaseType != null ? typeDescriptor.BaseType.FullName : "IBusinessObject, Scotec.XMLDatabase.IVisitable" #>
+	{
+		#region Properties
+
+<#
+	foreach(var property in typeDescriptor.Properties.Values)
+	{
+		bool isRefType = false;
+		if(property is Scotec.XMLDatabase.BOGenerator.Descriptors.ComplexPropertyDescriptor)
+			isRefType = ((Scotec.XMLDatabase.BOGenerator.Descriptors.ComplexPropertyDescriptor)property).IsRefType;
+		var simpleReturnType = property.ReturnType as SimpleTypeDescriptor;
+		var complexReturnType = property.ReturnType as ComplexTypeDescriptor;
+		bool isId = property.Name == "Id";
+		bool isOptional = property.IsOptional;
+
+		string returnValueType;
+		if(simpleReturnType != null)
+			returnValueType = simpleReturnType.IsEnum ? "Scotec.Math.Units." + simpleReturnType.EnumType + ".Units" : simpleReturnType.ValueType;
+		else
+			returnValueType = complexReturnType.FullName;
+		var isNullable = (simpleReturnType != null && isOptional && returnValueType != "System.String");
+
+#>
+		<#= returnValueType #><#= isNullable ? "?" : "" #> <#= property.Name #> { get; <#= ((simpleReturnType != null || isRefType) && !isId) ? "set; ": "" #>}
+<#
+		if(simpleReturnType != null && returnValueType.StartsWith("Scotec.Math.Units"))
+		{
+#>
+		Scotec.Math.Units.<#= simpleReturnType.EnumType #> Value { get; set; }
+<#
+		}
+	}
+#>
+
+		
+		#endregion Properties
+
+
+		#region Methods
+
+<#
+	foreach(var property in typeDescriptor.Properties.Values)
+	{
+		var complexProperty = property as Scotec.XMLDatabase.BOGenerator.Descriptors.ComplexPropertyDescriptor;
+		if(complexProperty == null)
+			continue;
+
+		var simpleReturnType = property.ReturnType as SimpleTypeDescriptor;
+		var complexReturnType = property.ReturnType as ComplexTypeDescriptor;
+
+		string returnValueType;
+		if(simpleReturnType != null)
+			returnValueType = simpleReturnType.IsEnum ? simpleReturnType.Namespace + "." + simpleReturnType.EnumType : simpleReturnType.ValueType;
+		else
+			returnValueType = complexReturnType.FullName;
+
+		bool isOptional = property.IsOptional;
+		bool isChoise = complexProperty != null ? complexProperty.IsChoise : false;
+		bool isAbstract = complexReturnType != null ? complexReturnType.IsAbstract : false;
+		bool isSealed = complexReturnType != null ? complexReturnType.IsSealed : false;
+		bool isRefType = complexProperty != null ? complexProperty.IsRefType : false;
+
+		if(isOptional || isChoise)
+		{
+#>
+		bool Has<#= property.Name #>();
+<#
+		}
+#>
+<#
+		if(isOptional && !isAbstract && !isRefType)
+		{
+#>
+		<#= returnValueType #> Create<#= property.Name #>();
+<#
+		}
+#>
+<#
+		if(isOptional && !isAbstract && isRefType)
+		{
+#>
+		void Create<#= property.Name #>();
+<#
+		}
+#>
+<#
+		if(isOptional && !isSealed && !isRefType && !isChoise)
+		{
+#>
+		T<#= property.Name #> Create<#= property.Name #><T<#= property.Name #>>() where T<#= property.Name #> : <#= property.ReturnType.FullName #>;
+<#
+		}
+#>
+<#
+		if(isOptional && !isSealed && isRefType && !isChoise)
+		{
+#>
+		void Create<#= property.Name #><T<#= property.Name #>>() where T<#= property.Name #> : <#= property.ReturnType.FullName #>;
+<#
+		}
+#>
+<#
+		if(isOptional)
+		{
+#>
+		void Delete<#= property.Name #>();
+<#
+		}
+#>
+<#
+		if(isChoise)
+		{
+			if(!isSealed && !isRefType)
+			{
+#>
+		//T<#= property.Name #> Choose<#= property.Name #><T<#= property.Name #>>() where T<#= property.Name #> : <#= property.ReturnType.FullName #>;
+<#
+			}
+			else if(!isSealed && isRefType)
+			{
+#>
+		//<T<#= property.Name #> Choose<#= property.Name #><T<#= property.Name #>>() where T<#= property.Name #> : <#= property.ReturnType.FullName #>Ref;
+<#
+			}
+			if(!isAbstract && !isRefType)
+			{
+#>
+		<#= property.ReturnType.FullName #> Choose<#= property.Name #>();
+<#
+			}
+			else if(isRefType)
+			{
+#>
+		<#= property.ReturnType.FullName #>Ref Choose<#= property.Name #>();
+<#
+			}
+		}
+#>
+
+<#
+	}
+#>
+		#endregion Methods
+
+	}
+
+	public interface <#= typeDescriptor.TypeName #>Visitor<T> : Scotec.XMLDatabase.IVisitor<T>
+	{
+		T Visit(<#= typeDescriptor.TypeName #> visitable);
+	}
+}
+

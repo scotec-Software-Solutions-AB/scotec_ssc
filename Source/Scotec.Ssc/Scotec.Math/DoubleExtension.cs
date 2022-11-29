@@ -2,37 +2,37 @@
 
 public static class DoubleExtension
 {
-    public static bool IsEqual(this double leftValue, double rightValue, int presision = 8)
+    public static bool IsEqual(this double leftValue, double rightValue, int precision = 8)
     {
-        var epsilon = System.Math.Pow(10, -presision);
+        var epsilon = System.Math.Pow(10, -precision);
 
         return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon;
     }
 
-    public static bool IsGreater(this double leftValue, double rightValue, int presision = 8)
+    public static bool IsGreater(this double leftValue, double rightValue, int precision = 8)
     {
-        var epsilon = System.Math.Pow(10, -presision);
+        var epsilon = System.Math.Pow(10, -precision);
 
         return GetDifference(leftValue, rightValue) > epsilon;
     }
 
-    public static bool IsLower(this double leftValue, double rightValue, int presision = 8)
+    public static bool IsLower(this double leftValue, double rightValue, int precision = 8)
     {
-        var epsilon = System.Math.Pow(10, -presision);
+        var epsilon = System.Math.Pow(10, -precision);
 
         return GetDifference(rightValue, leftValue) > epsilon;
     }
 
-    public static bool IsGreaterOrEqual(this double leftValue, double rightValue, int presision = 8)
+    public static bool IsGreaterOrEqual(this double leftValue, double rightValue, int precision = 8)
     {
-        var epsilon = System.Math.Pow(10, -presision);
+        var epsilon = System.Math.Pow(10, -precision);
 
         return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon || GetDifference(leftValue, rightValue) > epsilon;
     }
 
-    public static bool IsLowerOrEqual(this double leftValue, double rightValue, int presision = 8)
+    public static bool IsLowerOrEqual(this double leftValue, double rightValue, int precision = 8)
     {
-        var epsilon = System.Math.Pow(10, -presision);
+        var epsilon = System.Math.Pow(10, -precision);
 
         return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon || GetDifference(rightValue, leftValue) > epsilon;
     }
