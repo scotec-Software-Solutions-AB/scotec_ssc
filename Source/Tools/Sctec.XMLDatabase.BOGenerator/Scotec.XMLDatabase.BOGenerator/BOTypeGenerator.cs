@@ -34,7 +34,7 @@ namespace Scotec.XMLDatabase.BOGenerator
 
             if( generatorType == EGeneratorType.Interface )
             {
-                outputDirectory = string.Format("{0}.Contracts", projectDescriptor.OutputDirectory);
+                outputDirectory = string.Format("{0}.Abstractions", projectDescriptor.OutputDirectory);
                 fileName = string.Format( "{0}.cs", typeDescriptor.TypeName );
             }
             else
