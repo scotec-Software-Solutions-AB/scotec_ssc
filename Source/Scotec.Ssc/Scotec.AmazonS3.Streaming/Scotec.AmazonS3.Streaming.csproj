@@ -6,10 +6,6 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AWSSDK" Version="2.3.55.2" />
-  </ItemGroup>
-
 	<PropertyGroup>
 		<Authors>$(CompanyName)</Authors>
 		<Company>$(CompanyName)</Company>
@@ -34,5 +30,9 @@
 
 	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="AWSSDK.S3" Version="3.7.101.45" />
 	</ItemGroup>
 </Project>
