@@ -21,7 +21,7 @@
 	foreach(var project in projectDescriptor.ReferencedProjects)
 	{
 #>
-    <ProjectReference Include="..\\<#= project.ProjectFolder #>.Contracts\\<#= project.Name #>.Contracts.csproj" />
+    <ProjectReference Include="..\\<#= project.ProjectFolder #>.Abstractions\\<#= project.Name #>.Abstractions.csproj" />
 <#
 	}
 #>

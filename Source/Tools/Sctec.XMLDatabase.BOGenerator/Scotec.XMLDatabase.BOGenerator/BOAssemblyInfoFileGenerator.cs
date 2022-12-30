@@ -16,7 +16,7 @@ namespace Scotec.XMLDatabase.BOGenerator
             Console.WriteLine( string.Format( "Generating assembly info files for namespace '{0}'...",
                                               descriptor.Name ) );
 
-            CreateAssemblyInfoFile( descriptor, parameters, "Contracts", true );
+            CreateAssemblyInfoFile( descriptor, parameters, "Abstractions", true );
             CreateAssemblyInfoFile( descriptor, parameters, "", false );
         }
 

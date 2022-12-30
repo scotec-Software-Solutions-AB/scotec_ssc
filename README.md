@@ -9,12 +9,15 @@ Our libraries are constantly updated and improved. The individual components are
 Feel free to visit us on our [website](https://www.scotec-software.com).
 
 
- 
-
 ## Our components
 
 ### Scotec.Web.Robots
 Generates dynamic robots.txt and sitemap.xml files for Blazor websites.
+
+### Scotec.AmazonS3.Streaming
+For the upload as well as for the MultiPartUpload, the AmazonS3Client needs the total size of the content to be transferred before the upload begins. Often, however, the size is unknown. This can be the case, for example, when the content to be transferred is generated. So that the upload can take place, the entire content must first be available either in the memory or on a storage medium. With large amounts of data, this quickly leads to a load on the main memory or to performance losses due to hard disk accesses.
+
+The scotec-AmazonS3WriteStream is able to perform a multipart upload without knowing the size of the content beforehand. However, this means that the multipart upload cannot be completed automatically. Therefore, Flush() must be called after all data has been passed to the stream. Disposing the stream without first calling Flush() will abort the upload. All parts transferred to the bucket so far are deleted in this case.
 
 ### Scotec.Extensions.Linq
 Todo...

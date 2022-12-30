@@ -5,7 +5,7 @@
 <#@ parameter name="projectDescriptor" type="Scotec.XMLDatabase.BOGenerator.Descriptors.ProjectDescriptor" #>
 <#@ parameter name="isInterface" type="System.Boolean" #>
 <#
-		var projectNamePart = isInterface ? "Contracts" : "Implementation";
+		var projectNamePart = isInterface ? "Abstractions" : "Implementation";
 #>
 
 #region

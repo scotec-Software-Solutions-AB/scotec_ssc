@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Queues", "Scotec.Que
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.RingBuffer", "Scotec.RingBuffer\Scotec.RingBuffer.csproj", "{DF9693FA-286F-49C6-A121-A1F58C5F06EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scotec.AmazonS3.Streaming", "Scotec.AmazonS3.Streaming\Scotec.AmazonS3.Streaming.csproj", "{B7DD9391-668C-4F15-8337-0AB45744CDC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{DF9693FA-286F-49C6-A121-A1F58C5F06EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF9693FA-286F-49C6-A121-A1F58C5F06EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF9693FA-286F-49C6-A121-A1F58C5F06EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7DD9391-668C-4F15-8337-0AB45744CDC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7DD9391-668C-4F15-8337-0AB45744CDC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7DD9391-668C-4F15-8337-0AB45744CDC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7DD9391-668C-4F15-8337-0AB45744CDC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

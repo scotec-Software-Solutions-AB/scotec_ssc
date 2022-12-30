@@ -16,7 +16,7 @@ namespace Scotec.XMLDatabase.BOGenerator
     {
         public static void Run( ProjectDescriptor projectDescriptor, GenerateParameters parameters )
         {
-            CreateProjectFile( projectDescriptor, parameters, "InterfaceProject", "Contracts" );
+            CreateProjectFile( projectDescriptor, parameters, "InterfaceProject", "Abstractions");
             CreateProjectFile( projectDescriptor, parameters, "ImplementationProject", "" );
         }
 
