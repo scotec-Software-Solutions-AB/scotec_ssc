@@ -26,7 +26,6 @@ public abstract class UnitValue<TUnit, TImplementation> : IComparable, IComparab
     //private static readonly IEnumLocalizer EnumLocalizer;
 
 
-    [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
     private UnitValue(Dictionary<TUnit, Func<double, double>> conversionFromBaseUnit, Dictionary<TUnit, Func<double, double>> conversionToBaseUnit)
     {
         _conversionFromBaseUnit = conversionFromBaseUnit;
@@ -36,7 +35,6 @@ public abstract class UnitValue<TUnit, TImplementation> : IComparable, IComparab
         Unit = GetDefaultUnit();
     }
 
-    [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
     // ReSharper disable once UnusedParameter.Local
     protected UnitValue(SerializationInfo info, StreamingContext context, Dictionary<TUnit, Func<double, double>> conversionFromBaseUnit,
         Dictionary<TUnit, Func<double, double>> conversionToBaseUnit)
@@ -53,7 +51,6 @@ public abstract class UnitValue<TUnit, TImplementation> : IComparable, IComparab
         this[unit] = value;
     }
 
-    [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
     protected UnitValue(UnitValue<TUnit, TImplementation> rhs)
         : this(rhs._conversionFromBaseUnit, rhs._conversionToBaseUnit)
     {

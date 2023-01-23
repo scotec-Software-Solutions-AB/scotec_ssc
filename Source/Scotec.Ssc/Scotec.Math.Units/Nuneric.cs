@@ -8,8 +8,7 @@ using System.Runtime.Serialization;
 namespace Scotec.Math.Units;
 
 [Serializable]
-[Obsolete("This type is marked as depricated and will be removed in a future release. Use Scotec.Math.Units.Numeric instead.")]
-public sealed class Value : UnitValue<Value.Types, Value>
+public sealed class Numeric : UnitValue<Numeric.Types, Numeric>
 {
     public enum Types
     {
@@ -24,7 +23,7 @@ public sealed class Value : UnitValue<Value.Types, Value>
 
     private static readonly Dictionary<Types, Func<double, double>> ConvertionFromBaseUnit = new();
 
-    static Value()
+    static Numeric()
     {
         var valueTypes = Enum.GetValues(typeof(Types)).Cast<Types>();
         foreach (var valueType in valueTypes)
@@ -41,27 +40,27 @@ public sealed class Value : UnitValue<Value.Types, Value>
             }
     }
 
-    public Value()
+    public Numeric()
         : this(DefaultType, 0.0)
     {
     }
 
-    public Value(double value)
+    public Numeric(double value)
         : this(DefaultType, value)
     {
     }
 
-    public Value(Types unit, double value)
+    public Numeric(Types unit, double value)
         : base(unit, value, ConvertionFromBaseUnit, ConvertionToBaseUnit)
     {
     }
 
-    public Value(UnitValue<Types, Value> rhs)
+    public Numeric(UnitValue<Types, Numeric> rhs)
         : base(rhs)
     {
     }
 
-    private Value(SerializationInfo info, StreamingContext context)
+    private Numeric(SerializationInfo info, StreamingContext context)
         : base(info, context, ConvertionFromBaseUnit, ConvertionToBaseUnit)
     {
     }
