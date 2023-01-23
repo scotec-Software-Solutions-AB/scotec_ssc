@@ -8,9 +8,9 @@ using System.Runtime.Serialization;
 namespace Scotec.Math.Units;
 
 [Serializable]
-public sealed class Numeric : UnitValue<Numeric.Types, Numeric>
+public sealed class Numeric : UnitValue<Numeric.Units, Numeric>
 {
-    public enum Types
+    public enum Units
     {
         Any,
         Ratio,
@@ -19,17 +19,17 @@ public sealed class Numeric : UnitValue<Numeric.Types, Numeric>
         Percent
     }
 
-    private static readonly Dictionary<Types, Func<double, double>> ConvertionToBaseUnit = new();
+    private static readonly Dictionary<Units, Func<double, double>> ConvertionToBaseUnit = new();
 
-    private static readonly Dictionary<Types, Func<double, double>> ConvertionFromBaseUnit = new();
+    private static readonly Dictionary<Units, Func<double, double>> ConvertionFromBaseUnit = new();
 
     static Numeric()
     {
-        var valueTypes = Enum.GetValues(typeof(Types)).Cast<Types>();
+        var valueTypes = Enum.GetValues(typeof(Units)).Cast<Units>();
         foreach (var valueType in valueTypes)
             switch (valueType)
             {
-                case Types.Percent:
+                case Units.Percent:
                     ConvertionToBaseUnit.Add(valueType, v => v / 100);
                     ConvertionFromBaseUnit.Add(valueType, v => v * 100);
                     break;
@@ -41,21 +41,21 @@ public sealed class Numeric : UnitValue<Numeric.Types, Numeric>
     }
 
     public Numeric()
-        : this(DefaultType, 0.0)
+        : this(DefaultUnit, 0.0)
     {
     }
 
     public Numeric(double value)
-        : this(DefaultType, value)
+        : this(DefaultUnit, value)
     {
     }
 
-    public Numeric(Types unit, double value)
+    public Numeric(Units unit, double value)
         : base(unit, value, ConvertionFromBaseUnit, ConvertionToBaseUnit)
     {
     }
 
-    public Numeric(UnitValue<Types, Numeric> rhs)
+    public Numeric(UnitValue<Units, Numeric> rhs)
         : base(rhs)
     {
     }
@@ -66,10 +66,10 @@ public sealed class Numeric : UnitValue<Numeric.Types, Numeric>
     }
 
 
-    public static Types DefaultType => Types.Any;
+    public static Units DefaultUnit => Units.Any;
 
-    protected override Types GetDefaultUnit()
+    protected override Units GetDefaultUnit()
     {
-        return DefaultType;
+        return DefaultUnit;
     }
 }
