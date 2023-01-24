@@ -41,12 +41,12 @@ public sealed class Numeric : UnitValue<Numeric.Units, Numeric>
     }
 
     public Numeric()
-        : this(DefaultUnit, 0.0)
+        : this(SIUnit, 0.0)
     {
     }
 
     public Numeric(double value)
-        : this(DefaultUnit, value)
+        : this(SIUnit, value)
     {
     }
 
@@ -65,11 +65,10 @@ public sealed class Numeric : UnitValue<Numeric.Units, Numeric>
     {
     }
 
-
-    public static Units DefaultUnit => Units.Any;
+    public static Units SIUnit => Units.Any;
 
     protected override Units GetDefaultUnit()
     {
-        return DefaultUnit;
+        return SIUnit;
     }
 }
