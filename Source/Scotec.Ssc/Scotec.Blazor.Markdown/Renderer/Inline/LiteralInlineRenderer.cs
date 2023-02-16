@@ -20,13 +20,12 @@ namespace Scotec.Blazor.Markdown.Renderer.Inline
         {
             if (renderer.EnableHtmlEscape)
             {
-                renderer.AddContent(new MarkupString(obj.Content.AsSpan().ToString()));
+                renderer.AddContent(obj.Content.AsSpan().ToString());
             }
             else
             {
-                renderer.AddContent(obj.Content);
+                renderer.AddMarkupContent(obj.Content);
             }
-
         }
     }
 }

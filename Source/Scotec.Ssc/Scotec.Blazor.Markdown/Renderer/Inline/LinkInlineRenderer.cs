@@ -66,7 +66,7 @@ namespace Scotec.Blazor.Markdown.Renderer.Inline
             renderer.OpenElement("a");
 
             var attributes = link.GetAttributes();
-            attributes.AddProperty("href", link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url);
+            attributes.AddProperty("href", renderer.UrlEncode(link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url));
 
             if (renderer.EnableHtmlForInline && !string.IsNullOrEmpty(link.Title))
             {
@@ -122,7 +122,6 @@ namespace Scotec.Blazor.Markdown.Renderer.Inline
             }
 
             renderer.AddAttributes(link);
-            renderer.WriteChildren(link);
 
             if (renderer.EnableHtmlForInline)
             {

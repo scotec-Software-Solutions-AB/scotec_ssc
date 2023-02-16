@@ -17,7 +17,8 @@ namespace Scotec.Blazor.Markdown.Renderer
     {
         protected override void Write(BlazorRenderer renderer, ListBlock listBlock)
         {
-            //renderer.EnsureLine();
+            renderer.AddLineBreak();
+
             if (renderer.EnableHtmlForBlock)
             {
                 if (listBlock.IsOrdered)

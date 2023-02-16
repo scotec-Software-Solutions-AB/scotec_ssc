@@ -41,6 +41,7 @@ namespace Scotec.Blazor.Markdown.Renderer.Inline
             if (renderer.EnableHtmlForInline)
             {
                 renderer.OpenElement(GetTag(obj));
+                renderer.AddAttributes(obj);
             }
 
             renderer.WriteChildren(obj);

@@ -1,4 +1,5 @@
-﻿using Markdig.Helpers;
+﻿using System.Net;
+using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Scotec.Blazor.Markdown.Renderer.Inline;
+using System.Web;
 using CodeBlockRenderer = Scotec.Blazor.Markdown.Renderer.CodeBlockRenderer;
 using HeadingRenderer = Scotec.Blazor.Markdown.Renderer.HeadingRenderer;
 using HtmlBlockRenderer = Scotec.Blazor.Markdown.Renderer.HtmlBlockRenderer;
@@ -61,7 +63,13 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
     public bool UseNonAsciiNoEscape { get; set; }
     public Uri BaseUrl { get; set; }
     public Func<string, string> LinkRewriter { get; set; }
-    
+
+    internal string UrlEncode(string url)
+    {
+        //return HttpUtility.UrlEncode(url);
+        return Uri.EscapeDataString(url);
+    }
+
 
     /// <summary>Render the markdown object in a XamlWriter.</summary>
     /// <param name="markdownObject"></param>
@@ -96,9 +104,9 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         return this;
     }
 
-    internal BlazorRenderer AddContent(MarkupString content)
+    internal BlazorRenderer AddMarkupContent(string content)
     {
-        _builder.AddContent(_line++, content);
+        _builder.AddMarkupContent(_line++, content);
         return this;
     }
 
@@ -108,9 +116,21 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         return this;
     }
 
+    public BlazorRenderer AddMarkupContent(StringSlice slice)
+    {
+        AddMarkupContent(slice.AsSpan());
+        return this;
+    }
+
     internal BlazorRenderer AddContent(ReadOnlySpan<char> content)
     {
         AddContent(content.ToString());
+        return this;
+    }
+
+    internal BlazorRenderer AddMarkupContent(ReadOnlySpan<char> content)
+    {
+        AddMarkupContent(content.ToString());
         return this;
     }
 

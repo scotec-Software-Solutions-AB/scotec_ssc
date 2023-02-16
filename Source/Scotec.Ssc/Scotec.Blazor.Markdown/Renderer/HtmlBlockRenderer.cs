@@ -20,7 +20,7 @@ namespace Scotec.Blazor.Markdown.Renderer
         {
             foreach (var line in obj.Lines.Lines)
             {
-                renderer.AddContent(new MarkupString(line.ToString()));
+                renderer.AddMarkupContent(line.ToString());
             }
         }
     }

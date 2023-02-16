@@ -20,7 +20,7 @@ namespace Scotec.Blazor.Markdown.Renderer.Inline
         {
             if (renderer.EnableHtmlForInline)
             {
-                renderer.AddContent(new MarkupString(obj.Tag));
+                renderer.AddMarkupContent(obj.Tag);
             }
         }
     }

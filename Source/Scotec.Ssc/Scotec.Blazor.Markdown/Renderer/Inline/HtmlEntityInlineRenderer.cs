@@ -17,15 +17,14 @@ namespace Scotec.Blazor.Markdown.Renderer.Inline
     {
         protected override void Write(BlazorRenderer renderer, HtmlEntityInline obj)
         {
-            throw new NotImplementedException();
-            //if (renderer.EnableHtmlEscape)
-            //{
-            //    renderer.WriteEscape(obj.Transcoded);
-            //}
-            //else
-            //{
-            //    renderer.Write(obj.Transcoded);
-            //}
+            if (renderer.EnableHtmlEscape)
+            {
+                renderer.AddContent(obj.Transcoded);
+            }
+            else
+            {
+                renderer.AddMarkupContent(obj.Transcoded);
+            }
         }
     }
 }
