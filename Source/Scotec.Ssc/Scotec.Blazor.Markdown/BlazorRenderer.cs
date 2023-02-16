@@ -37,7 +37,7 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         ObjectRenderers.Add(new QuoteBlockRenderer());
         ObjectRenderers.Add(new ThematicBreakRenderer());
 
-        ///Default inline renderers
+        //Default inline renderers
         ObjectRenderers.Add(new AutolinkInlineRenderer());
         ObjectRenderers.Add(new CodeInlineRenderer());
         ObjectRenderers.Add(new DelimiterInlineRenderer());
@@ -47,7 +47,7 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         ObjectRenderers.Add(new LinkInlineRenderer());
         ObjectRenderers.Add(new LiteralInlineRenderer());
 
-        //// Extension renderers
+        // Extension renderers
         //ObjectRenderers.Add(new TableRenderer());
         //ObjectRenderers.Add(new TaskListRenderer());
 
@@ -66,8 +66,7 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
 
     internal string UrlEncode(string url)
     {
-        //return HttpUtility.UrlEncode(url);
-        return Uri.EscapeDataString(url);
+        return WebUtility.UrlEncode(url).Replace("+", "%20");
     }
 
 
