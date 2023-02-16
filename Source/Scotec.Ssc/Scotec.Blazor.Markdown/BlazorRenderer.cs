@@ -66,7 +66,14 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
 
     internal string UrlEncode(string url)
     {
-        return WebUtility.UrlEncode(url).Replace("+", "%20");
+        var queryPosition = url.IndexOf("?", StringComparison.InvariantCulture);
+        if (queryPosition < 0)
+        {
+            return HttpUtility.UrlPathEncode(url);
+        }
+        var urlPath = HttpUtility.UrlPathEncode(url.Substring(0, queryPosition));
+        var query = HttpUtility.UrlEncode(url.Substring(queryPosition + 1));
+        return string.IsNullOrEmpty(query) ? urlPath : $"{urlPath}?{query}";
     }
 
 
