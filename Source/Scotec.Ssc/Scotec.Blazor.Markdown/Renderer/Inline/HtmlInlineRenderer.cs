@@ -1,4 +1,5 @@
-﻿using Markdig.Syntax.Inlines;
+﻿using System.Text.RegularExpressions;
+using Markdig.Syntax.Inlines;
 
 namespace Scotec.Blazor.Markdown.Renderer.Inline;
 
@@ -12,7 +13,7 @@ public class HtmlInlineRenderer : BlazorObjectRenderer<HtmlInline>
     {
         if (renderer.EnableHtmlForInline)
         {
-            renderer.AddMarkupContent(obj.Tag);
+            renderer.WriteHtmlInlineTag(obj);
         }
     }
 }

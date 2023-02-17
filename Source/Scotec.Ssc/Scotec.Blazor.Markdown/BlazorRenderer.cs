@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Text.RegularExpressions;
+using System.Web;
 using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
@@ -18,6 +19,7 @@ namespace Scotec.Blazor.Markdown;
 
 public class BlazorRenderer : RendererBase
 {
+    private static readonly Regex RegexInlineHtml = new("<(/?)([a-zA-Z]*)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
     private readonly RenderTreeBuilder _builder;
     private int _line;
 
@@ -93,6 +95,33 @@ public class BlazorRenderer : RendererBase
     internal BlazorRenderer OpenElement(string elementName)
     {
         _builder.OpenElement(_line++, elementName);
+        return this;
+    }
+
+    internal BlazorRenderer WriteHtmlInlineTag(HtmlInline htmlInline)
+    {
+        // Note: The content to be passed to AddMarkupContent must be well formed html. 
+        // We cannot pass the open tag of the inline html, add some content and then pass the closing tag.
+        // If we jast pass the open tag, Razor will automatically clase the tag. This is by design.
+        // The following code would result in this html: "<b></b>content." 
+        // renderer.AddMarkupContent("<b>");
+        // renderer.AddContent("content")
+        // renderer.AddMarkupContent("</b>");
+        // Note: Be aware that the tests would still work with the above code. The tests use bunit for rendering which does not do an auto complete.  
+
+        // Do not use:
+        //renderer.AddMarkupContent(obj.Tag);
+
+        var match = RegexInlineHtml.Matches(htmlInline.Tag).First();
+        if (string.IsNullOrEmpty(match.Groups[1].Value))
+        {
+            OpenElement(match.Groups[2].Value);
+        }
+        else
+        {
+            CloseElement();
+        }
+
         return this;
     }
 
