@@ -19,6 +19,10 @@ The scotec-AmazonS3WriteStream is able to perform a multipart upload without kno
 ### Scotec.Web.Robots
 Generates dynamic robots.txt and sitemap.xml files for Blazor websites.
 
+### Scotec.Blazor.Markdown
+This Blazor component can be used to display Markdown content in Blazor apps.
+The component is built on top of the [Markdig](https://github.com/xoofx/markdig) parser.
+
 ### Scotec.Extensions.Linq
 ...
 
