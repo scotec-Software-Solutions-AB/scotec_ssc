@@ -1,27 +1,18 @@
-﻿using Markdig.Renderers.Html;
-using Markdig.Renderers;
-using Markdig.Syntax.Inlines;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Markdig.Syntax.Inlines;
 
-namespace Scotec.Blazor.Markdown.Renderer.Inline
+namespace Scotec.Blazor.Markdown.Renderer.Inline;
+
+/// <summary>
+///     A HTML renderer for a <see cref="HtmlInline" />.
+/// </summary>
+/// <seealso cref="BlazorObjectRenderer{HtmlInline}" />
+public class HtmlInlineRenderer : BlazorObjectRenderer<HtmlInline>
 {
-    /// <summary>
-    /// A HTML renderer for a <see cref="HtmlInline"/>.
-    /// </summary>
-    /// <seealso cref="BlazorObjectRenderer{HtmlInline}" />
-    public class HtmlInlineRenderer : BlazorObjectRenderer<HtmlInline>
+    protected override void Write(BlazorRenderer renderer, HtmlInline obj)
     {
-        protected override void Write(BlazorRenderer renderer, HtmlInline obj)
+        if (renderer.EnableHtmlForInline)
         {
-            if (renderer.EnableHtmlForInline)
-            {
-                renderer.AddMarkupContent(obj.Tag);
-            }
+            renderer.AddMarkupContent(obj.Tag);
         }
     }
 }

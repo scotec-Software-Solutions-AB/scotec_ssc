@@ -1,14 +1,11 @@
-﻿using System.Net;
+﻿using System.Web;
 using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.AspNetCore.Components.RenderTree;
 using Scotec.Blazor.Markdown.Renderer.Inline;
-using System.Web;
 using CodeBlockRenderer = Scotec.Blazor.Markdown.Renderer.CodeBlockRenderer;
 using HeadingRenderer = Scotec.Blazor.Markdown.Renderer.HeadingRenderer;
 using HtmlBlockRenderer = Scotec.Blazor.Markdown.Renderer.HtmlBlockRenderer;
@@ -19,7 +16,7 @@ using ThematicBreakRenderer = Scotec.Blazor.Markdown.Renderer.ThematicBreakRende
 
 namespace Scotec.Blazor.Markdown;
 
-public class BlazorRenderer : Markdig.Renderers.RendererBase
+public class BlazorRenderer : RendererBase
 {
     private readonly RenderTreeBuilder _builder;
     private int _line;
@@ -71,11 +68,11 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         {
             return HttpUtility.UrlPathEncode(url);
         }
+
         var urlPath = HttpUtility.UrlPathEncode(url.Substring(0, queryPosition));
         var query = HttpUtility.UrlEncode(url.Substring(queryPosition + 1));
         return string.IsNullOrEmpty(query) ? urlPath : $"{urlPath}?{query}";
     }
-
 
     /// <summary>Render the markdown object in a XamlWriter.</summary>
     /// <param name="markdownObject"></param>
@@ -98,12 +95,12 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         return this;
     }
 
-    
     internal BlazorRenderer AddLineBreak()
     {
         _builder.AddContent(_line++, NewLine.LineFeed.AsString());
         return this;
     }
+
     internal BlazorRenderer AddContent(string content)
     {
         _builder.AddContent(_line++, content);
@@ -140,7 +137,6 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         return this;
     }
 
-
     internal BlazorRenderer CloseElement()
     {
         _builder.CloseElement();
@@ -171,7 +167,7 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
     }
 
     /// <summary>
-    /// Writes the lines of a <see cref="LeafBlock"/>
+    ///     Writes the lines of a <see cref="LeafBlock" />
     /// </summary>
     /// <param name="leafBlock">The leaf block.</param>
     /// <param name="writeEndOfLines">if set to <c>true</c> write end of lines.</param>
@@ -183,9 +179,9 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         var slices = leafBlock.Lines.Lines;
         if (slices is not null)
         {
-            for (int i = 0; i < slices.Length; i++)
+            for (var i = 0; i < slices.Length; i++)
             {
-                ref StringSlice slice = ref slices[i].Slice;
+                ref var slice = ref slices[i].Slice;
                 if (slice.Text is null)
                 {
                     break;
@@ -196,7 +192,7 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
                     AddContent(string.Empty);
                 }
 
-                ReadOnlySpan<char> span = slice.AsSpan();
+                var span = slice.AsSpan();
                 if (escape)
                 {
                     //TODO: Use softEscape
@@ -218,9 +214,9 @@ public class BlazorRenderer : Markdig.Renderers.RendererBase
         return this;
     }
 
-
     /// <summary>
-    ///     Writes the attached <see cref="Markdig.Renderers.Html.HtmlAttributes" /> on the specified <see cref="MarkdownObject" />.
+    ///     Writes the attached <see cref="Markdig.Renderers.Html.HtmlAttributes" /> on the specified
+    ///     <see cref="MarkdownObject" />.
     /// </summary>
     /// <param name="markdownObject">The object.</param>
     /// <param name="classFilter">A class filter used to transform a class into another class at writing time</param>

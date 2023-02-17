@@ -76,7 +76,7 @@ public class CodeBlockRenderer : BlazorObjectRenderer<CodeBlock>
             if (renderer.EnableHtmlForBlock)
             {
                 renderer.CloseElement()
-                    .CloseElement();
+                        .CloseElement();
             }
         }
     }

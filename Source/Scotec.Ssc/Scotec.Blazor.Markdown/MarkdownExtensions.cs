@@ -17,10 +17,10 @@ public static class MarkdownExtensions
         }
 
         return pipeline
-            .UseEmphasisExtras()
-            .UseGridTables()
-            .UsePipeTables()
-            .UseTaskLists()
-            .UseAutoLinks();
+               .UseEmphasisExtras()
+               .UseGridTables()
+               .UsePipeTables()
+               .UseTaskLists()
+               .UseAutoLinks();
     }
 }

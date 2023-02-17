@@ -1,35 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Markdig.Renderers;
-using Markdig.Syntax;
+﻿using Markdig.Syntax;
 
-namespace Scotec.Blazor.Markdown.Renderer
+namespace Scotec.Blazor.Markdown.Renderer;
+
+/// <summary>
+///     An HTML renderer for a <see cref="HeadingBlock" />.
+/// </summary>
+/// <seealso cref="BlazorObjectRenderer{TObject}" />
+public class HeadingRenderer : BlazorObjectRenderer<HeadingBlock>
 {
-    /// <summary>
-    /// An HTML renderer for a <see cref="HeadingBlock"/>.
-    /// </summary>
-    /// <seealso cref="BlazorObjectRenderer{TObject}" />
-    public class HeadingRenderer : BlazorObjectRenderer<HeadingBlock>
+    protected override void Write(BlazorRenderer renderer, HeadingBlock obj)
     {
-        protected override void Write(BlazorRenderer renderer, HeadingBlock obj)
+        var headingText = $"h{obj.Level}";
+
+        if (renderer.EnableHtmlForBlock)
         {
-            string headingText = $"h{obj.Level}";
+            renderer.OpenElement(headingText);
+            renderer.AddAttributes(obj);
+        }
 
-            if (renderer.EnableHtmlForBlock)
-            {
-                renderer.OpenElement(headingText);
-                renderer.AddAttributes(obj);
-            }
+        renderer.WriteLeafInline(obj);
 
-            renderer.WriteLeafInline(obj);
-
-            if (renderer.EnableHtmlForBlock)
-            {
-                renderer.CloseElement();
-            }
+        if (renderer.EnableHtmlForBlock)
+        {
+            renderer.CloseElement();
         }
     }
 }

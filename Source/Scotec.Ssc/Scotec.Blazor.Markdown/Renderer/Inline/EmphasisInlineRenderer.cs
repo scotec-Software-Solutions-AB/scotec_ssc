@@ -1,70 +1,63 @@
-﻿using Markdig.Renderers.Html;
-using Markdig.Renderers;
+﻿using System.Diagnostics;
 using Markdig.Syntax.Inlines;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Scotec.Blazor.Markdown.Renderer.Inline
+namespace Scotec.Blazor.Markdown.Renderer.Inline;
+
+/// <summary>
+///     A HTML renderer for an <see cref="EmphasisInline" />.
+/// </summary>
+/// <seealso cref="BlazorObjectRenderer{EmphasisInline}" />
+public class EmphasisInlineRenderer : BlazorObjectRenderer<EmphasisInline>
 {
     /// <summary>
-    /// A HTML renderer for an <see cref="EmphasisInline"/>.
+    ///     Delegates to get the tag associated to an <see cref="EmphasisInline" /> object.
     /// </summary>
-    /// <seealso cref="BlazorObjectRenderer{EmphasisInline}" />
-    public class EmphasisInlineRenderer : BlazorObjectRenderer<EmphasisInline>
+    /// <param name="obj">The object.</param>
+    /// <returns>The HTML tag associated to this <see cref="EmphasisInline" /> object</returns>
+    public delegate string GetTagDelegate(EmphasisInline obj);
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="EmphasisInlineRenderer" /> class.
+    /// </summary>
+    public EmphasisInlineRenderer()
     {
-        /// <summary>
-        /// Delegates to get the tag associated to an <see cref="EmphasisInline"/> object.
-        /// </summary>
-        /// <param name="obj">The object.</param>
-        /// <returns>The HTML tag associated to this <see cref="EmphasisInline"/> object</returns>
-        public delegate string GetTagDelegate(EmphasisInline obj);
+        GetTag = GetDefaultTag;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EmphasisInlineRenderer"/> class.
-        /// </summary>
-        public EmphasisInlineRenderer()
+    /// <summary>
+    ///     Gets or sets the GetTag delegate.
+    /// </summary>
+    public GetTagDelegate GetTag { get; set; }
+
+    protected override void Write(BlazorRenderer renderer, EmphasisInline obj)
+    {
+        if (renderer.EnableHtmlForInline)
         {
-            GetTag = GetDefaultTag;
+            renderer.OpenElement(GetTag(obj));
+            renderer.AddAttributes(obj);
         }
 
-        /// <summary>
-        /// Gets or sets the GetTag delegate.
-        /// </summary>
-        public GetTagDelegate GetTag { get; set; }
+        renderer.WriteChildren(obj);
 
-        protected override void Write(BlazorRenderer renderer, EmphasisInline obj)
+        if (renderer.EnableHtmlForInline)
         {
-            if (renderer.EnableHtmlForInline)
-            {
-                renderer.OpenElement(GetTag(obj));
-                renderer.AddAttributes(obj);
-            }
+            renderer.CloseElement();
+        }
+    }
 
-            renderer.WriteChildren(obj);
-
-            if (renderer.EnableHtmlForInline)
-            {
-                renderer.CloseElement();
-            }
+    /// <summary>
+    ///     Gets the default HTML tag for ** and __ emphasis.
+    /// </summary>
+    /// <param name="obj">The object.</param>
+    /// <returns></returns>
+    public static string GetDefaultTag(EmphasisInline obj)
+    {
+        if (obj.DelimiterChar is '*' or '_')
+        {
+            Debug.Assert(obj.DelimiterCount <= 2);
+            return obj.DelimiterCount == 2 ? "strong" : "em";
         }
 
-        /// <summary>
-        /// Gets the default HTML tag for ** and __ emphasis.
-        /// </summary>
-        /// <param name="obj">The object.</param>
-        /// <returns></returns>
-        public static string GetDefaultTag(EmphasisInline obj)
-        {
-            if (obj.DelimiterChar is '*' or '_')
-            {
-                Debug.Assert(obj.DelimiterCount <= 2);
-                return obj.DelimiterCount == 2 ? "strong" : "em";
-            }
-            return null;
-        }
+        return null;
     }
 }
