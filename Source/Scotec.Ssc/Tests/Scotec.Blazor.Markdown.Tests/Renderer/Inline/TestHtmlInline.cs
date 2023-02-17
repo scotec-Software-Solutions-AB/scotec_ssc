@@ -4,23 +4,22 @@ namespace Scotec.Blazor.Markdown.Tests.Renderer.Inline;
 
 public class TestHtmlInline
 {
-    //TODO
-    //[Theory]
-    //[InlineData("<em>f</em>")]
-    //[InlineData("<em> f</em>")]
-    //[InlineData("<em>f </em>")]
-    //[InlineData("<em> f </em>")]
-    //[InlineData("<b>p</b>")]
-    //[InlineData("<b></b>")]
-    //[InlineData("<b> </b>")]
-    //[InlineData("<b>  </b>")]
-    //[InlineData("<b>   </b>")]
-    //[InlineData("<b>\t</b>")]
-    //[InlineData("<b> \t</b>")]
-    //[InlineData("<b>\t </b>")]
-    //[InlineData("<b> \t </b>")]
-    //public void Test(string markdown)
-    //{
-    //    MarkdownTest.Run(markdown);
-    //}
+    [Theory]
+    [InlineData("<em>f</em>")]
+    [InlineData("<em> f</em>")]
+    [InlineData("<em>f </em>")]
+    [InlineData("<em> f </em>")]
+    [InlineData("<b>p</b>")]
+    [InlineData("<b></b>")]
+    [InlineData("<b> </b>")]
+    [InlineData("<b>  </b>")]
+    [InlineData("<b>   </b>")]
+    [InlineData("<b>\t</b>")]
+    [InlineData("<b> \t</b>")]
+    [InlineData("<b>\t </b>")]
+    [InlineData("<b> \t </b>")]
+    public void Test(string markdown)
+    {
+        MarkdownTest.Run(markdown);
+    }
 }

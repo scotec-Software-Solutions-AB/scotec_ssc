@@ -12,7 +12,7 @@ public class LiteralInlineRenderer : BlazorObjectRenderer<LiteralInline>
     {
         if (renderer.EnableHtmlEscape)
         {
-            renderer.AddContent(obj.Content.AsSpan().ToString());
+            renderer.AddContent(obj.Content);
         }
         else
         {

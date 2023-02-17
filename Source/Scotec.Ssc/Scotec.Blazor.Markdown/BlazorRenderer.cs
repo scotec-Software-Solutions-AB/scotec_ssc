@@ -41,6 +41,7 @@ public class BlazorRenderer : RendererBase
         ObjectRenderers.Add(new EmphasisInlineRenderer());
         ObjectRenderers.Add(new LineBreakInlineRenderer());
         ObjectRenderers.Add(new HtmlEntityInlineRenderer());
+        ObjectRenderers.Add(new HtmlInlineRenderer());
         ObjectRenderers.Add(new LinkInlineRenderer());
         ObjectRenderers.Add(new LiteralInlineRenderer());
 
