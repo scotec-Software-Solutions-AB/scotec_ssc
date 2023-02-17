@@ -18,6 +18,7 @@ public class TestHtmlInline
     [InlineData("<b> \t</b>")]
     [InlineData("<b>\t </b>")]
     [InlineData("<b> \t </b>")]
+    [InlineData("Text with <b>inline</b> HTML")]
     public void Test(string markdown)
     {
         MarkdownTest.Run(markdown);
