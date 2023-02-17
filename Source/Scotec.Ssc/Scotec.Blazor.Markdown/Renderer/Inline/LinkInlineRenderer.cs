@@ -30,9 +30,9 @@ public class LinkInlineRenderer : BlazorObjectRenderer<LinkInline>
                     Rel += $" {rel}";
                 }
             }
-            else if (!value && Rel is not null)
+            else
             {
-                Rel = Rel.Replace(rel, string.Empty);
+                Rel = Rel?.Replace(rel, string.Empty);
             }
         }
     }
@@ -59,8 +59,7 @@ public class LinkInlineRenderer : BlazorObjectRenderer<LinkInline>
         renderer.OpenElement("a");
 
         var attributes = link.GetAttributes();
-        attributes.AddProperty("href",
-            renderer.UrlEncode(link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url));
+        attributes.AddProperty("href", renderer.UrlEncode(GetUrl(link)));
 
         if (renderer.EnableHtmlForInline && !string.IsNullOrEmpty(link.Title))
         {
@@ -84,30 +83,20 @@ public class LinkInlineRenderer : BlazorObjectRenderer<LinkInline>
         }
     }
 
+    private static string GetUrl(LinkInline link)
+    {
+        return link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
+    }
+
     private void WriteImage(BlazorRenderer renderer, LinkInline link)
     {
         renderer.OpenElement("img");
         var attributes = link.GetAttributes();
-        attributes.AddProperty("src", link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url);
+        attributes.AddProperty("src", GetUrl(link));
 
         if (renderer.EnableHtmlForInline)
         {
             attributes.AddProperty("alt", link.FirstChild?.ToString() ?? string.Empty);
-            //TODO: Get text for 'alt' attribute.
-            // This is the original ccode from HtmlRenderer. The code calls renderer.WriteChildren(link) to fill the "alt" atribute.
-            // This is not possible with blazor since we have to call AddAttribute("attr", "value")
-            //if (renderer.EnableHtmlForInline)
-            //{
-            //    renderer.WriteRaw(" alt=\"");
-            //}
-            //var wasEnableHtmlForInline = renderer.EnableHtmlForInline;
-            //renderer.EnableHtmlForInline = false;
-            //renderer.WriteChildren(link);
-            //renderer.EnableHtmlForInline = wasEnableHtmlForInline;
-            //if (renderer.EnableHtmlForInline)
-            //{
-            //    renderer.WriteRaw('"');
-            //}
         }
 
         if (renderer.EnableHtmlForInline && !string.IsNullOrEmpty(link.Title))

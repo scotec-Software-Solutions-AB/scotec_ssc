@@ -25,10 +25,4 @@ public class Markdown : ComponentBase
         var document = Markdig.Markdown.Parse(Content, pipeline);
         renderer.Render(document);
     }
-
-    private void RenderFragment(RenderTreeBuilder builder)
-    {
-        builder.OpenElement(0, "hr");
-        builder.CloseElement();
-    }
 }

@@ -195,7 +195,7 @@ public class BlazorRenderer : RendererBase
                 var span = slice.AsSpan();
                 if (escape)
                 {
-                    //TODO: Use softEscape
+                    //TODO: Use softEscape if needed.
                     //AddContent(span, softEscape);
                     AddContent(span);
                 }

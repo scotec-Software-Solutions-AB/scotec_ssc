@@ -27,11 +27,9 @@ public class CodeBlockRenderer : BlazorObjectRenderer<CodeBlock>
 
     protected override void Write(BlazorRenderer renderer, CodeBlock obj)
     {
-        if (_blocksAsDiv is not null && (obj as FencedCodeBlock)?.Info is string info &&
-            _blocksAsDiv.Contains(info))
+        if (_blocksAsDiv is not null && (obj as FencedCodeBlock)?.Info is { } info && _blocksAsDiv.Contains(info))
         {
-            var infoPrefix = (obj.Parser as FencedCodeBlockParser)?.InfoPrefix ??
-                             FencedCodeBlockParser.DefaultInfoPrefix;
+            var infoPrefix = (obj.Parser as FencedCodeBlockParser)?.InfoPrefix ?? FencedCodeBlockParser.DefaultInfoPrefix;
 
             // We are replacing the HTML attribute `language-mylang` by `mylang` only for a div block
             // NOTE that we are allocating a closure here
