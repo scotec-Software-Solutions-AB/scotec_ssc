@@ -1,28 +1,26 @@
 ﻿using Markdig;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Scotec.Blazor.Markdown
+namespace Scotec.Blazor.Markdown;
+
+public static class MarkdownExtensions
 {
-    public static class MarkdownExtensions
+    /// <summary>
+    ///     Uses all extensions supported by <c>Markdig.Wpf</c>.
+    /// </summary>
+    /// <param name="pipeline">The pipeline.</param>
+    /// <returns>The modified pipeline</returns>
+    public static MarkdownPipelineBuilder UseSupportedExtensions(this MarkdownPipelineBuilder pipeline)
     {
-        /// <summary>
-        /// Uses all extensions supported by <c>Markdig.Wpf</c>.
-        /// </summary>
-        /// <param name="pipeline">The pipeline.</param>
-        /// <returns>The modified pipeline</returns>
-        public static MarkdownPipelineBuilder UseSupportedExtensions(this MarkdownPipelineBuilder pipeline)
+        if (pipeline == null)
         {
-            if (pipeline == null) throw new ArgumentNullException(nameof(pipeline));
-            return pipeline
-                .UseEmphasisExtras()
-                .UseGridTables()
-                .UsePipeTables()
-                .UseTaskLists()
-                .UseAutoLinks();
+            throw new ArgumentNullException(nameof(pipeline));
         }
+
+        return pipeline
+            .UseEmphasisExtras()
+            .UseGridTables()
+            .UsePipeTables()
+            .UseTaskLists()
+            .UseAutoLinks();
     }
 }
