@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
 using Scotec.Web.Robots.Sitemap;
 
 namespace Scotec.Web.Robots.Middleware;
@@ -14,9 +16,11 @@ public class RobotsSitemapMiddleware
 
     public async Task InvokeAsync(HttpContext context, ISitemapProvider sitemapProvider)
     {
-        if (context.Request.Path.StartsWithSegments("/sitemap.xml"))
+        var path = context.Request.Path.ToUriComponent();
+        if (path.EndsWith("/sitemap.xml"))
         {
-            var sitemap = sitemapProvider.Build();
+            var language = ExtractLanguage(path);
+            var sitemap = sitemapProvider.Build(language);
 
             context.Response.ContentType = "application/xml";
             await context.Response.Body.WriteAsync(sitemap.Content, context.RequestAborted);
@@ -25,5 +29,13 @@ public class RobotsSitemapMiddleware
         }
 
         await _next(context);
+    }
+
+    private string? ExtractLanguage(string path)
+    {
+        var segments = path.Split("/");
+        return segments.Reverse()
+                       .FirstOrDefault(segment => CultureInfo.GetCultures(CultureTypes.AllCultures)
+                                                             .Any(culture => string.Compare(segment, culture.Name, StringComparison.InvariantCultureIgnoreCase) == 0));
     }
 }

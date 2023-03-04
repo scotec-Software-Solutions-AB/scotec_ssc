@@ -20,6 +20,12 @@ public class SitemapProvider : ISitemapProvider
 
     public SitemapResult Build()
     {
+        return Build(null);
+    }
+
+
+    public SitemapResult Build(string? language)
+    {
         var document = new XDocument(new XDeclaration("1.0", "UTF-8", null));
         XNamespace xmlNamespace = @"http://www.sitemaps.org/schemas/sitemap/0.9";
 
@@ -32,7 +38,11 @@ public class SitemapProvider : ISitemapProvider
                 var url = new XElement(xmlNamespace + "url");
                 urlSet.Add(url);
 
-                url.Add(new XElement(xmlNamespace + "loc", _options.Protocoll + host + entry.Location));
+                var path = string.IsNullOrEmpty(language)
+                    ? entry.Location
+                    : entry.Location.Replace("{language}", language);
+
+                url.Add(new XElement(xmlNamespace + "loc", _options.Protocoll + host + path ));
                 if (entry.LastModified != null)
                     url.Add(new XElement(xmlNamespace + "lastmod", entry.LastModified.Value.ToString("yyyy-MM-dd")));
                 if (entry.ChangeFrequency != null)
