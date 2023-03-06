@@ -1,4 +1,6 @@
-﻿namespace Scotec.Web.Robots.Sitemap;
+﻿using System.Globalization;
+
+namespace Scotec.Web.Robots.Sitemap;
 
 public interface ISitemapOptions
 {
@@ -9,4 +11,6 @@ public interface ISitemapOptions
     DateTime? LastModified { get; set; }
 
     string Protocoll { get; set; }
+
+    CultureInfo[] SupportedCultures { get; set; }
 }

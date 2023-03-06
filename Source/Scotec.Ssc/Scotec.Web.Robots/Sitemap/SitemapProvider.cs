@@ -20,45 +20,71 @@ public class SitemapProvider : ISitemapProvider
 
     public SitemapResult Build()
     {
-        return Build(null);
+        return Build(string.Empty);
     }
 
 
-    public SitemapResult Build(string? language)
+    public SitemapResult Build(string culture)
+    {
+        return Build(CultureInfo.GetCultureInfo(culture));
+    }
+
+    public SitemapResult Build(CultureInfo culture)
     {
         var document = new XDocument(new XDeclaration("1.0", "UTF-8", null));
         XNamespace xmlNamespace = @"http://www.sitemaps.org/schemas/sitemap/0.9";
 
-        var urlSet = AddUrlSet(document, xmlNamespace);
+        var urlSet = AddRoot(document, xmlNamespace, "urlset");
 
         var host = _httpContextAccessor.HttpContext!.Request.Host;
-        _entryProviders.SelectMany(provider => provider.Entries)
-            .ForAll(entry =>
-            {
-                var url = new XElement(xmlNamespace + "url");
-                urlSet.Add(url);
 
-                var path = string.IsNullOrEmpty(language)
-                    ? entry.Location
-                    : entry.Location.Replace("{language}", language);
+        if (_options.SupportedCultures.Contains(culture))
+        {
+            _entryProviders.SelectMany(provider => provider.Entries)
+                           .ForAll(entry =>
+                           {
+                               var url = new XElement(xmlNamespace + "url");
+                               urlSet.Add(url);
 
-                url.Add(new XElement(xmlNamespace + "loc", _options.Protocoll + host + path ));
-                if (entry.LastModified != null)
-                    url.Add(new XElement(xmlNamespace + "lastmod", entry.LastModified.Value.ToString("yyyy-MM-dd")));
-                if (entry.ChangeFrequency != null)
-                    url.Add(new XElement(xmlNamespace + "changefreq", entry.ChangeFrequency.Value.ToString()));
-                if (entry.Priority != null)
-                    url.Add(new XElement(xmlNamespace + "priority", entry.Priority.Value.ToString("0.0", CultureInfo.InvariantCulture)));
-            });
+                               var path = culture.Equals(CultureInfo.InvariantCulture)
+                                   ? entry.Location
+                                   : entry.Location.Replace("{language}", culture.Name);
+
+                               url.Add(new XElement(xmlNamespace + "loc", _options.Protocoll + host + path));
+                               if (entry.LastModified != null)
+                                   url.Add(new XElement(xmlNamespace + "lastmod", entry.LastModified.Value.ToString("yyyy-MM-dd")));
+                               if (entry.ChangeFrequency != null)
+                                   url.Add(new XElement(xmlNamespace + "changefreq", entry.ChangeFrequency.Value.ToString()));
+                               if (entry.Priority != null)
+                                   url.Add(new XElement(xmlNamespace + "priority", entry.Priority.Value.ToString("0.0", CultureInfo.InvariantCulture)));
+                           });
+        }
 
         return new SitemapResult(document);
     }
 
-    private XElement AddUrlSet(XDocument document, XNamespace xmlNamespace)
+    public SitemapResult Build(CultureInfo[] cultures)
     {
-        XNamespace ns = @"http://www.sitemaps.org/schemas/sitemap/0.9";
+        var document = new XDocument(new XDeclaration("1.0", "UTF-8", null));
+        XNamespace xmlNamespace = @"http://www.sitemaps.org/schemas/sitemap/0.9";
 
-        var element = new XElement(ns + "urlset");
+        var urlSet = AddRoot(document, xmlNamespace, "sitemapindex");
+
+        var host = _httpContextAccessor.HttpContext!.Request.Host;
+        foreach(var culture in cultures) 
+        {
+           var sitemap = new XElement(xmlNamespace + "sitemap");
+           urlSet.Add(sitemap);
+
+            sitemap.Add(new XElement(xmlNamespace + "loc", $"{_options.Protocoll}{host}/{culture.Name}/sitemap.xml"));
+        }
+
+        return new SitemapResult(document);
+    }
+
+    private static XElement AddRoot(XDocument document, XNamespace xmlNamespace, string root)
+    {
+        var element = new XElement(xmlNamespace + root);
 
         document.Add(element);
 
