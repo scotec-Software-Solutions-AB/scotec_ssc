@@ -33,7 +33,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{597644C4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Blazor.Markdown.Tests", "Tests\Scotec.Blazor.Markdown.Tests\Scotec.Blazor.Markdown.Tests.csproj", "{CFD7A65F-AA03-4E70-BCD8-7783A082A888}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scotec.Blazor.UrlRequestCultureProvider", "Scotec.Blazor.UrlRequestCultureProvider\Scotec.Blazor.UrlRequestCultureProvider.csproj", "{6FDAEA79-D1CC-4F41-99EA-DE0984AFD65A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Blazor.UrlRequestCultureProvider", "Scotec.Blazor.UrlRequestCultureProvider\Scotec.Blazor.UrlRequestCultureProvider.csproj", "{6FDAEA79-D1CC-4F41-99EA-DE0984AFD65A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Extensions.Autocad", "Scotec.Extensions.Autocad\Scotec.Extensions.Autocad.csproj", "{C5E335A4-DC2D-4689-B15A-10E32BE9CCEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{6FDAEA79-D1CC-4F41-99EA-DE0984AFD65A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FDAEA79-D1CC-4F41-99EA-DE0984AFD65A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FDAEA79-D1CC-4F41-99EA-DE0984AFD65A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5E335A4-DC2D-4689-B15A-10E32BE9CCEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5E335A4-DC2D-4689-B15A-10E32BE9CCEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5E335A4-DC2D-4689-B15A-10E32BE9CCEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5E335A4-DC2D-4689-B15A-10E32BE9CCEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
