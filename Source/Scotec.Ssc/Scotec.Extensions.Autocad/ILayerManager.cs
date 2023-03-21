@@ -24,7 +24,7 @@ public interface ILayerManager
     ///     and does not match any regular expression from the exclude list. If a layer name matches any expression from both,
     ///     the include and exclude list, the layer will be excluded.
     /// </summary>
-    IEnumerable<LayerTableRecord> GetLayers(Database database, string[] include, string[] exclude);
+    IEnumerable<LayerTableRecord> GetLayers(Database database, string[]? include, string[]? exclude);
 
     /// <summary>
     ///     Deletes the given layers from the database.
