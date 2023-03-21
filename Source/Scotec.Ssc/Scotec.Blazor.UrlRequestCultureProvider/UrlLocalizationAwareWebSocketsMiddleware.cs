@@ -1,6 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text.Json;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
@@ -81,10 +83,22 @@ public class UrlLocalizationAwareWebSocketsMiddleware
                                  .Contains(x[0])
                 => Redirect,
 
-            _ => _next
+            //_ => _next
+            _ => (RequestDelegate)SetCulture
         };
 
         await nextAction(httpContext);
+    }
+
+    private async Task SetCulture(HttpContext httpContext)
+    {
+        var currentCulture = httpContext.GetCultureFromReferer();
+        var culture = new CultureInfo(currentCulture);
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+
+
+        await _next(httpContext);
     }
 
     private Task Redirect(HttpContext context)
