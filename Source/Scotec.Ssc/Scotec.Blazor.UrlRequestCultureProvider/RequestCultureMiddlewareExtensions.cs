@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 namespace Scotec.Blazor.UrlRequestCultureProvider;
 
 public static class RequestCultureMiddlewareExtensions
 {
-    public static IApplicationBuilder UseUrlRequestLocalization(this IApplicationBuilder builder, RequestLocalizationOptions options)
+    public static IApplicationBuilder UseUrlRequestLocalization(this IApplicationBuilder builder)
     {
+        var options = builder.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
+        Debug.Assert(options != null, nameof(options) + " != null");
         // Do not use the default culture providers.
         options.RequestCultureProviders.Clear();
+        options.ApplyCurrentCultureToResponseHeaders = true;
 
         options.AddInitialRequestCultureProvider(new CustomRequestCultureProvider(async context =>
         {
@@ -22,8 +27,8 @@ public static class RequestCultureMiddlewareExtensions
         // to UseMiddleware() does not register the options as a service and makes them available only to the middleware.
         // IOptions<> is registered as a singleton by default and can be injected into any service lifetime. However, if it has not been
         // registered before, the service locator returns a default instance of the options.
-        return builder.UseMiddleware<UrlLocalizationAwareWebSocketsMiddleware>()
-                      //.UseMiddleware<UrlLocalizationAwareWebSocketsMiddleware>(Options.Create(options))
-                      .UseRequestLocalization(options);
+        return builder.UseMiddleware<UrlLocalizationAwareWebSocketsMiddleware>();
+        //.UseMiddleware<UrlLocalizationAwareWebSocketsMiddleware>(Options.Create(options))
+        //.UseRequestLocalization(options);
     }
 }
