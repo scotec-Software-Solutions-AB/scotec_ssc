@@ -79,7 +79,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
 
             string[] { Length: > 0 } x
                 when x[0] != "_blazor"
-                     && !_options.Value.SupportedUICultures!.Select(info => info.TwoLetterISOLanguageName)
+                     && !_options.Value.SupportedUICultures!.Select(info => info.Name)
                                  .Contains(x[0])
                 => Redirect,
 
