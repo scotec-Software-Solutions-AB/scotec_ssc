@@ -12,6 +12,10 @@ public static class HttpContextExtensions
     public static string GetCultureFromReferer(this HttpContext httpContext)
     {
         var referer = httpContext.Request.Headers["Referer"].ToString();
+        if (string.IsNullOrEmpty(referer))
+        {
+            return string.Empty;
+        }
         var uri = new Uri(referer);
 
         return GetCultureFromPath(uri.LocalPath);
@@ -30,6 +34,6 @@ public static class HttpContextExtensions
             }
         }
 
-        return CultureInfo.CurrentCulture.Name;
+        return string.Empty;
     }
 }

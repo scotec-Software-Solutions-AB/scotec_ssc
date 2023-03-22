@@ -51,7 +51,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
     ///     Handles the requests and returns a Task that represents the execution of the middleware.
     /// </summary>
     /// <param name="httpContext">
-    ///     The HTTP context reprensenting the request.
+    ///     The HTTP context representing the request.
     /// </param>
     public async Task InvokeAsync(HttpContext httpContext)
     {
@@ -92,12 +92,18 @@ public class UrlLocalizationAwareWebSocketsMiddleware
 
     private async Task SetCulture(HttpContext httpContext)
     {
-        var currentCulture = httpContext.GetCultureFromReferer();
-        var culture = new CultureInfo(currentCulture);
-        CultureInfo.CurrentCulture = culture;
-        CultureInfo.CurrentUICulture = culture;
+        var currentCulture = httpContext.GetCultureFromRequest();
+        if (string.IsNullOrEmpty(currentCulture))
+        {
+            currentCulture = httpContext.GetCultureFromReferer();
+        }
 
-
+        if (!string.IsNullOrEmpty(currentCulture))
+        {
+            var culture = new CultureInfo(currentCulture);
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+        }
         await _next(httpContext);
     }
 
