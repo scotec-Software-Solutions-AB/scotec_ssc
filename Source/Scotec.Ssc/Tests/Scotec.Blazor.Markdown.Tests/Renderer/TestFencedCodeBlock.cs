@@ -109,5 +109,14 @@ namespace Scotec.Blazor.Markdown.Tests.Renderer
         {
             MarkdownTest.Run(markdown);
         }
+
+        [Theory]
+        [InlineData("```csharp\r\n c \r\n```\r\n")]
+        [InlineData("~~~css\r\n c \r\n```\r\n")]
+        public void TestLanguage(string markdown)
+        {
+            MarkdownTest.Run(markdown);
+        }
+
     }
 }
