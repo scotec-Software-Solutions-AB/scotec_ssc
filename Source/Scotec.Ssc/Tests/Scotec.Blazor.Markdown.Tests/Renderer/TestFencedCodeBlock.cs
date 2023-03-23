@@ -14,7 +14,6 @@ namespace Scotec.Blazor.Markdown.Tests.Renderer
         [InlineData("```\nc\n```\n")]
         [InlineData("\n```\nc\n```")]
         [InlineData("\n\n```\nc\n```")]
-        [InlineData("```\nc\n```\n")]
         [InlineData("```\nc\n```\n\n")]
         [InlineData("\n```\nc\n```\n")]
         [InlineData("\n```\nc\n```\n\n")]
