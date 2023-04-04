@@ -2,10 +2,10 @@
 {
     public struct ImageMetadata
     {
-        public ImageFormat Format { get; set; }
+        public ImageType ImageType { get; set; }
 
         public string Path { get; set; }
 
-
+        public Stream ImageStream { get; set; }
     }
 }

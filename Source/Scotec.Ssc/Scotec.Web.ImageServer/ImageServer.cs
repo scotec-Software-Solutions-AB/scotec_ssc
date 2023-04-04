@@ -1,19 +1,50 @@
-﻿namespace Scotec.Web.ImageServer
+﻿namespace Scotec.Web.ImageServer;
+
+internal class ImageServer : IImageServer
 {
-    internal class ImageServer : IImageServer
+    private readonly IWebHostEnvironment _environment;
+
+    public ImageServer(IWebHostEnvironment environment)
     {
-        private readonly IWebHostEnvironment _environment;
+        _environment = environment;
+    }
 
-        public ImageServer(IWebHostEnvironment environment)
+    public ImageMetadata GetImage(string path)
+    {
+        var imageType = GetImageType(path);
+        if (imageType == ImageType.None)
         {
-            _environment = environment;
+            return new ImageMetadata{ ImageType = ImageType.None};
         }
-        public Stream GetImage(string path)
-        {
-            var rootPath = _environment.WebRootPath;
+        
+        var rootPath = _environment.WebRootPath;
+        var filePath = Path.Combine(rootPath, path.Replace('/', '\\').Trim('\\'));
 
-            var filePath = Path.Combine(rootPath, path.Replace('/', '\\').Trim('\\'));
-            return File.OpenRead(filePath);
-        }
+        var imagaData = new ImageMetadata
+        {
+            ImageType = imageType,
+            Path = path,
+            ImageStream = File.OpenRead(filePath)
+        };
+
+        return imagaData;
+    }
+
+
+    private static ImageType GetImageType(string path)
+    {
+        var extension = Path.GetExtension(path).ToLower();
+
+        return extension switch
+        {
+            ".bmp" => ImageType.Bmp,
+            ".jpg" => ImageType.Jpeg,
+            ".jepg" => ImageType.Jpeg,
+            ".gif" => ImageType.Gif,
+            ".ico" => ImageType.Ico,
+            ".png" => ImageType.Png,
+            ".webp" => ImageType.Webp,
+            _ => ImageType.None
+        };
     }
 }

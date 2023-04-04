@@ -2,6 +2,6 @@
 {
     public interface IImageServer
     {
-        Stream GetImage(string path);
+        ImageMetadata GetImage(string path);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace Scotec.Web.ImageServer;
 
@@ -14,8 +13,8 @@ public static class ImageServerMifddlewareExtensions
 
     public static IServiceCollection AddImageServer(this IServiceCollection services)
     {
-        services.AddSingleton<IImageServer, ImageServer>();
-        
+        services.AddScoped<IImageServer, ImageServer>();
+
         return services;
     }
 }
