@@ -109,13 +109,18 @@ public class BlazorRenderer : RendererBase
         // renderer.AddMarkupContent("</b>");
         // Note: Be aware that the tests would still work with the above code. The tests use bunit for rendering which does not do an auto complete.  
 
-        // Do not use:
-        //renderer.AddMarkupContent(obj.Tag);
-
         var match = RegexInlineHtml.Matches(htmlInline.Tag).First();
         if (string.IsNullOrEmpty(match.Groups[1].Value))
         {
-            OpenElement(match.Groups[2].Value);
+            var element = match.Groups[2].Value.ToLower();
+            if (element == "br")
+            {
+                AddMarkupContent(htmlInline.Tag);
+            }
+            else
+            {
+                OpenElement(element);
+            }
         }
         else
         {
