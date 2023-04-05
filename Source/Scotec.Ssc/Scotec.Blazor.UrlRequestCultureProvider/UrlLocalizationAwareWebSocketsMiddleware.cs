@@ -210,7 +210,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
         {
             var root = JsonSerializer
                 .Deserialize<BlazorNegociateBody>(responseBodyContent);
-            CultureByConnectionTokens[root.ConnectionToken] = currentCulture;
+            CultureByConnectionTokens[root!.ConnectionToken] = currentCulture;
         }
 
         // Rewind the response body as if we hadn't upwrap-it

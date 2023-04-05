@@ -8,8 +8,7 @@ public static class RequestCultureMiddlewareExtensions
 {
     public static IApplicationBuilder UseUrlRequestLocalization(this IApplicationBuilder builder)
     {
-        var options = builder.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
-        Debug.Assert(options != null, nameof(options) + " != null");
+        var options = builder.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>()!.Value;
         // Do not use the default culture providers.
         options.RequestCultureProviders.Clear();
         options.ApplyCurrentCultureToResponseHeaders = true;

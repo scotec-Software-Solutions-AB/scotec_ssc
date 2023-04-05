@@ -1,6 +1,6 @@
 ﻿namespace Scotec.Web.ImageServer
 {
-    public enum ImageType
+    public enum ImageFormat
     {
         None,
 

@@ -2,49 +2,58 @@
 
 internal class ImageServer : IImageServer
 {
-    private readonly IWebHostEnvironment _environment;
+    private readonly IImageProcessor _imageProcessor;
+    private readonly IImageProvider _imageProvider;
 
-    public ImageServer(IWebHostEnvironment environment)
+    public ImageServer(IImageProvider imageProvider, IImageProcessor imageProcessor)
     {
-        _environment = environment;
+        _imageProvider = imageProvider;
+        _imageProcessor = imageProcessor;
     }
 
-    public ImageMetadata GetImage(string path)
+    public async Task<ImageResponse?> GetImageInfoAsync(string path)
     {
-        var imageType = GetImageType(path);
-        if (imageType == ImageType.None)
-        {
-            return new ImageMetadata{ ImageType = ImageType.None};
-        }
-        
-        var rootPath = _environment.WebRootPath;
-        var filePath = Path.Combine(rootPath, path.Replace('/', '\\').Trim('\\'));
+        return await GetImageInfoAsync(path, null, null);
+    }
 
-        var imagaData = new ImageMetadata
+    public async Task<ImageResponse?> GetImageInfoAsync(string path, int? width, int? height)
+    {
+        var format = GetImageFormat(path);
+        if (format == ImageFormat.None)
         {
-            ImageType = imageType,
+            return null;
+        }
+
+        var request = new ImageRequest
+        {
+            Width = width,
+            Height = height,
             Path = path,
-            ImageStream = File.OpenRead(filePath)
+            Format = format
         };
 
-        return imagaData;
+        return await _imageProcessor.ProcessImageAsync(request, _imageProvider);
     }
 
+    public async Task<ImageResponse?> GetImageInfoAsync(ImageRequest request)
+    {
+        return await _imageProcessor.ProcessImageAsync(request, _imageProvider);
+    }
 
-    private static ImageType GetImageType(string path)
+    private static ImageFormat? GetImageFormat(string path)
     {
         var extension = Path.GetExtension(path).ToLower();
 
         return extension switch
         {
-            ".bmp" => ImageType.Bmp,
-            ".jpg" => ImageType.Jpeg,
-            ".jepg" => ImageType.Jpeg,
-            ".gif" => ImageType.Gif,
-            ".ico" => ImageType.Ico,
-            ".png" => ImageType.Png,
-            ".webp" => ImageType.Webp,
-            _ => ImageType.None
+            ".bmp" => ImageFormat.Bmp,
+            ".jpg" => ImageFormat.Jpeg,
+            ".jepg" => ImageFormat.Jpeg,
+            ".gif" => ImageFormat.Gif,
+            ".ico" => ImageFormat.Ico,
+            ".png" => ImageFormat.Png,
+            ".webp" => ImageFormat.Webp,
+            _ => ImageFormat.None
         };
     }
 }

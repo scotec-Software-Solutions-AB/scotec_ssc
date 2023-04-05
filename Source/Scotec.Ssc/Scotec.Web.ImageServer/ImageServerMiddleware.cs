@@ -16,18 +16,18 @@ public class ImageServerMiddleware
 
     public async Task InvokeAsync(HttpContext httpContext, IImageServer imageServer)
     {
-        var imageData = imageServer.GetImage(httpContext.Request.Path.Value!);
-        if (imageData.ImageType == ImageType.None)
+        var imageData = await imageServer.GetImageInfoAsync(httpContext.Request.Path.Value!);
+        if (imageData == null)
         {
             await _next(httpContext);
             return;
         }
         
         var response = httpContext.Response;
-        response.ContentType = $"image/{imageData.ImageType}";
+        response.ContentType = $"image/{imageData.Value.Format.ToString().ToLower()}";
         response.StatusCode = (int)HttpStatusCode.OK;
 
-        await imageData.ImageStream.CopyToAsync(response.BodyWriter.AsStream());
+        await imageData.Value.Image.CopyToAsync(response.BodyWriter.AsStream());
     }
 
 }

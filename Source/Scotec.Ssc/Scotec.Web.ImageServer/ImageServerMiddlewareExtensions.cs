@@ -14,6 +14,8 @@ public static class ImageServerMifddlewareExtensions
     public static IServiceCollection AddImageServer(this IServiceCollection services)
     {
         services.AddScoped<IImageServer, ImageServer>();
+        services.AddScoped<IImageProcessor, MagickImageProcessor>();
+        services.AddScoped<IImageProvider, LocalImageProvider>();
 
         return services;
     }

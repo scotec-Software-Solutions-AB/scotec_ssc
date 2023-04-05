@@ -2,8 +2,8 @@
 {
     public interface IImageCache
     {
-        public void AddImage(string name, string format, int width, int height);
+        public void AddImage(ImageInfo imageInfo);
 
-        public bool TryGetImage(string name, string format, int width, int height, out Stream imageStream);
+        public bool TryGetImage(ImageInfo imageInfo);
     }
 }
