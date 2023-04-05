@@ -3,11 +3,11 @@
 internal class ImageServer : IImageServer
 {
     private readonly IImageProcessor _imageProcessor;
-    private readonly IImageProvider _imageProvider;
+    private readonly IImageProviderFactory _imageProviderFactory;
 
-    public ImageServer(IImageProvider imageProvider, IImageProcessor imageProcessor)
+    public ImageServer(IImageProviderFactory imageProviderFactory, IImageProcessor imageProcessor)
     {
-        _imageProvider = imageProvider;
+        _imageProviderFactory = imageProviderFactory;
         _imageProcessor = imageProcessor;
     }
 
@@ -32,12 +32,16 @@ internal class ImageServer : IImageServer
             Format = format
         };
 
-        return await _imageProcessor.ProcessImageAsync(request, _imageProvider);
+        return await GetImageInfoAsync(request);
     }
 
     public async Task<ImageResponse?> GetImageInfoAsync(ImageRequest request)
     {
-        return await _imageProcessor.ProcessImageAsync(request, _imageProvider);
+        var imageProvider = _imageProviderFactory.CreateImageProvider(request);
+
+        return imageProvider != null 
+            ? await _imageProcessor.ProcessImageAsync(request, imageProvider)
+            : null;
     }
 
     private static ImageFormat? GetImageFormat(string path)
