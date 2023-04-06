@@ -28,7 +28,8 @@ namespace Scotec.Web.ImageServer
                 };
 
                 image.Crop(region);
-
+                image.Density = new Density(96, 96);
+                
                 image.Resize(request.Width ?? image.BaseWidth, request.Height ?? image.BaseHeight);
             }
 
@@ -108,6 +109,20 @@ namespace Scotec.Web.ImageServer
             {
                 ratioHeight /= ratioWidth;
                 ratioWidth = 1;
+            }
+
+            if (ratioWidth > 1 && ratioHeight > 1)
+            {
+                if (ratioWidth > ratioHeight)
+                {
+                    ratioWidth /= ratioHeight;
+                    ratioHeight = 1;
+                }
+                else
+                {
+                    ratioHeight /= ratioWidth;
+                    ratioWidth = 1;
+                }
             }
 
             if (ratioWidth > ratioHeight)

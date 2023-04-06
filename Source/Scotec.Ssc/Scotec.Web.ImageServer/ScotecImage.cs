@@ -84,7 +84,16 @@ public class ScotecImage : ComponentBase
         try
         {
             Debug.Assert(ImageServer != null, nameof(ImageServer) + " != null");
-            var imageInfo = await ImageServer.GetImageInfoAsync(path, width, height);
+
+            var request = new ImageRequest()
+            {
+                Path = path,
+                Width = Width,
+                Height = Height,
+                Format = Format
+            };
+
+            var imageInfo = await ImageServer.GetImageInfoAsync(request);
             if (imageInfo == null)
             {
                 ImageData = string.Empty;
