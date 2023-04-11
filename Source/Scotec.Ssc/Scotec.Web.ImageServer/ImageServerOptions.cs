@@ -1,6 +1,5 @@
-﻿namespace Scotec.Web.ImageServer
+﻿namespace Scotec.Web.ImageServer;
+
+public class ImageServerOptions
 {
-    public class ImageServerOptions
-    {
-    }
 }

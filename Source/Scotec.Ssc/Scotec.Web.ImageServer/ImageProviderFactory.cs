@@ -4,10 +4,10 @@
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IDictionary<string, Type> _descriptors;
-        public ImageProviderFactory(IServiceProvider serviceProvider, IEnumerable<Tuple<string, Type>> descriptors)
+        public ImageProviderFactory(IServiceProvider serviceProvider, IEnumerable<ImageProviderDescriptor> descriptors)
         {
             _serviceProvider = serviceProvider;
-            _descriptors = descriptors.ToDictionary(item => item.Item1, item => item.Item2);
+            _descriptors = descriptors.ToDictionary(descriptor => descriptor.Path, item => item.ImageProviderType);
         }
         public IImageProvider? CreateImageProvider(ImageRequest request)
         {

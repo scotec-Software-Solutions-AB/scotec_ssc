@@ -27,7 +27,7 @@ public static class ImageServerMifddlewareExtensions
     {
         services.TryAddScoped<IImageProviderFactory, ImageProviderFactory>();
         services.TryAddScoped<TImplementation>();
-        services.AddSingleton(new Tuple<string, Type>(key, typeof(TImplementation)));
+        services.AddSingleton(new ImageProviderDescriptor(key, typeof(TImplementation)));
         return services;
     }
 }
