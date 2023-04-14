@@ -2,35 +2,37 @@
 
 public static class DoubleExtension
 {
-    public static bool IsEqual(this double leftValue, double rightValue, int precision = 8)
+    private const int DefaultPrecision = 8;
+
+    public static bool IsEqual(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
         var epsilon = System.Math.Pow(10, -precision);
 
         return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon;
     }
 
-    public static bool IsGreater(this double leftValue, double rightValue, int precision = 8)
+    public static bool IsGreater(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
         var epsilon = System.Math.Pow(10, -precision);
 
         return GetDifference(leftValue, rightValue) > epsilon;
     }
 
-    public static bool IsLower(this double leftValue, double rightValue, int precision = 8)
+    public static bool IsLower(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
         var epsilon = System.Math.Pow(10, -precision);
 
         return GetDifference(rightValue, leftValue) > epsilon;
     }
 
-    public static bool IsGreaterOrEqual(this double leftValue, double rightValue, int precision = 8)
+    public static bool IsGreaterOrEqual(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
         var epsilon = System.Math.Pow(10, -precision);
 
         return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon || GetDifference(leftValue, rightValue) > epsilon;
     }
 
-    public static bool IsLowerOrEqual(this double leftValue, double rightValue, int precision = 8)
+    public static bool IsLowerOrEqual(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
         var epsilon = System.Math.Pow(10, -precision);
 
@@ -68,5 +70,23 @@ public static class DoubleExtension
         var devisor = System.Math.Pow(10, exponent);
 
         return leftValue / devisor - rightValue / devisor;
+    }
+
+    /// <summary>
+    /// Returns the smallest multiple of significance that is greater than or equal to the specified value.
+    /// </summary>
+    public static double Ceiling(this double value, double significance, int precision = DefaultPrecision)
+    {
+        var y = System.Math.Ceiling(-12.345);
+        if (significance.IsLowerOrEqual(0.0))
+        {
+            throw new Exception("significance must be greater than 0");
+        }
+
+        var sign = value.IsLower(0.0, precision) ? -1.0 : 1.0;
+
+        var x = System.Math.Round((int)(value / significance) * significance, precision);
+        
+        return System.Math.Round(x.Equals(value) ? x : x + significance * sign, precision);
     }
 }
