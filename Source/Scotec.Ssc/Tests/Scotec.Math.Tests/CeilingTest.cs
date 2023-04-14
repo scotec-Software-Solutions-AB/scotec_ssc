@@ -22,7 +22,7 @@ namespace Scotec.Math.Tests
         [InlineData(0.0, 1, 0)]
         [InlineData(0.0, 2, 0)]
         [InlineData(0.0, 0.1, 0)]
-        void Test(double value, double significance, double expectedResult)
+        public void Test(double value, double significance, double expectedResult)
         {
             var result = value.Ceiling(significance);
 
