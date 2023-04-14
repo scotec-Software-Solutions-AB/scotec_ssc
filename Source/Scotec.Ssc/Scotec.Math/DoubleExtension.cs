@@ -77,7 +77,6 @@ public static class DoubleExtension
     /// </summary>
     public static double Ceiling(this double value, double significance, int precision = DefaultPrecision)
     {
-        var y = System.Math.Ceiling(-12.345);
         if (significance.IsLowerOrEqual(0.0))
         {
             throw new Exception("significance must be greater than 0");
