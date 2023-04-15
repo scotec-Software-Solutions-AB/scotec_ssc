@@ -276,7 +276,7 @@ public class BlazorRenderer : RendererBase
 
         if (attributes.Id != null)
         {
-            _builder.AddAttribute(_line++, attributes.Id);
+            _builder.AddAttribute(_line++, "id", attributes.Id);
         }
 
         if (attributes.Classes is { Count: > 0 })

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Markdig;
+using Markdig.Extensions.GenericAttributes;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Scotec.Blazor.Markdown.Renderer.Extension;
 
@@ -14,10 +16,11 @@ public class Markdown : ComponentBase
         _builder = builder;
 
         var pipelineBuilder = new BlazorPipelineBuilder();
-        pipelineBuilder.Extensions.AddIfNotAlready<BlazorAttributesExtension>();
+        pipelineBuilder.UseGenericAttributes();
+        //pipelineBuilder.Extensions.AddIfNotAlready<BlazorAttributesExtension>();
+        //pipelineBuilder.Extensions.AddIfNotAlready<GenericAttributesExtension>();
 
         var pipeline = pipelineBuilder.Build();
-
         var renderer = new BlazorRenderer(builder);
         pipeline.Setup(renderer);
 

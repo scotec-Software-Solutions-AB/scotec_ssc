@@ -196,4 +196,13 @@ public class TestLinkInline
     {
         MarkdownTest.Run(markdown);
     }
+
+    [Theory]
+    [InlineData("![a](b){#myid .myclass width=1 height=2}")]
+    //[InlineData("![a](b){width=100}")]
+
+    public void Test_LinkWithAttributes(string markdown)
+    {
+        MarkdownTest.Run(markdown);
+    }
 }

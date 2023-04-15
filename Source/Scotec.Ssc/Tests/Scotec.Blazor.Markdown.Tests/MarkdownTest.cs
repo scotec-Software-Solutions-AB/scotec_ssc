@@ -1,4 +1,8 @@
-﻿using Bunit;
+﻿using System.IO.Pipes;
+using Bunit;
+using Markdig;
+using Markdig.Extensions.GenericAttributes;
+using Scotec.Blazor.Markdown.Renderer.Extension;
 
 namespace Scotec.Blazor.Markdown.Tests;
 
@@ -18,6 +22,11 @@ public static class MarkdownTest
 
     private static string ParseMarkdig(string markdown)
     {
-        return Markdig.Markdown.ToHtml(markdown);
+        var pipelineBuilder = new MarkdownPipelineBuilder();
+        //pipelineBuilder.InlineParsers.AddIfNotAlready<GenericAttributesParser>();
+        pipelineBuilder.UseAdvancedExtensions();//.UseGenericAttributes();
+
+        var pipeline = pipelineBuilder.Build();
+        return Markdig.Markdown.ToHtml(markdown, pipeline);
     }
 }

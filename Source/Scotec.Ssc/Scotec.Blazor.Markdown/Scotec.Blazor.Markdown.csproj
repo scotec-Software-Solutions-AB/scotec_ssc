@@ -31,11 +31,15 @@
 
 	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
-		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt"/>
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Markdig" Version="0.30.4" />
+	  <PackageReference Include="Markdig" Version="0.31.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Scotec.Blazor.UrlRequestCultureProvider\Scotec.Blazor.UrlRequestCultureProvider.csproj" />
 	</ItemGroup>
 </Project>
