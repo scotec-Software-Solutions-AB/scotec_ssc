@@ -16,7 +16,20 @@ public class ImageServerMiddleware
 
     public async Task InvokeAsync(HttpContext httpContext, IImageServer imageServer)
     {
-        var imageData = await imageServer.GetImageInfoAsync(httpContext.Request.Path.Value!);
+        var query = httpContext.Request.Query;
+
+        int? width = null;
+        int? height = null;
+        if(query.ContainsKey("width"))
+        {
+            width = int.Parse(query["width"]);
+        }
+        if(query.ContainsKey("height"))
+        {
+            height = int.Parse(query["height"]);
+        }
+
+        var imageData = await imageServer.GetImageInfoAsync(httpContext.Request.Path.Value!, width, height);
         if (imageData == null)
         {
             await _next(httpContext);
