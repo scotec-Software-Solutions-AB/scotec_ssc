@@ -1,6 +1,6 @@
 ﻿namespace Scotec.Web.ImageServer
 {
-    public struct ImageResponse
+    public record struct ImageResponse
     {
         public string Path { get; init; }
 
@@ -10,6 +10,8 @@
 
         public ImageFormat Format { get; init; } 
 
-        public Stream Image { get; init; }
+        public Stream Image { get; set; }
+
+        public Guid Id { get; set; }
     }
 }

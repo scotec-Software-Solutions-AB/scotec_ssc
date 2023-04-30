@@ -2,13 +2,16 @@
 
 internal class ImageServer : IImageServer
 {
+    private readonly IImageCache _imageCache;
     private readonly IImageProcessor _imageProcessor;
     private readonly IImageProviderFactory _imageProviderFactory;
 
-    public ImageServer(IImageProviderFactory imageProviderFactory, IImageProcessor imageProcessor)
+    public ImageServer(IImageProviderFactory imageProviderFactory, IImageProcessor imageProcessor,
+        IImageCache imageCache)
     {
         _imageProviderFactory = imageProviderFactory;
         _imageProcessor = imageProcessor;
+        _imageCache = imageCache;
     }
 
     public async Task<ImageResponse?> GetImageInfoAsync(string path)
@@ -35,13 +38,32 @@ internal class ImageServer : IImageServer
         return await GetImageInfoAsync(request);
     }
 
-    public async Task<ImageResponse?> GetImageInfoAsync(ImageRequest request)
-    {
-        var imageProvider = _imageProviderFactory.CreateImageProvider(request);
+    private static readonly ManualResetEventSlim _lock = new(true, 1);
 
-        return imageProvider != null 
-            ? await _imageProcessor.ProcessImageAsync(request, imageProvider)
-            : null;
+    public async Task<ImageResponse?> GetImageInfoAsync(ImageRequest imageRequest)
+    {
+        try
+        {
+            _lock.Wait();
+            if (!_imageCache.TryGetImage(imageRequest, out var imageResponse))
+            {
+                var imageProvider = _imageProviderFactory.CreateImageProvider(imageRequest);
+                if (imageProvider == null)
+                {
+                    // Link does not point to an image or link is invalid.
+                    return null;
+                }
+
+                imageResponse = await _imageProcessor.ProcessImageAsync(imageRequest, imageProvider);
+                imageResponse = _imageCache.AddImage(imageResponse.Value);
+            }
+
+            return imageResponse;
+        }
+        finally
+        {
+            _lock.Set();
+        }
     }
 
     private static ImageFormat? GetImageFormat(string path)

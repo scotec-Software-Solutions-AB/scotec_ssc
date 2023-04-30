@@ -16,7 +16,8 @@ public static class ImageServerMifddlewareExtensions
     {
         services.AddScoped<IImageServer, ImageServer>()
                 .AddScoped<IImageProcessor, MagickImageProcessor>()
-                .AddImageProvider<IImageProvider, LocalImageProvider>("images");
+                .AddImageProvider<IImageProvider, LocalImageProvider>("images")
+                .AddSingleton<IImageCache, InMemoryImageCache>();
 
         return services;
     }

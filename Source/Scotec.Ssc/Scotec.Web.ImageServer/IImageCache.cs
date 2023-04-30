@@ -2,8 +2,8 @@
 {
     public interface IImageCache
     {
-        public void AddImage(ImageInfo imageInfo);
+        public ImageResponse AddImage(ImageResponse imageResponse);
 
-        public bool TryGetImage(ImageInfo imageInfo);
+        public bool TryGetImage(ImageRequest imageRequest, out ImageResponse? imageResponse);
     }
 }
