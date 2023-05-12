@@ -127,7 +127,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
             segments = new[] { preferredLanguage.Name }.Concat(segments).ToArray();
         }
 
-        context.Response.Redirect($"/{string.Join('/', segments)}", false);
+        context.Response.Redirect($"/{string.Join('/', segments)}", true);
 
         return Task.CompletedTask;
     }
