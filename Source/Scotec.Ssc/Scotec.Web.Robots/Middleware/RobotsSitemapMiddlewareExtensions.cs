@@ -8,8 +8,9 @@ public static class RobotsSitemapExtensions
 {
     public static IApplicationBuilder UseSitemap(this IApplicationBuilder builder)
     {
-        return builder.MapWhen(httpContext => httpContext.Request.Path.StartsWithSegments("/sitemap.xml"), builder =>
-            builder.UseMiddleware<RobotsSitemapMiddleware>());
+        return builder.UseMiddleware<RobotsSitemapMiddleware>();
+        //return builder.MapWhen(httpContext => httpContext.Request.Path.StartsWithSegments("/sitemap.xml"), builder =>
+        //    builder.UseMiddleware<RobotsSitemapMiddleware>());
     }
 
     public static IServiceCollection AddSitemap(this IServiceCollection services)

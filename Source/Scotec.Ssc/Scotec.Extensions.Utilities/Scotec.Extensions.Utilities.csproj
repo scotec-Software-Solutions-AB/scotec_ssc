@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Authors>$(CompanyName)</Authors>
+		<Company>$(CompanyName)</Company>
+		<Copyright>$(CompanyName)</Copyright>
+		<Description>Set with helpful extensions.</Description>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IsPublishable>True</IsPublishable>
+		<PackageIcon>Logo.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://www.scotec-software.com</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<RepositoryUrl>https://github.com/scotec-Software-Solutions-AB/scotec_ssc</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<SignAssembly>False</SignAssembly>
+		<Title>Scotec.Extensions.Utilities</Title>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\Logo.png" Pack="true" PackagePath="" />
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
+	</ItemGroup>
+</Project>

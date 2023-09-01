@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 namespace Scotec.Math.Units;
 
 [Serializable]
+[Obsolete("This type is marked as depricated and will be removed in a future release. Use Scotec.Math.Units.Numeric instead.")]
 public sealed class Value : UnitValue<Value.Types, Value>
 {
     public enum Types

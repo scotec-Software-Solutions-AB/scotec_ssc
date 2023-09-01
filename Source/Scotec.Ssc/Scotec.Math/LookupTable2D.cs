@@ -71,7 +71,7 @@ public class LookupTable2D
 
     public double MaximumRowValue()
     {
-        return _rows[^1];
+        return _rows[_rows!.Length - 1];
     }
 
     public double MinimumColumnValue()
@@ -81,7 +81,7 @@ public class LookupTable2D
 
     public double MaximumColumnValue()
     {
-        return _columns[^1];
+        return _columns[_columns!.Length - 1];
     }
 
     public double GetInterpolatedValue(double rowValue, double columnValue)

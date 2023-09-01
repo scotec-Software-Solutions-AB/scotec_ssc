@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<IsPublishable>false</IsPublishable>
+		<SignAssembly>False</SignAssembly>
+		<Title>Scotec.Blazor.Markdown.Tests</Title>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="bunit" Version="1.16.2" />
+	  <PackageReference Include="Markdig" Version="0.31.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+	  <PackageReference Include="xunit" Version="2.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Scotec.Blazor.Markdown\Scotec.Blazor.Markdown.csproj" />
+	</ItemGroup>
+</Project>

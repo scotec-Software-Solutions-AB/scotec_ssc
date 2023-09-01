@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<Authors>$(CompanyName)</Authors>
+		<Company>$(CompanyName)</Company>
+		<Copyright>$(CompanyName)</Copyright>
+		<Description>Markdown renderer for Blazor.</Description>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IsPublishable>True</IsPublishable>
+		<PackageIcon>Logo.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://www.scotec-software.com</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<RepositoryUrl>https://github.com/scotec-Software-Solutions-AB/scotec_ssc</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<SignAssembly>False</SignAssembly>
+		<Title>Scotec.Blazor.Markdown</Title>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\Logo.png" Pack="true" PackagePath="" />
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Markdig" Version="0.31.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Scotec.Blazor.UrlRequestCultureProvider\Scotec.Blazor.UrlRequestCultureProvider.csproj" />
+	</ItemGroup>
+</Project>

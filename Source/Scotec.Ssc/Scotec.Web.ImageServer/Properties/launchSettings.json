@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Scotec.Web.ImageServer": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:57174;http://localhost:57175"
+    }
+  }
+}

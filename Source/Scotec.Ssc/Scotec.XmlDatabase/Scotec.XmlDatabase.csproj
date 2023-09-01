@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFrameworks>net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
+		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -30,6 +31,7 @@
 
 	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt"/>
 	</ItemGroup>
 
 	<ItemGroup>

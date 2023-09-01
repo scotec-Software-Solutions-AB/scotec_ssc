@@ -1,40 +1,40 @@
-﻿namespace Scotec.Math;
+﻿using System.Runtime.CompilerServices;
+
+namespace Scotec.Math;
 
 public static class DoubleExtension
 {
-    public static bool IsEqual(this double leftValue, double rightValue, int precision = 8)
-    {
-        var epsilon = System.Math.Pow(10, -precision);
+    private const int DefaultPrecision = 8;
 
-        return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon;
+    public static bool IsEqual(this double leftValue, double rightValue, int precision = DefaultPrecision)
+    {
+        return System.Math.Abs(GetDifference(leftValue, rightValue)) < GetEpsilon(precision);
+    }
+    
+    public static bool IsGreater(this double leftValue, double rightValue, int precision = DefaultPrecision)
+    {
+        return GetDifference(leftValue, rightValue) > GetEpsilon(precision);
     }
 
-    public static bool IsGreater(this double leftValue, double rightValue, int precision = 8)
+    public static bool IsLower(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
-        var epsilon = System.Math.Pow(10, -precision);
-
-        return GetDifference(leftValue, rightValue) > epsilon;
+        return GetDifference(rightValue, leftValue) > GetEpsilon(precision);
     }
 
-    public static bool IsLower(this double leftValue, double rightValue, int precision = 8)
+    public static bool IsGreaterOrEqual(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
-        var epsilon = System.Math.Pow(10, -precision);
+        var epsilon = GetEpsilon(precision);
+        var difference = GetDifference(leftValue, rightValue);
 
-        return GetDifference(rightValue, leftValue) > epsilon;
+        return System.Math.Abs(difference) < epsilon || difference > epsilon;
     }
 
-    public static bool IsGreaterOrEqual(this double leftValue, double rightValue, int precision = 8)
+    public static bool IsLowerOrEqual(this double leftValue, double rightValue, int precision = DefaultPrecision)
     {
         var epsilon = System.Math.Pow(10, -precision);
+        var difference = GetDifference(rightValue, leftValue);
 
-        return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon || GetDifference(leftValue, rightValue) > epsilon;
-    }
-
-    public static bool IsLowerOrEqual(this double leftValue, double rightValue, int precision = 8)
-    {
-        var epsilon = System.Math.Pow(10, -precision);
-
-        return System.Math.Abs(GetDifference(leftValue, rightValue)) < epsilon || GetDifference(rightValue, leftValue) > epsilon;
+        return System.Math.Abs(difference) < epsilon || difference > epsilon;
     }
 
     public static string ToFraction(this double value)
@@ -54,19 +54,32 @@ public static class DoubleExtension
         return double.IsNaN(exponent) || double.IsInfinity(exponent) ? 0 : (int)exponent;
     }
 
-    /// <summary>
-    ///     Devides both value by 10^exp and builds then the difference of the results.
-    ///     This is needed if we want to compare values that are lower than epsilon.
-    ///     WARNING: By using this method, very hight values are considered to be equal:
-    ///     123456789123 will be equal to 123456789122
-    ///     To treat the values as unequal, the precision must be set to 12 (default is 8).
-    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static double GetDifference(double leftValue, double rightValue)
     {
-        var exponent = GetExponent(leftValue);
+        return leftValue - rightValue;
+    }
 
-        var devisor = System.Math.Pow(10, exponent);
+    /// <summary>
+    /// Returns the smallest multiple of significance that is greater than or equal to the specified value.
+    /// </summary>
+    public static double Ceiling(this double value, double significance, int precision = DefaultPrecision)
+    {
+        if (significance.IsLowerOrEqual(0.0))
+        {
+            throw new Exception("significance must be greater than 0");
+        }
 
-        return leftValue / devisor - rightValue / devisor;
+        var sign = value.IsLower(0.0, precision) ? -1.0 : 1.0;
+
+        var x = System.Math.Round((int)(value / significance) * significance, precision);
+        
+        return System.Math.Round(x.Equals(value) ? x : x + significance * sign, precision);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static double GetEpsilon(int precision)
+    {
+        return System.Math.Pow(10, -precision);
     }
 }
