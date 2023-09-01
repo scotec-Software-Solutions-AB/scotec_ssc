@@ -10,9 +10,6 @@ public class StringFormatTest
     [InlineData("_{Value}_", StringComparison.OrdinalIgnoreCase, "A", "_A_")]
     public void Test(string template, StringComparison comparison, string data, string expected)
     {
-        var x = template.FormatX( () => );
-
-
         var result = template.Format(comparison, value => data);
         Assert.Equal(expected, result);
     }
