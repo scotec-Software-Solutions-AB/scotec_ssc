@@ -15,18 +15,17 @@ public static class ImageServerMifddlewareExtensions
     public static IServiceCollection AddImageServer(this IServiceCollection services)
     {
         services.AddScoped<IImageServer, ImageServer>()
+                .AddScoped<IImageProviderFactory, ImageProviderFactory>()
                 .AddScoped<IImageProcessor, MagickImageProcessor>()
-                .AddImageProvider<IImageProvider, LocalImageProvider>("images")
+                .AddImageProvider<LocalImageProvider>("images")
                 .AddSingleton<IImageCache, InMemoryImageCache>();
-
+         
         return services;
     }
 
-    public static IServiceCollection AddImageProvider<TService, TImplementation>(this IServiceCollection services, string key) 
-        where TService : class, IImageProvider
-        where TImplementation : class, TService
+    public static IServiceCollection AddImageProvider<TImplementation>(this IServiceCollection services, string key) 
+        where TImplementation : class, IImageProvider
     {
-        services.TryAddScoped<IImageProviderFactory, ImageProviderFactory>();
         services.TryAddScoped<TImplementation>();
         services.AddSingleton(new ImageProviderDescriptor(key, typeof(TImplementation)));
         return services;

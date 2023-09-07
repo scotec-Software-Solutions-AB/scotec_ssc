@@ -38,13 +38,13 @@ internal class ImageServer : IImageServer
         return await GetImageInfoAsync(request);
     }
 
-    private static readonly ManualResetEventSlim _lock = new(true, 1);
+    private static readonly ManualResetEventSlim Lock = new(true, 1);
 
     public async Task<ImageResponse?> GetImageInfoAsync(ImageRequest imageRequest)
     {
         try
         {
-            _lock.Wait();
+            Lock.Wait();
             if (!_imageCache.TryGetImage(imageRequest, out var imageResponse))
             {
                 var imageProvider = _imageProviderFactory.CreateImageProvider(imageRequest);
@@ -62,7 +62,7 @@ internal class ImageServer : IImageServer
         }
         finally
         {
-            _lock.Set();
+            Lock.Set();
         }
     }
 
