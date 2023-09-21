@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Scotec.Web.ImageServer;
+namespace Scotec.Web.ImageServer.Caching;
 
 public class InMemoryImageCache : IImageCache
 {
