@@ -7,7 +7,7 @@ using Scotec.Web.ImageServer.Server;
 
 namespace Scotec.Web.ImageServer;
 
-public static class ImageServerMifddlewareExtensions
+public static class ImageServerMiddlewareExtensions
 {
     public static IApplicationBuilder UseImageServer(this IApplicationBuilder builder)
     {
