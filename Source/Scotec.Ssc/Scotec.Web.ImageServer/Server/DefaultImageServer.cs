@@ -1,12 +1,17 @@
-﻿namespace Scotec.Web.ImageServer;
+﻿using Scotec.Web.ImageServer.Caching;
+using Scotec.Web.ImageServer.Processor;
+using Scotec.Web.ImageServer.Provider;
 
-internal class ImageServer : IImageServer
+namespace Scotec.Web.ImageServer.Server;
+
+internal class DefaultImageServer : IImageServer
 {
+    private static readonly ManualResetEventSlim _lock = new(true, 1);
     private readonly IImageCache _imageCache;
     private readonly IImageProcessor _imageProcessor;
     private readonly IImageProviderFactory _imageProviderFactory;
 
-    public ImageServer(IImageProviderFactory imageProviderFactory, IImageProcessor imageProcessor,
+    public DefaultImageServer(IImageProviderFactory imageProviderFactory, IImageProcessor imageProcessor,
         IImageCache imageCache)
     {
         _imageProviderFactory = imageProviderFactory;
@@ -14,12 +19,12 @@ internal class ImageServer : IImageServer
         _imageCache = imageCache;
     }
 
-    public async Task<ImageResponse?> GetImageInfoAsync(string path)
+    public async Task<ImageResponse?> GetImageAsync(string path)
     {
-        return await GetImageInfoAsync(path, null, null);
+        return await GetImageAsync(path, null, null);
     }
 
-    public async Task<ImageResponse?> GetImageInfoAsync(string path, int? width, int? height)
+    public async Task<ImageResponse?> GetImageAsync(string path, int? width, int? height)
     {
         var format = GetImageFormat(path);
         if (format == ImageFormat.None)
@@ -35,16 +40,14 @@ internal class ImageServer : IImageServer
             Format = format
         };
 
-        return await GetImageInfoAsync(request);
+        return await GetImageAsync(request);
     }
 
-    private static readonly ManualResetEventSlim Lock = new(true, 1);
-
-    public async Task<ImageResponse?> GetImageInfoAsync(ImageRequest imageRequest)
+    public async Task<ImageResponse?> GetImageAsync(ImageRequest imageRequest)
     {
         try
         {
-            Lock.Wait();
+            _lock.Wait();
             if (!_imageCache.TryGetImage(imageRequest, out var imageResponse))
             {
                 var imageProvider = _imageProviderFactory.CreateImageProvider(imageRequest);
@@ -62,7 +65,7 @@ internal class ImageServer : IImageServer
         }
         finally
         {
-            Lock.Set();
+            _lock.Set();
         }
     }
 

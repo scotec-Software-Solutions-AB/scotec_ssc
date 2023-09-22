@@ -16,8 +16,11 @@ public class Markdown : ComponentBase
         _builder = builder;
 
         var pipelineBuilder = new BlazorPipelineBuilder();
-        pipelineBuilder.UseGenericAttributes();
-        //pipelineBuilder.Extensions.AddIfNotAlready<BlazorAttributesExtension>();
+        pipelineBuilder.EnableTrackTrivia();
+        pipelineBuilder.UseYamlFrontMatter();
+
+        //pipelineBuilder.UseGenericAttributes();
+        pipelineBuilder.Extensions.AddIfNotAlready<BlazorAttributesExtension>();
         //pipelineBuilder.Extensions.AddIfNotAlready<GenericAttributesExtension>();
 
         var pipeline = pipelineBuilder.Build();

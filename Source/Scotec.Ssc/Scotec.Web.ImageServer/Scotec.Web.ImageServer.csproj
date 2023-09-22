@@ -36,7 +36,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.0.1" />
+	  <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Components\" />
 	</ItemGroup>
 
 </Project>

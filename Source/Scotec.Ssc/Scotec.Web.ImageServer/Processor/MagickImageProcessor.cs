@@ -1,7 +1,8 @@
 ﻿using System.Drawing;
 using ImageMagick;
+using Scotec.Web.ImageServer.Provider;
 
-namespace Scotec.Web.ImageServer;
+namespace Scotec.Web.ImageServer.Processor;
 
 public class MagickImageProcessor : IImageProcessor
 {

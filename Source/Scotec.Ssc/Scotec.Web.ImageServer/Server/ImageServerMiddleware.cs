@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Options;
 
-namespace Scotec.Web.ImageServer;
+namespace Scotec.Web.ImageServer.Server;
 
 public class ImageServerMiddleware
 {
@@ -20,27 +20,29 @@ public class ImageServerMiddleware
 
         int? width = null;
         int? height = null;
-        if(query.ContainsKey("width"))
+
+        if (query.TryGetValue("width", out var widthString) && !string.IsNullOrEmpty(widthString))
         {
-            width = int.Parse(query["width"]);
-        }
-        if(query.ContainsKey("height"))
-        {
-            height = int.Parse(query["height"]);
+            width = int.Parse(widthString!);
         }
 
-        var imageData = await imageServer.GetImageInfoAsync(httpContext.Request.Path.Value!, width, height);
+        if (query.TryGetValue("height", out var heightString) && !string.IsNullOrEmpty(heightString))
+        {
+            height = int.Parse(heightString!);
+        }
+
+        var imageData = await imageServer.GetImageAsync(httpContext.Request.Path.Value!, width, height);
         if (imageData == null)
         {
+            // Could not find an image under the given path. Let the next middleware handle the request.
             await _next(httpContext);
             return;
         }
-        
+
         var response = httpContext.Response;
         response.ContentType = $"image/{imageData.Value.Format.ToString().ToLower()}";
         response.StatusCode = (int)HttpStatusCode.OK;
 
         await imageData.Value.Image.CopyToAsync(response.BodyWriter.AsStream());
     }
-
 }
