@@ -23,8 +23,9 @@ public static class MarkdownTest
     private static string ParseMarkdig(string markdown)
     {
         var pipelineBuilder = new MarkdownPipelineBuilder();
-        //pipelineBuilder.InlineParsers.AddIfNotAlready<GenericAttributesParser>();
-        pipelineBuilder.UseAdvancedExtensions();//.UseGenericAttributes();
+        pipelineBuilder.InlineParsers.AddIfNotAlready<GenericAttributesParser>();
+        //pipelineBuilder.UseAdvancedExtensions();
+        pipelineBuilder.UseGenericAttributes();
 
         var pipeline = pipelineBuilder.Build();
         return Markdig.Markdown.ToHtml(markdown, pipeline);
