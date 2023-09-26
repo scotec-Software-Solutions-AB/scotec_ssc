@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using Microsoft.Extensions.Options;
 
 namespace Scotec.Web.ImageServer.Server;
@@ -32,7 +33,7 @@ public class ImageServerMiddleware
         }
 
         var imageData = await imageServer.GetImageAsync(httpContext.Request.Path.Value!, width, height);
-        if (imageData == null)
+        if (imageData.Format == ImageFormat.None)
         {
             // Could not find an image under the given path. Let the next middleware handle the request.
             await _next(httpContext);
@@ -40,9 +41,10 @@ public class ImageServerMiddleware
         }
 
         var response = httpContext.Response;
-        response.ContentType = $"image/{imageData.Value.Format.ToString().ToLower()}";
+        response.ContentType = $"image/{imageData.Format.ToString().ToLower()}";
         response.StatusCode = (int)HttpStatusCode.OK;
 
-        await imageData.Value.Image.CopyToAsync(response.BodyWriter.AsStream());
+        Debug.Assert(imageData.Image != null, "imageData.Image != null");
+        await imageData.Image.CopyToAsync(response.BodyWriter.AsStream());
     }
 }

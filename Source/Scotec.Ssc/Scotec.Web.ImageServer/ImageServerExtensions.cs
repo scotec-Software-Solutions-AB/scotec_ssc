@@ -20,8 +20,22 @@ public static class ImageServerMiddlewareExtensions
     {
         services.AddScoped<IImageServer, DefaultImageServer>()
                 .AddScoped<IImageProcessor, MagickImageProcessor>()
-                .AddImageProvider<IImageProvider, LocalImageProvider>("images")
+                .AddLocalImageProvider()
                 .AddSingleton<IImageCache, InMemoryImageCache>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddLocalImageProvider(this IServiceCollection services)
+    {
+        services.AddImageProvider<IImageProvider, LocalImageProvider>("images");
+
+        return services;
+    }
+
+    public static IServiceCollection AddAzureBlobStorageImageProvider(this IServiceCollection services)
+    {
+        services.AddImageProvider<IImageProvider, AzureBlobStorageImageProvider>("azure");
 
         return services;
     }

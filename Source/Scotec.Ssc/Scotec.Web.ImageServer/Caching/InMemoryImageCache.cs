@@ -1,14 +1,22 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 
 namespace Scotec.Web.ImageServer.Caching;
 
+// TODO: Add max size and remove oldest images if max. size is reached.
 public class InMemoryImageCache : IImageCache
 {
     private readonly Dictionary<string, ImageResponse> _images = new();
 
     public ImageResponse AddImage(ImageResponse imageResponse)
     {
+        if (imageResponse.Format == ImageFormat.None)
+        {
+            return imageResponse;
+        }
         var memoryStream = new MemoryStream();
+
+        Debug.Assert(imageResponse.Image != null, "imageResponse.Image != null");
         imageResponse.Image.CopyTo(memoryStream);
 
         memoryStream.Position = 0;
@@ -20,18 +28,18 @@ public class InMemoryImageCache : IImageCache
         return imageResponse;
     }
 
-    public bool TryGetImage(ImageRequest imageRequest, out ImageResponse? imageResponse)
+    public bool TryGetImage(ImageRequest imageRequest, out ImageResponse imageResponse)
     {
-        imageResponse = null;
-
-        if (_images.TryGetValue(BuildKey(imageRequest), out var image))
+        if (!_images.TryGetValue(BuildKey(imageRequest), out imageResponse)
+            || imageResponse.Image == null
+            || imageResponse.Format == ImageFormat.None)
         {
-            image.Image = Clone(image.Image);
-            imageResponse = image;
-            return true;
+            return false;
         }
 
-        return false;
+        imageResponse.Image = Clone(imageResponse.Image);
+        return true;
+
     }
 
     private static Stream Clone(Stream stream)

@@ -9,11 +9,23 @@ public class LocalImageProvider : IImageProvider
         _environment = environment;
     }
 
-    public Stream GetImage(string path)
+    public Task<Stream?> GetImageAsync(string path)
     {
-        var rootPath = _environment.WebRootPath;
-        var filePath = Path.Combine(rootPath, path.Replace('/', '\\').Trim('\\'));
+        try
+        {
+            var rootPath = _environment.WebRootPath;
+            var filePath = Path.Combine(rootPath, path.Replace('/', '\\').Trim('\\'));
 
-        return File.OpenRead(filePath);
+            if (File.Exists(path))
+            {
+                return Task.FromResult<Stream?>(File.OpenRead(filePath));
+            }
+        }
+        catch (Exception)
+        {
+            //TODO: Add logging.
+        }
+        
+        return Task.FromResult<Stream?>(default);
     }
 }

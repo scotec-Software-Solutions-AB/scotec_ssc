@@ -8,8 +8,15 @@ public class MagickImageProcessor : IImageProcessor
 {
     public async Task<ImageResponse> ProcessImageAsync(ImageRequest request, IImageProvider imageProvider)
     {
-        var source = imageProvider.GetImage(request.Path);
-
+        var source = await imageProvider.GetImageAsync(request.Path);
+        if (source == null)
+        {
+            return new ImageResponse
+            {
+                Path = request.Path,
+                Format = ImageFormat.None,
+            };
+        }
         var format = GetImageType(request.Path);
         using var image = new MagickImage(source, format);
         image.Format = request.Format.HasValue ? Convert(request.Format.Value) : format;

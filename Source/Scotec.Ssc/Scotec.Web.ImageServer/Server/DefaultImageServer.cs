@@ -1,6 +1,7 @@
 ﻿using Scotec.Web.ImageServer.Caching;
 using Scotec.Web.ImageServer.Processor;
 using Scotec.Web.ImageServer.Provider;
+using System.IO;
 
 namespace Scotec.Web.ImageServer.Server;
 
@@ -19,17 +20,21 @@ internal class DefaultImageServer : IImageServer
         _imageCache = imageCache;
     }
 
-    public async Task<ImageResponse?> GetImageAsync(string path)
+    public async Task<ImageResponse> GetImageAsync(string path)
     {
         return await GetImageAsync(path, null, null);
     }
 
-    public async Task<ImageResponse?> GetImageAsync(string path, int? width, int? height)
+    public async Task<ImageResponse> GetImageAsync(string path, int? width, int? height)
     {
         var format = GetImageFormat(path);
         if (format == ImageFormat.None)
         {
-            return null;
+            return new ImageResponse
+            {
+                Path = path,
+                Format = ImageFormat.None
+            };
         }
 
         var request = new ImageRequest
@@ -43,7 +48,7 @@ internal class DefaultImageServer : IImageServer
         return await GetImageAsync(request);
     }
 
-    public async Task<ImageResponse?> GetImageAsync(ImageRequest imageRequest)
+    public async Task<ImageResponse> GetImageAsync(ImageRequest imageRequest)
     {
         try
         {
@@ -54,11 +59,18 @@ internal class DefaultImageServer : IImageServer
                 if (imageProvider == null)
                 {
                     // Link does not point to an image or link is invalid.
-                    return null;
+                    return new ImageResponse
+                    {
+                        Path = imageRequest.Path,
+                        Format = ImageFormat.None
+                    };
                 }
 
                 imageResponse = await _imageProcessor.ProcessImageAsync(imageRequest, imageProvider);
-                imageResponse = _imageCache.AddImage(imageResponse.Value);
+                if (imageResponse.Format != ImageFormat.None)
+                {
+                    imageResponse = _imageCache.AddImage(imageResponse);
+                }
             }
 
             return imageResponse;

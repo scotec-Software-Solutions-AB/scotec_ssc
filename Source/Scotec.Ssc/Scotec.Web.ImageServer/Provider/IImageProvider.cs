@@ -2,5 +2,5 @@
 
 public interface IImageProvider
 {
-    Stream GetImage(string path);
+    Task<Stream?> GetImageAsync(string path);
 }
