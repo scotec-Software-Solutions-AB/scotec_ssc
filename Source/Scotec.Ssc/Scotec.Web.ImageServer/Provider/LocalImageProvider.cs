@@ -9,23 +9,18 @@ public class LocalImageProvider : IImageProvider
         _environment = environment;
     }
 
-    public Task<Stream?> GetImageAsync(string path)
+    public Task<Stream> GetImageAsync(string path)
     {
         try
         {
             var rootPath = _environment.WebRootPath;
             var filePath = Path.Combine(rootPath, path.Replace('/', '\\').Trim('\\'));
 
-            if (File.Exists(path))
-            {
-                return Task.FromResult<Stream?>(File.OpenRead(filePath));
-            }
+            return Task.FromResult<Stream>(File.OpenRead(filePath));
         }
-        catch (Exception)
+        catch (Exception e) when ( e is not ImageServerException)
         {
-            //TODO: Add logging.
+            throw new ImageServerException($"Could not load image. Path:{path}", e);
         }
-        
-        return Task.FromResult<Stream?>(default);
     }
 }

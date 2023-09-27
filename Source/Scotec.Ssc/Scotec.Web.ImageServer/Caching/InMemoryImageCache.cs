@@ -12,33 +12,45 @@ public class InMemoryImageCache : IImageCache
     {
         if (imageResponse.Format == ImageFormat.None)
         {
+            throw new ImageServerException($"Unsupported image format. Path:{imageResponse.Path}");
+        }
+
+        try
+        {
+            var memoryStream = new MemoryStream();
+
+            imageResponse.Image.CopyTo(memoryStream);
+
+            memoryStream.Position = 0;
+            imageResponse.Image = memoryStream;
+            imageResponse.Id = Guid.NewGuid();
+
+            _images.Add(BuildKey(imageResponse), imageResponse);
+
             return imageResponse;
         }
-        var memoryStream = new MemoryStream();
-
-        Debug.Assert(imageResponse.Image != null, "imageResponse.Image != null");
-        imageResponse.Image.CopyTo(memoryStream);
-
-        memoryStream.Position = 0;
-        imageResponse.Image = memoryStream;
-        imageResponse.Id = Guid.NewGuid();
-
-        _images.Add(BuildKey(imageResponse), imageResponse);
-
-        return imageResponse;
+        catch (Exception e)
+        {
+            throw new ImageServerException($"Could not add image to cache. Path:{imageResponse.Path}", e);
+        }
     }
 
     public bool TryGetImage(ImageRequest imageRequest, out ImageResponse imageResponse)
     {
-        if (!_images.TryGetValue(BuildKey(imageRequest), out imageResponse)
-            || imageResponse.Image == null
-            || imageResponse.Format == ImageFormat.None)
+        try
         {
-            return false;
-        }
+            if (!_images.TryGetValue(BuildKey(imageRequest), out imageResponse))
+            {
+                return false;
+            }
 
-        imageResponse.Image = Clone(imageResponse.Image);
-        return true;
+            imageResponse.Image = Clone(imageResponse.Image);
+            return true;
+        }
+        catch (Exception e) when(e is not ImageServerException)
+        {
+            throw new ImageServerException("Error while trying to get image from cache.", e);
+        }
 
     }
 

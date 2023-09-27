@@ -11,14 +11,14 @@ public class ImageProviderFactory : IImageProviderFactory
         _descriptors = descriptors.ToDictionary(descriptor => descriptor.Path, item => item.ImageProviderType);
     }
 
-    public IImageProvider? CreateImageProvider(ImageRequest request)
+    public IImageProvider CreateImageProvider(ImageRequest request)
     {
         var key = request.Path.Split('/', 2, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
         if (key != null && _descriptors.TryGetValue(key, out var type))
         {
-            return (IImageProvider?)_serviceProvider.GetService(type);
+            return (IImageProvider)_serviceProvider.GetService(type)!;
         }
 
-        return null;
+        throw new ImageServerException($"Could not load image provider for file '{request.Path}'");
     }
 }

@@ -6,29 +6,27 @@ public class AzureBlobStorageImageProvider : IImageProvider
 {
     private readonly string _connectionString; 
 
-    private readonly string _blobContainerName;
-
     public AzureBlobStorageImageProvider(IConfiguration configuration)
     {
-        _connectionString = configuration.GetSection($"{nameof(AzureBlobStorageImageProvider)}.ConnectionString").Get<string>();
-        _blobContainerName = configuration.GetSection($"{nameof(AzureBlobStorageImageProvider)}.ContainerName").Get<string>();
+        _connectionString = configuration.GetSection($"{nameof(AzureBlobStorageImageProvider)}:ConnectionString").Get<string>();
     }
 
-    public async Task<Stream?> GetImageAsync(string path)
+    public async Task<Stream> GetImageAsync(string path)
     {
         try
         {
+            var parts = path.Replace('\\', '/').Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
             var blobServiceClient = new BlobServiceClient(_connectionString);
 
-            var containerClient = blobServiceClient.GetBlobContainerClient(_blobContainerName);
-            var blobClient = containerClient.GetBlobClient(path);
-            var response = await blobClient.DownloadAsync();
+            var containerClient = blobServiceClient.GetBlobContainerClient(parts[0]);
+            var blobClient = containerClient.GetBlobClient(parts[1]);
+            var response = await blobClient.DownloadAsync().ConfigureAwait(true);
             
             return response.Value.Content;
         }
-        catch (Exception)
+        catch (Exception e) when (e is not ImageServerException)
         {
-            return default;
+            throw new ImageServerException($"Could not load image. Path:{path}", e);
         }
     }
 }

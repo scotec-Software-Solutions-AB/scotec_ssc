@@ -2,5 +2,5 @@
 
 public interface IImageProviderFactory
 {
-    IImageProvider? CreateImageProvider(ImageRequest request);
+    IImageProvider CreateImageProvider(ImageRequest request);
 }

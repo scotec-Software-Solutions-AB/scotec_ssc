@@ -1,4 +1,5 @@
-﻿using Scotec.Web.ImageServer.Caching;
+﻿using System.Data;
+using Scotec.Web.ImageServer.Caching;
 using Scotec.Web.ImageServer.Processor;
 using Scotec.Web.ImageServer.Provider;
 using System.IO;
@@ -27,22 +28,12 @@ internal class DefaultImageServer : IImageServer
 
     public async Task<ImageResponse> GetImageAsync(string path, int? width, int? height)
     {
-        var format = GetImageFormat(path);
-        if (format == ImageFormat.None)
-        {
-            return new ImageResponse
-            {
-                Path = path,
-                Format = ImageFormat.None
-            };
-        }
-
         var request = new ImageRequest
         {
+            Format = GetImageFormat(path),
             Width = width,
             Height = height,
             Path = path,
-            Format = format
         };
 
         return await GetImageAsync(request);
@@ -50,31 +41,29 @@ internal class DefaultImageServer : IImageServer
 
     public async Task<ImageResponse> GetImageAsync(ImageRequest imageRequest)
     {
+        if (imageRequest.Format == ImageFormat.None)
+        {
+            throw new ImageServerException($"Image format not supported. Path: {imageRequest.Path}");
+        }
+
         try
         {
             _lock.Wait();
             if (!_imageCache.TryGetImage(imageRequest, out var imageResponse))
             {
                 var imageProvider = _imageProviderFactory.CreateImageProvider(imageRequest);
-                if (imageProvider == null)
-                {
-                    // Link does not point to an image or link is invalid.
-                    return new ImageResponse
-                    {
-                        Path = imageRequest.Path,
-                        Format = ImageFormat.None
-                    };
-                }
-
+                
                 imageResponse = await _imageProcessor.ProcessImageAsync(imageRequest, imageProvider);
-                if (imageResponse.Format != ImageFormat.None)
-                {
-                    imageResponse = _imageCache.AddImage(imageResponse);
-                }
+                imageResponse = _imageCache.AddImage(imageResponse);
             }
 
             return imageResponse;
         }
+        catch (Exception e) when (e is not ImageServerException)
+        {
+            throw new ImageServerException($"Could not load image. Path:{imageRequest.Path}", e);
+        }
+
         finally
         {
             _lock.Set();
