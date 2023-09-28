@@ -18,9 +18,17 @@ public class ImageServerMiddleware
     public async Task InvokeAsync(HttpContext httpContext, IImageServer imageServer)
     {
         var query = httpContext.Request.Query;
+        var path = httpContext.Request.Path.Value ?? string.Empty;
 
         int? width = null;
         int? height = null;
+
+        if (!imageServer.CanProcessImage(path))
+        {
+            // Could not find an image under the given path. Let the next middleware handle the request.
+            await _next(httpContext);
+            return;
+        }
 
         if (query.TryGetValue("width", out var widthString) && !string.IsNullOrEmpty(widthString))
         {
@@ -32,14 +40,8 @@ public class ImageServerMiddleware
             height = int.Parse(heightString!);
         }
 
-        var imageData = await imageServer.GetImageAsync(httpContext.Request.Path.Value!, width, height);
-        if (imageData.Format == ImageFormat.None)
-        {
-            // Could not find an image under the given path. Let the next middleware handle the request.
-            await _next(httpContext);
-            return;
-        }
 
+        var imageData = await imageServer.GetImageAsync(path, width, height);
         var response = httpContext.Response;
         response.ContentType = $"image/{imageData.Format.ToString().ToLower()}";
         response.StatusCode = (int)HttpStatusCode.OK;

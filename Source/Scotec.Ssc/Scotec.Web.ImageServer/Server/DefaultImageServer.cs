@@ -70,6 +70,16 @@ internal class DefaultImageServer : IImageServer
         }
     }
 
+    public bool IsImage(string path)
+    {
+        return GetImageFormat(path) != ImageFormat.None;
+    }
+
+    public bool CanProcessImage(string path)
+    {
+        return IsImage(path) && _imageProviderFactory.HasImageProvider(path);
+    }
+
     private static ImageFormat? GetImageFormat(string path)
     {
         var extension = Path.GetExtension(path).ToLower();
