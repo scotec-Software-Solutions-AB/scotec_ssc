@@ -25,6 +25,7 @@ public class ImageProviderTest
         try
         {
             var image = await ImageServer.GetImageAsync(path);
+            var imageFromCache = await ImageServer.GetImageAsync(path);
         }
         catch (Exception e)
         {

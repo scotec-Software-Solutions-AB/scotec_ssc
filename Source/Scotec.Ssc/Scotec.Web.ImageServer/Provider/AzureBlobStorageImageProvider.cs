@@ -8,7 +8,7 @@ public class AzureBlobStorageImageProvider : IImageProvider
 
     public AzureBlobStorageImageProvider(IConfiguration configuration)
     {
-        _connectionString = configuration.GetSection($"{nameof(AzureBlobStorageImageProvider)}:ConnectionString").Get<string>();
+        _connectionString = configuration.GetSection($"ScotecImageServer:ImageProvider:{nameof(AzureBlobStorageImageProvider)}:ConnectionString").Get<string>();
     }
 
     public async Task<Stream> GetImageAsync(string path)
