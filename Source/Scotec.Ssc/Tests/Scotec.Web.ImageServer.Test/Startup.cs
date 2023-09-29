@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Scotec.Web.ImageServer.Test.Mocks;
 
 namespace Scotec.Web.ImageServer.Test;
 
@@ -16,5 +18,7 @@ public class Startup
         services.AddImageServer()
                 .AddLocalImageProvider("images")
                 .AddAzureBlobStorageImageProvider("scotecblog");
+
+        services.AddSingleton<IWebHostEnvironment, WebHostEnvironmentMock>();
     }
 }

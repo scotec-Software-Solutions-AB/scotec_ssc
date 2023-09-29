@@ -1,31 +1,31 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 
 namespace Scotec.Web.ImageServer.Caching;
 
 // TODO: Add max size and remove oldest images if max. size is reached.
 public class InMemoryImageCache : IImageCache
 {
+    private static readonly ManualResetEventSlim Lock = new(true, 1);
     private readonly Dictionary<string, ImageResponse> _images = new();
+    private long _cacheSize;
 
     public ImageResponse AddImage(ImageResponse imageResponse)
     {
         if (imageResponse.Format == ImageFormat.None)
-        {
             throw new ImageServerException($"Unsupported image format. Path:{imageResponse.Path}");
-        }
 
+        Lock.Wait();
         try
         {
-            var memoryStream = new MemoryStream();
+            var key = BuildKey(imageResponse);
 
-            imageResponse.Image.CopyTo(memoryStream);
+            // Multiple threads may try to add the same image at the same time.
+            // However, only the first writes the image into the cache.
+            // All other will be forgotten here.
+            if (_images.TryGetValue(key, out var cachedImageResponse)) return cachedImageResponse;
 
-            memoryStream.Position = 0;
-            imageResponse.Image = memoryStream;
-            imageResponse.Id = Guid.NewGuid();
-
-            _images.Add(BuildKey(imageResponse), imageResponse);
+            _images.Add(key, imageResponse);
+            _cacheSize += imageResponse.Image.Length;
 
             return imageResponse;
         }
@@ -33,40 +33,47 @@ public class InMemoryImageCache : IImageCache
         {
             throw new ImageServerException($"Could not add image to cache. Path:{imageResponse.Path}", e);
         }
+        finally
+        {
+            Lock.Set();
+        }
     }
 
-    public bool TryGetImage(ImageRequest imageRequest, out ImageResponse imageResponse)
+    public bool TryGetImage(ImageRequest imageRequest, out ImageResponse? imageResponse)
     {
+        imageResponse = null;
+
+        Lock.Wait();
         try
         {
-            if (!_images.TryGetValue(BuildKey(imageRequest), out imageResponse))
-            {
-                return false;
-            }
+            if (!_images.TryGetValue(BuildKey(imageRequest), out imageResponse)) return false;
 
-            imageResponse.Image = Clone(imageResponse.Image);
+            // Refresh timestamp with each request.
+            imageResponse.Timestamp = DateTime.UtcNow;
+
             return true;
         }
-        catch (Exception e) when(e is not ImageServerException)
+        catch (Exception e) when (e is not ImageServerException)
         {
             throw new ImageServerException("Error while trying to get image from cache.", e);
         }
-
+        finally
+        {
+            Lock.Set();
+        }
     }
 
-    private static Stream Clone(Stream stream)
+    public void Clear()
     {
-        stream.Position = 0;
-        var memoryStream = new MemoryStream();
-        stream.CopyTo(memoryStream);
-        memoryStream.Position = 0;
-
-        return memoryStream;
-    }
-
-    private void ClearCache()
-    {
-        _images.Clear();
+        Lock.Wait();
+        try
+        {
+            _images.Clear();
+        }
+        finally
+        {
+            Lock.Set();
+        }
     }
 
     private static string BuildKey(ImageResponse response)

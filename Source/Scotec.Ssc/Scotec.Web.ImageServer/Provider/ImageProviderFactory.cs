@@ -15,17 +15,9 @@ public class ImageProviderFactory : IImageProviderFactory
     {
         var key = GetImageProviderKey(request.Path);
         if (key != null && _descriptors.TryGetValue(key, out var type))
-        {
             return (IImageProvider)_serviceProvider.GetService(type)!;
-        }
 
         throw new ImageServerException($"Could not load image provider for file '{request.Path}'");
-    }
-
-    private static string? GetImageProviderKey(string path)
-    {
-        var key = path.Split('/', 2, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-        return key;
     }
 
     public bool HasImageProvider(string path)
@@ -33,5 +25,11 @@ public class ImageProviderFactory : IImageProviderFactory
         var key = GetImageProviderKey(path);
 
         return !string.IsNullOrEmpty(key) && _descriptors.ContainsKey(key);
+    }
+
+    private static string? GetImageProviderKey(string path)
+    {
+        var key = path.Split('/', 2, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+        return key;
     }
 }

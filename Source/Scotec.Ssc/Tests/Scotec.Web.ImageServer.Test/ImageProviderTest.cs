@@ -18,7 +18,7 @@ public class ImageProviderTest
     private IImageServer ImageServer { get; }
 
     [Theory]
-    //[InlineData("images/Logo.png")]
+    [InlineData("images/Logo.png")]
     [InlineData("scotecblog/Logo.png")]
     public async void GetImageAsync(string path)
     {

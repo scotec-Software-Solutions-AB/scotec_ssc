@@ -22,7 +22,8 @@ public class MagickImageProcessor : IImageProcessor
                 var newWidth = request.Width ?? image.Width * (request.Height / (decimal)image.Height);
                 var newHeight = request.Height ?? image.Height * (request.Width / (decimal)image.Width);
 
-                var copyRect = CalculateCopyRegion(image.BaseWidth, image.BaseHeight, newWidth!.Value, newHeight!.Value);
+                var copyRect =
+                    CalculateCopyRegion(image.BaseWidth, image.BaseHeight, newWidth!.Value, newHeight!.Value);
 
                 var region = new MagickGeometry(copyRect.X, copyRect.Y, copyRect.Width, copyRect.Height)
                 {
@@ -37,18 +38,13 @@ public class MagickImageProcessor : IImageProcessor
                 image.Resize(request.Width ?? image.BaseWidth, request.Height ?? image.BaseHeight);
             }
 
-
-            var convertedImage = new MemoryStream();
-            await image.WriteAsync(convertedImage);
-            convertedImage.Position = 0;
-
-            var response = new ImageResponse
+            var response = new ImageResponse(request.Path)
             {
-                Path = request.Path,
                 Format = Convert(image.Format),
                 Width = request.Width,
                 Height = request.Height,
-                Image = convertedImage
+                Image = image.ToByteArray(),
+                Timestamp = DateTime.UtcNow
             };
 
             return response;
@@ -80,9 +76,7 @@ public class MagickImageProcessor : IImageProcessor
     private MagickFormat Convert(ImageFormat format)
     {
         if (!Enum.TryParse(format.ToString(), true, out MagickFormat magickFormat))
-        {
             throw new ImageServerException($"Unsupported image format: {format}");
-        }
 
         return magickFormat;
     }
@@ -90,9 +84,7 @@ public class MagickImageProcessor : IImageProcessor
     private ImageFormat Convert(MagickFormat format)
     {
         if (!Enum.TryParse(format.ToString(), true, out ImageFormat imageFormat))
-        {
             throw new ImageServerException($"Unsupported image format: {format}");
-        }
 
         return imageFormat;
     }

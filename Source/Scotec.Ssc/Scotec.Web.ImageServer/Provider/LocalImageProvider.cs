@@ -18,7 +18,7 @@ public class LocalImageProvider : IImageProvider
 
             return Task.FromResult<Stream>(File.OpenRead(filePath));
         }
-        catch (Exception e) when ( e is not ImageServerException)
+        catch (Exception e) when (e is not ImageServerException)
         {
             throw new ImageServerException($"Could not load image. Path:{path}", e);
         }

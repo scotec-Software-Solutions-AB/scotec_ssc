@@ -19,8 +19,8 @@ public static class ImageServerMiddlewareExtensions
     public static IServiceCollection AddImageServer(this IServiceCollection services)
     {
         services.AddScoped<IImageServer, DefaultImageServer>()
-                .AddScoped<IImageProcessor, MagickImageProcessor>()
-                .AddSingleton<IImageCache, InMemoryImageCache>();
+            .AddScoped<IImageProcessor, MagickImageProcessor>()
+            .AddSingleton<IImageCache, InMemoryImageCache>();
 
         return services;
     }
@@ -33,14 +33,16 @@ public static class ImageServerMiddlewareExtensions
     }
 
 
-    public static IServiceCollection AddAzureBlobStorageImageProvider(this IServiceCollection services, string containerName)
+    public static IServiceCollection AddAzureBlobStorageImageProvider(this IServiceCollection services,
+        string containerName)
     {
         services.AddImageProvider<IImageProvider, AzureBlobStorageImageProvider>(containerName);
 
         return services;
     }
 
-    public static IServiceCollection AddImageProvider<TService, TImplementation>(this IServiceCollection services, string key)
+    public static IServiceCollection AddImageProvider<TService, TImplementation>(this IServiceCollection services,
+        string key)
         where TService : class, IImageProvider
         where TImplementation : class, TService
     {

@@ -1,14 +1,11 @@
-﻿using System.Data;
-using Scotec.Web.ImageServer.Caching;
+﻿using Scotec.Web.ImageServer.Caching;
 using Scotec.Web.ImageServer.Processor;
 using Scotec.Web.ImageServer.Provider;
-using System.IO;
 
 namespace Scotec.Web.ImageServer.Server;
 
 internal class DefaultImageServer : IImageServer
 {
-    private static readonly ManualResetEventSlim _lock = new(true, 1);
     private readonly IImageCache _imageCache;
     private readonly IImageProcessor _imageProcessor;
     private readonly IImageProviderFactory _imageProviderFactory;
@@ -33,7 +30,7 @@ internal class DefaultImageServer : IImageServer
             Format = GetImageFormat(path),
             Width = width,
             Height = height,
-            Path = path,
+            Path = path
         };
 
         return await GetImageAsync(request);
@@ -42,31 +39,23 @@ internal class DefaultImageServer : IImageServer
     public async Task<ImageResponse> GetImageAsync(ImageRequest imageRequest)
     {
         if (imageRequest.Format == ImageFormat.None)
-        {
             throw new ImageServerException($"Image format not supported. Path: {imageRequest.Path}");
-        }
 
         try
         {
-            _lock.Wait();
             if (!_imageCache.TryGetImage(imageRequest, out var imageResponse))
             {
                 var imageProvider = _imageProviderFactory.CreateImageProvider(imageRequest);
-                
+
                 imageResponse = await _imageProcessor.ProcessImageAsync(imageRequest, imageProvider);
                 imageResponse = _imageCache.AddImage(imageResponse);
             }
 
-            return imageResponse;
+            return imageResponse!;
         }
         catch (Exception e) when (e is not ImageServerException)
         {
             throw new ImageServerException($"Could not load image. Path:{imageRequest.Path}", e);
-        }
-
-        finally
-        {
-            _lock.Set();
         }
     }
 

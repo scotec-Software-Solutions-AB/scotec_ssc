@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Net;
+﻿using System.Net;
 using Microsoft.Extensions.Options;
 
 namespace Scotec.Web.ImageServer.Server;
@@ -31,14 +30,10 @@ public class ImageServerMiddleware
         }
 
         if (query.TryGetValue("width", out var widthString) && !string.IsNullOrEmpty(widthString))
-        {
             width = int.Parse(widthString!);
-        }
 
         if (query.TryGetValue("height", out var heightString) && !string.IsNullOrEmpty(heightString))
-        {
             height = int.Parse(heightString!);
-        }
 
 
         var imageData = await imageServer.GetImageAsync(path, width, height);
@@ -46,7 +41,6 @@ public class ImageServerMiddleware
         response.ContentType = $"image/{imageData.Format.ToString().ToLower()}";
         response.StatusCode = (int)HttpStatusCode.OK;
 
-        Debug.Assert(imageData.Image != null, "imageData.Image != null");
-        await imageData.Image.CopyToAsync(response.BodyWriter.AsStream());
+        await response.BodyWriter.WriteAsync(imageData.Image);
     }
 }

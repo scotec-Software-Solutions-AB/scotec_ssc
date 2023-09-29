@@ -4,11 +4,13 @@ namespace Scotec.Web.ImageServer.Provider;
 
 public class AzureBlobStorageImageProvider : IImageProvider
 {
-    private readonly string _connectionString; 
+    private readonly string _connectionString;
 
     public AzureBlobStorageImageProvider(IConfiguration configuration)
     {
-        _connectionString = configuration.GetSection($"ScotecImageServer:ImageProvider:{nameof(AzureBlobStorageImageProvider)}:ConnectionString").Get<string>();
+        _connectionString = configuration
+            .GetSection($"ScotecImageServer:ImageProvider:{nameof(AzureBlobStorageImageProvider)}:ConnectionString")
+            .Get<string>();
     }
 
     public async Task<Stream> GetImageAsync(string path)
@@ -21,7 +23,7 @@ public class AzureBlobStorageImageProvider : IImageProvider
             var containerClient = blobServiceClient.GetBlobContainerClient(parts[0]);
             var blobClient = containerClient.GetBlobClient(parts[1]);
             var response = await blobClient.DownloadAsync().ConfigureAwait(true);
-            
+
             return response.Value.Content;
         }
         catch (Exception e) when (e is not ImageServerException)
