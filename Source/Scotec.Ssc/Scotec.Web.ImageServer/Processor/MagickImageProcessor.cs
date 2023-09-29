@@ -44,7 +44,6 @@ public class MagickImageProcessor : IImageProcessor
                 Width = request.Width,
                 Height = request.Height,
                 Image = image.ToByteArray(),
-                Timestamp = DateTime.UtcNow
             };
 
             return response;

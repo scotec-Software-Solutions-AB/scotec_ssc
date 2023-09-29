@@ -51,6 +51,8 @@ internal class DefaultImageServer : IImageServer
                 imageResponse = _imageCache.AddImage(imageResponse);
             }
 
+            imageResponse!.LastAccess = DateTime.UtcNow;
+
             return imageResponse!;
         }
         catch (Exception e) when (e is not ImageServerException)

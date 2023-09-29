@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.Eventing.Reader;
+using System.Text;
 
 namespace Scotec.Web.ImageServer.Caching;
 
@@ -6,13 +7,32 @@ namespace Scotec.Web.ImageServer.Caching;
 public class InMemoryImageCache : IImageCache
 {
     private static readonly ManualResetEventSlim Lock = new(true, 1);
-    private readonly Dictionary<string, ImageResponse> _images = new();
+    private readonly Dictionary<string, ImageResponseWrapper> _images = new();
+    private readonly SortedList<ulong, ImageResponseWrapper> _sortedImages = new();
     private long _cacheSize;
+    private readonly long _maxSize = 1024 * 1024 * 1;
+    private ulong _nextTimestamp;
+
+    private class ImageResponseWrapper
+    {
+        public ulong Timestamp { get; set; }
+        public ImageResponse ImageResponse { get; }
+
+        public ImageResponseWrapper(ulong timestamp, ImageResponse imageResponse)
+        {
+            Timestamp = timestamp;
+            ImageResponse = imageResponse;
+        }
+
+
+    }
 
     public ImageResponse AddImage(ImageResponse imageResponse)
     {
         if (imageResponse.Format == ImageFormat.None)
+        {
             throw new ImageServerException($"Unsupported image format. Path:{imageResponse.Path}");
+        }
 
         Lock.Wait();
         try
@@ -21,11 +41,22 @@ public class InMemoryImageCache : IImageCache
 
             // Multiple threads may try to add the same image at the same time.
             // However, only the first writes the image into the cache.
-            // All other will be forgotten here.
-            if (_images.TryGetValue(key, out var cachedImageResponse)) return cachedImageResponse;
+            // All other will be ignored here.
+            if (_images.ContainsKey(key))
+            {
+                return imageResponse;
+            }
 
-            _images.Add(key, imageResponse);
+            var wrapper = new ImageResponseWrapper(_nextTimestamp, imageResponse);
+            _images.Add(key, wrapper);
+            _sortedImages.Add(_nextTimestamp, wrapper);
             _cacheSize += imageResponse.Image.Length;
+            ++_nextTimestamp;
+
+            if (_cacheSize > _maxSize)
+            {
+                RemoveOldest();
+            }
 
             return imageResponse;
         }
@@ -46,10 +77,19 @@ public class InMemoryImageCache : IImageCache
         Lock.Wait();
         try
         {
-            if (!_images.TryGetValue(BuildKey(imageRequest), out imageResponse)) return false;
+            if (!_images.TryGetValue(BuildKey(imageRequest), out var imageResponseWrapper))
+            {
+                return false;
+            }
 
-            // Refresh timestamp with each request.
-            imageResponse.Timestamp = DateTime.UtcNow;
+            if (_nextTimestamp > imageResponseWrapper.Timestamp + 1)
+            {
+                _sortedImages.Remove(imageResponseWrapper.Timestamp);
+                imageResponseWrapper.Timestamp = _nextTimestamp;
+                _sortedImages.Add(_nextTimestamp, imageResponseWrapper);
+                ++_nextTimestamp;
+            }               
+            imageResponse = imageResponseWrapper.ImageResponse;
 
             return true;
         }
@@ -69,10 +109,23 @@ public class InMemoryImageCache : IImageCache
         try
         {
             _images.Clear();
+            _sortedImages.Clear();
+            _nextTimestamp = 0;
         }
         finally
         {
             Lock.Set();
+        }
+    }
+
+    private void RemoveOldest()
+    {
+        while (_cacheSize > _maxSize)
+        {
+            var wrapper = _sortedImages[0];
+            _sortedImages.RemoveAt(0);
+            _images.Remove(wrapper.ImageResponse.Path);
+            _cacheSize -= wrapper.ImageResponse.Image.Length;
         }
     }
 

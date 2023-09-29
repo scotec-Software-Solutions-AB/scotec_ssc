@@ -7,6 +7,8 @@ public class ImageResponse
         Path = path;
         Format = ImageFormat.None;
         Image = Array.Empty<byte>();
+        Created = DateTime.UtcNow;
+        LastAccess = DateTime.UtcNow;
     }
 
     //public ImageResponse(ImageResponse response)
@@ -33,7 +35,10 @@ public class ImageResponse
 
     public Guid Id { get; set; }
 
-    public DateTime Timestamp { get; set; }
+    public DateTime LastAccess { get; set; }
+    public DateTime Created { get; }
+
+    public object CacheDate { get; set; }
 
     //private static Stream? CloneStream(Stream? stream)
     //{
