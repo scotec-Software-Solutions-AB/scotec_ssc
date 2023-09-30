@@ -10,7 +10,8 @@ public class InMemoryImageCache : IImageCache
     private readonly Dictionary<string, ImageResponseWrapper> _images = new();
     private readonly SortedList<ulong, ImageResponseWrapper> _sortedImages = new();
     private long _cacheSize;
-    private readonly long _maxSize = 1024 * 1024 * 1;
+    private readonly long _upperThreshold = 1024 * 1024 * 10;
+    private readonly long _lowerThreshold = 1024 * 1024 * 8;
     private ulong _nextTimestamp;
 
     private class ImageResponseWrapper
@@ -53,7 +54,7 @@ public class InMemoryImageCache : IImageCache
             _cacheSize += imageResponse.Image.Length;
             ++_nextTimestamp;
 
-            if (_cacheSize > _maxSize)
+            if (_cacheSize > _upperThreshold)
             {
                 RemoveOldest();
             }
@@ -73,11 +74,11 @@ public class InMemoryImageCache : IImageCache
     public bool TryGetImage(ImageRequest imageRequest, out ImageResponse? imageResponse)
     {
         imageResponse = null;
-
+        var key = BuildKey(imageRequest);
         Lock.Wait();
         try
         {
-            if (!_images.TryGetValue(BuildKey(imageRequest), out var imageResponseWrapper))
+            if (!_images.TryGetValue(key, out var imageResponseWrapper))
             {
                 return false;
             }
@@ -118,11 +119,31 @@ public class InMemoryImageCache : IImageCache
         }
     }
 
+    public void RemoveImage(ImageResponse imageResponse)
+    {
+        var key = BuildKey(imageResponse);
+
+        Lock.Wait();
+        try
+        {
+            if (_images.TryGetValue(key, out var imageResponseWrapper))
+            {
+                _images.Remove(key);
+                _sortedImages.Remove(imageResponseWrapper.Timestamp);
+                _cacheSize -= imageResponseWrapper.ImageResponse.Image.Length;
+            }
+        }
+        finally
+        {
+            Lock.Set();
+        }
+    }
+
     private void RemoveOldest()
     {
-        while (_cacheSize > _maxSize)
+        while (_cacheSize >= _lowerThreshold)
         {
-            var wrapper = _sortedImages[0];
+            var wrapper = _sortedImages.First().Value;
             _sortedImages.RemoveAt(0);
             _images.Remove(wrapper.ImageResponse.Path);
             _cacheSize -= wrapper.ImageResponse.Image.Length;

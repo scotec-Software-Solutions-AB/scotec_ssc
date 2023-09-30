@@ -38,7 +38,7 @@ public class ImageResponse
     public DateTime LastAccess { get; set; }
     public DateTime Created { get; }
 
-    public object CacheDate { get; set; }
+    public object Tag { get; set; }
 
     //private static Stream? CloneStream(Stream? stream)
     //{

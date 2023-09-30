@@ -7,4 +7,6 @@ public interface IImageCache
     public bool TryGetImage(ImageRequest imageRequest, out ImageResponse? imageResponse);
 
     void Clear();
+
+    void RemoveImage(ImageResponse imageResponse);
 }
