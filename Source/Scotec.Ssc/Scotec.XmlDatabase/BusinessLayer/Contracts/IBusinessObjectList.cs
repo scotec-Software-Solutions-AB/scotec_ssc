@@ -35,10 +35,9 @@ namespace Scotec.XMLDatabase
         /// </summary>
         /// <returns>The new element.</returns>
         IBusinessObjectType Create();
-
-
         T Create<T>() where T : IBusinessObjectType;
 
+        IBusinessObjectType Create(Type type);
 
         /// <summary>
         ///   Creates a new element at the given position. All further elements
