@@ -83,13 +83,7 @@ namespace Scotec.XMLDatabase
         {
             try
             {
-                var type = typeof( T );
-                var typeName = string.Format( "{0}.{1}Type", type.Namespace, type.Name.Substring( 1 ) );
-
-
-                var newObject = DataList.CreateDataObject( typeName );
-
-                return (T)BusinessSession.Factory.GetBusinessObject( newObject );
+                return (T)Create(typeof(T));
             }
             catch( DataException e )
             {
@@ -101,6 +95,25 @@ namespace Scotec.XMLDatabase
             }
         }
 
+        public TBusinessObjectType Create(Type type)
+        {
+            try
+            {
+                var typeName = string.Format("{0}.{1}Type", type.Namespace, type.Name.Substring(1));
+                
+                var newObject = DataList.CreateDataObject(typeName);
+
+                return (TBusinessObjectType)BusinessSession.Factory.GetBusinessObject(newObject);
+            }
+            catch (DataException e)
+            {
+                throw new BusinessException((EBusinessError)e.DataError, e.Message, e);
+            }
+            catch (Exception e)
+            {
+                throw new BusinessException(EBusinessError.Document, "Caught unhandled exception.", e);
+            }
+        }
 
         public TBusinessObjectType Create()
         {
