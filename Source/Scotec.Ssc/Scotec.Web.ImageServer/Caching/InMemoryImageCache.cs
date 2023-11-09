@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using System.Text;
+﻿using System.Text;
+using ImageMagick;
 
 namespace Scotec.Web.ImageServer.Caching;
 
@@ -8,24 +8,15 @@ public class InMemoryImageCache : IImageCache
 {
     private static readonly ManualResetEventSlim Lock = new(true, 1);
     private readonly Dictionary<string, ImageResponseWrapper> _images = new();
-    private readonly SortedList<ulong, ImageResponseWrapper> _sortedImages = new();
-    private long _cacheSize;
-    private readonly long _upperThreshold = 1024 * 1024 * 10;
     private readonly long _lowerThreshold = 1024 * 1024 * 8;
+    private readonly SortedList<ulong, ImageResponseWrapper> _sortedImages = new();
+    private readonly long _upperThreshold = 1024 * 1024 * 10;
+    private long _cacheSize;
     private ulong _nextTimestamp;
 
-    private class ImageResponseWrapper
+    public InMemoryImageCache(IConfiguration configuration)
     {
-        public ulong Timestamp { get; set; }
-        public ImageResponse ImageResponse { get; }
-
-        public ImageResponseWrapper(ulong timestamp, ImageResponse imageResponse)
-        {
-            Timestamp = timestamp;
-            ImageResponse = imageResponse;
-        }
-
-
+        
     }
 
     public ImageResponse AddImage(ImageResponse imageResponse)
@@ -35,11 +26,11 @@ public class InMemoryImageCache : IImageCache
             throw new ImageServerException($"Unsupported image format. Path:{imageResponse.Path}");
         }
 
+        var key = BuildKey(imageResponse);
+
         Lock.Wait();
         try
         {
-            var key = BuildKey(imageResponse);
-
             // Multiple threads may try to add the same image at the same time.
             // However, only the first writes the image into the cache.
             // All other will be ignored here.
@@ -89,7 +80,8 @@ public class InMemoryImageCache : IImageCache
                 imageResponseWrapper.Timestamp = _nextTimestamp;
                 _sortedImages.Add(_nextTimestamp, imageResponseWrapper);
                 ++_nextTimestamp;
-            }               
+            }
+
             imageResponse = imageResponseWrapper.ImageResponse;
 
             return true;
@@ -168,5 +160,17 @@ public class InMemoryImageCache : IImageCache
         builder.Append(request.Height);
 
         return builder.ToString();
+    }
+
+    private class ImageResponseWrapper
+    {
+        public ImageResponseWrapper(ulong timestamp, ImageResponse imageResponse)
+        {
+            Timestamp = timestamp;
+            ImageResponse = imageResponse;
+        }
+
+        public ulong Timestamp { get; set; }
+        public ImageResponse ImageResponse { get; }
     }
 }

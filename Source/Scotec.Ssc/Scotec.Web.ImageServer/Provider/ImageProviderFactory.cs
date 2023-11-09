@@ -1,4 +1,6 @@
-﻿namespace Scotec.Web.ImageServer.Provider;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Scotec.Web.ImageServer.Provider;
 
 public class ImageProviderFactory : IImageProviderFactory
 {
@@ -14,10 +16,11 @@ public class ImageProviderFactory : IImageProviderFactory
     public IImageProvider CreateImageProvider(ImageRequest request)
     {
         var key = GetImageProviderKey(request.Path);
-        if (key != null && _descriptors.TryGetValue(key, out var type))
-            return (IImageProvider)_serviceProvider.GetService(type)!;
+        return _serviceProvider.GetRequiredKeyedService<IImageProvider>(key);
+        //if (key != null && _descriptors.TryGetValue(key, out var type))
+        //    return (IImageProvider)_serviceProvider.GetService(type)!;
 
-        throw new ImageServerException($"Could not load image provider for file '{request.Path}'");
+        //throw new ImageServerException($"Could not load image provider for file '{request.Path}'");
     }
 
     public bool HasImageProvider(string path)

@@ -47,8 +47,10 @@ public static class ImageServerMiddlewareExtensions
         where TImplementation : class, TService
     {
         services.TryAddScoped<IImageProviderFactory, ImageProviderFactory>();
-        services.TryAddScoped<TImplementation>();
-        services.AddSingleton(new ImageProviderDescriptor(key, typeof(TImplementation)));
+        //services.TryAddScoped<TImplementation>();
+        //services.AddSingleton(new ImageProviderDescriptor(key, typeof(TImplementation)));
+        services.TryAddKeyedScoped<TService, TImplementation>(key);
+        services.Configure()
         return services;
     }
 }

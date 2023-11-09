@@ -39,6 +39,7 @@
 	<ItemGroup>
 	  <PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
 	  <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.3.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4" />
 	</ItemGroup>
 
 	<ItemGroup>
