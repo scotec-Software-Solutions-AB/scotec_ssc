@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
@@ -62,6 +63,15 @@ public class UrlLocalizationAwareWebSocketsMiddleware
 
         var nextAction = segments switch
         {
+            string[] { Length: > 0 } x
+                when x.Contains("_framework")
+                => _next,
+
+            //string[] { Length: > 0 } x
+            //    when x.Contains("_framework")
+            //    => (RequestDelegate)SetCulture,
+
+
             string[] { Length: 2 } x
                 when x[0] == "_blazor" && x[1] == "negotiate"
                                        && httpContext.Request.Method == "POST"
@@ -100,8 +110,12 @@ public class UrlLocalizationAwareWebSocketsMiddleware
 
         if (!string.IsNullOrEmpty(currentCulture))
         {
+
             var culture = new CultureInfo(currentCulture);
-            CultureInfo.CurrentCulture = culture;
+
+            CultureInfo.CurrentCulture.ClearCachedData();
+            CultureInfo.CurrentCulture.ClearCachedData();
+            CultureInfo.CurrentUICulture = culture;
             CultureInfo.CurrentUICulture = culture;
         }
 
@@ -192,6 +206,8 @@ public class UrlLocalizationAwareWebSocketsMiddleware
 
         // Set the culture
         var culture = new CultureInfo(currentCulture);
+        CultureInfo.CurrentCulture.ClearCachedData();
+        CultureInfo.CurrentUICulture.ClearCachedData();
         CultureInfo.CurrentCulture = culture;
         CultureInfo.CurrentUICulture = culture;
 
@@ -214,6 +230,11 @@ public class UrlLocalizationAwareWebSocketsMiddleware
                 .Deserialize<BlazorNegociateBody>(responseBodyContent);
             CultureByConnectionTokens[root!.ConnectionToken] = currentCulture;
         }
+
+        var requestCulture = _options.Value.DefaultRequestCulture;
+        var provider = _options.Value.RequestCultureProviders.First();
+        //var requestCulture = new ProviderCultureResult(currentCulture, currentCulture);
+        httpContext.Features.Set<IRequestCultureFeature>(new RequestCultureFeature(requestCulture, provider));
 
         // Rewind the response body as if we hadn't upwrap-it
         await responseBody.CopyToAsync(originalResponseBodyStream);
