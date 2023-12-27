@@ -41,7 +41,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
     ///     The delegate representing the remaining middleware in the request pipeline.
     /// </param>
     /// <param name="options">Language options</param>
-    public UrlLocalizationAwareWebSocketsMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
+    public UrlLocalizationAwareWebSocketsMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options, ILoggerFactory loggerFactory)
     {
         _next = next;
         _options = options;
@@ -61,43 +61,45 @@ public class UrlLocalizationAwareWebSocketsMiddleware
             .Value!
             .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-        var nextAction = segments switch
-        {
-            string[] { Length: > 0 } x
-                when x.Contains("_framework")
-                => _next,
 
-            //string[] { Length: > 0 } x
-            //    when x.Contains("_framework")
-            //    => (RequestDelegate)SetCulture,
+        await _next(httpContext);
+        //var nextAction = segments switch
+        //{
+        //    string[] { Length: > 0 } x
+        //        when x.Contains("_framework")
+        //        => _next,
+
+        //    //string[] { Length: > 0 } x
+        //    //    when x.Contains("_framework")
+        //    //    => (RequestDelegate)SetCulture,
 
 
-            string[] { Length: 2 } x
-                when x[0] == "_blazor" && x[1] == "negotiate"
-                                       && httpContext.Request.Method == "POST"
-                => BlazorNegotiate,
+        //    string[] { Length: 2 } x
+        //        when x[0] == "_blazor" && x[1] == "negotiate"
+        //                               && httpContext.Request.Method == "POST"
+        //        => BlazorNegotiate,
 
-            string[] { Length: 1 } x
-                when x[0] == "_blazor"
-                     && httpContext.Request.QueryString.HasValue
-                     && httpContext.Request.Method == "GET"
-                => BlazorHeartbeat,
+        //    string[] { Length: 1 } x
+        //        when x[0] == "_blazor"
+        //             && httpContext.Request.QueryString.HasValue
+        //             && httpContext.Request.Method == "GET"
+        //        => BlazorHeartbeat,
 
-            string[] { Length: 0 } x
-                => Redirect,
+        //    string[] { Length: 0 } x
+        //        => Redirect,
 
-            string[] { Length: > 0 } x
-                when x[0] != "_blazor"
-                     && !_options.Value.SupportedUICultures!.Select(info => info.Name)
-                         .Contains(x[0])
-                => Redirect,
+        //    string[] { Length: > 0 } x
+        //        when x[0] != "_blazor"
+        //             && !_options.Value.SupportedUICultures!.Select(info => info.Name)
+        //                 .Contains(x[0])
+        //        => Redirect,
 
-            //_ => _next
-            _ => (RequestDelegate)SetCulture
-        };
+        //    //_ => _next
+        //    _ => (RequestDelegate)SetCulture
+        //};
 
-        await nextAction(httpContext);
-        var result = httpContext.Response.StatusCode;
+        //await nextAction(httpContext);
+        //var result = httpContext.Response.StatusCode;
     }
 
     private async Task SetCulture(HttpContext httpContext)
