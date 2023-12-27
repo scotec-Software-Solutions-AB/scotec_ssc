@@ -86,20 +86,20 @@ public class UrlLocalizationAwareWebSocketsMiddleware
         //        => BlazorHeartbeat,
 
         //    string[] { Length: 0 } x
-        //        => Redirect,
+        //        => _next, //Redirect,
 
-        //    string[] { Length: > 0 } x
-        //        when x[0] != "_blazor"
-        //             && !_options.Value.SupportedUICultures!.Select(info => info.Name)
-        //                 .Contains(x[0])
-        //        => Redirect,
+        //    //string[] { Length: > 0 } x
+        //    //    when x[0] != "_blazor"
+        //    //         && !_options.Value.SupportedUICultures!.Select(info => info.Name)
+        //    //             .Contains(x[0])
+        //    //    => Redirect,
 
-        //    //_ => _next
-        //    _ => (RequestDelegate)SetCulture
+        //    _ => _next
+        //    //_ => (RequestDelegate)SetCulture
         //};
 
         //await nextAction(httpContext);
-        //var result = httpContext.Response.StatusCode;
+        var result = httpContext.Response.StatusCode;
     }
 
     private async Task SetCulture(HttpContext httpContext)
