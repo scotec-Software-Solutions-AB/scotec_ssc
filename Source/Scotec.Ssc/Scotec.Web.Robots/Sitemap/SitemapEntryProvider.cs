@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using Scotec.Extensions.Linq;
+using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 
 namespace Scotec.Web.Robots.Sitemap;
 
@@ -12,9 +15,13 @@ public class SitemapEntryProvider : ISitemapEntryProvider
         _options = options;
     }
 
-    public IEnumerable<ISitemapEntry> Entries => CollectSitemapEntries();
+    public IEnumerable<ISitemapEntry> Entries => CollectSitemapEntries(CultureInfo.InvariantCulture);
+    public IEnumerable<ISitemapEntry> GetEntries(CultureInfo culture)
+    {
+        return CollectSitemapEntries(culture);
+    }
 
-    private IEnumerable<ISitemapEntry> CollectSitemapEntries()
+    private IEnumerable<ISitemapEntry> CollectSitemapEntries(CultureInfo culture)
     {
         var pages = GetPages();
 
@@ -26,6 +33,12 @@ public class SitemapEntryProvider : ISitemapEntryProvider
             var route = page.GetCustomAttribute<RouteAttribute>(true)?.Template;
             if (route == null)
                 continue;
+
+
+            if(!culture.Equals(CultureInfo.InvariantCulture))
+            {
+                route = route.Replace("{language}", culture.Name);
+            }
 
             var changeFrequency = page.GetCustomAttribute<ChangeFrequencyAttribute>(true)?.ChangeFrequency;
             var lastModified = page.GetCustomAttribute<LastModifiedAttribute>(true)?.AsDateTime();

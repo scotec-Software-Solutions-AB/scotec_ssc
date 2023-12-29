@@ -40,17 +40,17 @@ public class SitemapProvider : ISitemapProvider
 
         if (_options.SupportedCultures.Contains(culture))
         {
-            _entryProviders.SelectMany(provider => provider.Entries)
+            _entryProviders.SelectMany(provider => provider.GetEntries(culture))
                            .ForAll(entry =>
                            {
                                var url = new XElement(xmlNamespace + "url");
                                urlSet.Add(url);
 
-                               var path = culture.Equals(CultureInfo.InvariantCulture)
-                                   ? entry.Location
-                                   : entry.Location.Replace("{language}", culture.Name);
+                               //var path = culture.Equals(CultureInfo.InvariantCulture)
+                               //    ? entry.Location
+                               //    : entry.Location.Replace("{language}", culture.Name);
 
-                               url.Add(new XElement(xmlNamespace + "loc", _options.Protocoll + host + path));
+                               url.Add(new XElement(xmlNamespace + "loc", _options.Protocoll + host + entry.Location));
                                if (entry.LastModified != null)
                                    url.Add(new XElement(xmlNamespace + "lastmod", entry.LastModified.Value.ToString("yyyy-MM-dd")));
                                if (entry.ChangeFrequency != null)
