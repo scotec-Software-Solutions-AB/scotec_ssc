@@ -1,9 +1,5 @@
-﻿using System.Collections.Concurrent;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.Json;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
 namespace Scotec.Blazor.UrlRequestCultureProvider;
@@ -19,18 +15,6 @@ namespace Scotec.Blazor.UrlRequestCultureProvider;
 /// </remarks>
 public class UrlLocalizationAwareWebSocketsMiddleware
 {
-    /*
-     * Localization Extensibility
-     * https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization-extensibility?view=aspnetcore-3.1
-     *
-     * Write custom ASP.NET Core middleware
-     * https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write?view=aspnetcore-3.1
-     *
-     *
-     * https://docs.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios?view=aspnetcore-3.1#blazor-server-circuit-handler
-     */
-
-    protected internal static readonly ConcurrentDictionary<string, string> CultureByConnectionTokens = new();
     private readonly RequestDelegate _next;
     private readonly IOptions<RequestLocalizationOptions> _options;
 
@@ -41,7 +25,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
     ///     The delegate representing the remaining middleware in the request pipeline.
     /// </param>
     /// <param name="options">Language options</param>
-    public UrlLocalizationAwareWebSocketsMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options, ILoggerFactory loggerFactory)
+    public UrlLocalizationAwareWebSocketsMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
     {
         _next = next;
         _options = options;
@@ -62,72 +46,41 @@ public class UrlLocalizationAwareWebSocketsMiddleware
             .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
 
-        await _next(httpContext);
-        //var nextAction = segments switch
-        //{
-        //    string[] { Length: > 0 } x
-        //        when x.Contains("_framework")
-        //        => _next,
-
-        //    //string[] { Length: > 0 } x
-        //    //    when x.Contains("_framework")
-        //    //    => (RequestDelegate)SetCulture,
-
-
-        //    string[] { Length: 2 } x
-        //        when x[0] == "_blazor" && x[1] == "negotiate"
-        //                               && httpContext.Request.Method == "POST"
-        //        => BlazorNegotiate,
-
-        //    string[] { Length: 1 } x
-        //        when x[0] == "_blazor"
-        //             && httpContext.Request.QueryString.HasValue
-        //             && httpContext.Request.Method == "GET"
-        //        => BlazorHeartbeat,
-
-        //    string[] { Length: 0 } x
-        //        => _next, //Redirect,
-
-        //    //string[] { Length: > 0 } x
-        //    //    when x[0] != "_blazor"
-        //    //         && !_options.Value.SupportedUICultures!.Select(info => info.Name)
-        //    //             .Contains(x[0])
-        //    //    => Redirect,
-
-        //    _ => _next
-        //    //_ => (RequestDelegate)SetCulture
-        //};
-
-        //await nextAction(httpContext);
-        var result = httpContext.Response.StatusCode;
-    }
-
-    private async Task SetCulture(HttpContext httpContext)
-    {
-        var currentCulture = httpContext.GetCultureFromRequest();
-        if (string.IsNullOrEmpty(currentCulture))
+        var nextAction = segments switch
         {
-            currentCulture = httpContext.GetCultureFromReferer();
-        }
+            // Files under the path _framework are not handled by the StaticFileMiddleware.
+            // However, we won't handle such files here as well.
+            string[] { Length: > 0 } x
+                when x.Contains("_framework")
+                => _next,
 
-        if (!string.IsNullOrEmpty(currentCulture))
-        {
+            string[] { Length: 2 } x
+                when x[0] == "_blazor" && x[1] == "negotiate"
+                                       && httpContext.Request.Method == "POST"
+                => BlazorNegotiate,
 
-            var culture = new CultureInfo(currentCulture);
+            // No path provided, so we need to redirect to a language specific uri such /de or /en. 
+            string[] { Length: 0 } x
+                => Redirect,
 
-            CultureInfo.CurrentCulture.ClearCachedData();
-            CultureInfo.CurrentCulture.ClearCachedData();
-            CultureInfo.CurrentUICulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-        }
+            // Check if the path points to a supported language. If not, redirect.
+            string[] { Length: > 0 } x
+                when x[0] != "_blazor"
+                     && !_options.Value.SupportedUICultures!.Select(info => info.Name)
+                         .Contains(x[0])
+                => Redirect,
 
-        await _next(httpContext);
+            // Nothing to do here.
+            _ => _next
+        };
+
+        await nextAction(httpContext);
     }
 
     private Task Redirect(HttpContext context)
     {
         //Get preferred language
-        var preferredLanguage = GetPreferredLanguage(context.Request.Headers.AcceptLanguage);
+        var preferredLanguage = GetPreferredLanguage(context.Request.Headers.AcceptLanguage!);
 
         var segments = context
             .Request
@@ -136,23 +89,14 @@ public class UrlLocalizationAwareWebSocketsMiddleware
             .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (segments.Length > 0 && segments[0].Length == 0) // IsValidCulture(segments[0]))
-        {
             segments[0] = preferredLanguage.Name;
-        }
         else
-        {
             segments = new[] { preferredLanguage.Name }.Concat(segments).ToArray();
-        }
 
         var protocol = context.Request.IsHttps ? "https" : "http";
         context.Response.Redirect($"{protocol}://{context.Request.Host}/{string.Join('/', segments)}", true);
 
         return Task.CompletedTask;
-    }
-
-    private bool IsValidCulture(string culture)
-    {
-        return new CultureInfo("culture").Name != "";
     }
 
     private CultureInfo GetPreferredLanguage(string acceptLanguage)
@@ -174,44 +118,12 @@ public class UrlLocalizationAwareWebSocketsMiddleware
     }
 
     /// <summary>
-    ///     On blazor heartbeat, set the culture based on the dictionary entry created in
-    ///     <see cref="BlazorNegotiate(HttpContext httpContext)" />.
-    /// </summary>
-    private async Task BlazorHeartbeat(HttpContext httpContext)
-    {
-        var components = QueryHelpers.ParseQuery(httpContext.Request.QueryString.Value);
-        var connectionToken = components["id"];
-        var currentCulture = CultureByConnectionTokens[connectionToken];
-
-        var culture = new CultureInfo(currentCulture);
-        CultureInfo.CurrentCulture = culture;
-        CultureInfo.CurrentUICulture = culture;
-
-        await _next(httpContext);
-
-        if (httpContext.Response.StatusCode == StatusCodes.Status101SwitchingProtocols)
-        {
-            // When "closing" the SignalR connection (websocket) clean-up the memory by removing the
-            // token from the dictionary.
-            CultureByConnectionTokens.TryRemove(connectionToken, out var _);
-        }
-    }
-
-    /// <summary>
-    ///     On blazor negotiate, set the culture based on the referer and save it to a
-    ///     dictionary to be used by the Blazor heartbeat
-    ///     <see cref="BlazorHeartbeat(HttpContext)" />.
+    ///     On blazor negotiate, set the culture based on the referer and save it to a dictionary.
     /// </summary>
     private async Task BlazorNegotiate(HttpContext httpContext)
     {
         var currentCulture = httpContext.GetCultureFromReferer();
-
-        // Set the culture
-        var culture = new CultureInfo(currentCulture);
-        CultureInfo.CurrentCulture.ClearCachedData();
-        CultureInfo.CurrentUICulture.ClearCachedData();
-        CultureInfo.CurrentCulture = culture;
-        CultureInfo.CurrentUICulture = culture;
+        if (currentCulture == null) return;
 
         // Enable the rewinding of the body after the action has been called
         httpContext.Request.EnableBuffering();
@@ -223,23 +135,20 @@ public class UrlLocalizationAwareWebSocketsMiddleware
 
         await _next(httpContext);
 
-        // Temporary unwarp the response body to get the connectionToken
+        // Temporary unwrap the response body to get the connectionToken
         var responseBodyContent = await ReadResponseBodyAsync(httpContext.Response);
 
         if (httpContext.Response.ContentType == "application/json")
         {
             var root = JsonSerializer
-                .Deserialize<BlazorNegociateBody>(responseBodyContent);
-            CultureByConnectionTokens[root!.ConnectionToken] = currentCulture;
+                .Deserialize<BlazorNegotiateBody>(responseBodyContent);
+            CultureByConnectionTokens.AddToken(root!.ConnectionToken, currentCulture);
         }
 
-        var requestCulture = _options.Value.DefaultRequestCulture;
-        var provider = _options.Value.RequestCultureProviders.First();
-        //var requestCulture = new ProviderCultureResult(currentCulture, currentCulture);
-        httpContext.Features.Set<IRequestCultureFeature>(new RequestCultureFeature(requestCulture, provider));
 
         // Rewind the response body as if we hadn't upwrap-it
         await responseBody.CopyToAsync(originalResponseBodyStream);
+        return;
 
         static async Task<string> ReadResponseBodyAsync(HttpResponse response)
         {
