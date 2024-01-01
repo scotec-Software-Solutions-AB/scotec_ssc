@@ -40,11 +40,10 @@ public class UrlLocalizationAwareWebSocketsMiddleware
     public async Task InvokeAsync(HttpContext httpContext)
     {
         var segments = httpContext
-            .Request
-            .Path
-            .Value!
-            .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-
+                       .Request
+                       .Path
+                       .Value!
+                       .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         var nextAction = segments switch
         {
@@ -67,7 +66,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
             string[] { Length: > 0 } x
                 when x[0] != "_blazor"
                      && !_options.Value.SupportedUICultures!.Select(info => info.Name)
-                         .Contains(x[0])
+                                 .Contains(x[0])
                 => Redirect,
 
             // Nothing to do here.
@@ -83,15 +82,19 @@ public class UrlLocalizationAwareWebSocketsMiddleware
         var preferredLanguage = GetPreferredLanguage(context.Request.Headers.AcceptLanguage!);
 
         var segments = context
-            .Request
-            .Path
-            .Value!
-            .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                       .Request
+                       .Path
+                       .Value!
+                       .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (segments.Length > 0 && segments[0].Length == 0) // IsValidCulture(segments[0]))
+        {
             segments[0] = preferredLanguage.Name;
+        }
         else
+        {
             segments = new[] { preferredLanguage.Name }.Concat(segments).ToArray();
+        }
 
         var protocol = context.Request.IsHttps ? "https" : "http";
         context.Response.Redirect($"{protocol}://{context.Request.Host}/{string.Join('/', segments)}", true);
@@ -105,11 +108,11 @@ public class UrlLocalizationAwareWebSocketsMiddleware
         {
             var supportedLanguages = _options.Value.SupportedCultures;
             var culture = acceptLanguage.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(language => new AcceptLanguage(language))
-                .OrderByDescending(language => language.Quality)
-                .Select(language => language.Culture)
-                .FirstOrDefault(culture => supportedLanguages!.Contains(culture),
-                    _options.Value.DefaultRequestCulture.UICulture);
+                                        .Select(language => new AcceptLanguage(language))
+                                        .OrderByDescending(language => language.Quality)
+                                        .Select(language => language.Culture)
+                                        .FirstOrDefault(culture => supportedLanguages!.Contains(culture),
+                                            _options.Value.DefaultRequestCulture.UICulture);
 
             return culture;
         }
@@ -123,7 +126,10 @@ public class UrlLocalizationAwareWebSocketsMiddleware
     private async Task BlazorNegotiate(HttpContext httpContext)
     {
         var currentCulture = httpContext.GetCultureFromReferer();
-        if (currentCulture == null) return;
+        if (currentCulture == null)
+        {
+            return;
+        }
 
         // Enable the rewinding of the body after the action has been called
         httpContext.Request.EnableBuffering();
@@ -144,7 +150,6 @@ public class UrlLocalizationAwareWebSocketsMiddleware
                 .Deserialize<BlazorNegotiateBody>(responseBodyContent);
             CultureByConnectionTokens.AddToken(root!.ConnectionToken, currentCulture);
         }
-
 
         // Rewind the response body as if we hadn't upwrap-it
         await responseBody.CopyToAsync(originalResponseBodyStream);

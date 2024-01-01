@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Scotec.Math.Units" Version="0.9.2" />
-    <PackageReference Include="Scotec.XmlDatabase" Version="0.9.2" />
+    <PackageReference Include="Scotec.Math.Units" Version="1.0.0" />
+    <PackageReference Include="Scotec.XmlDatabase" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

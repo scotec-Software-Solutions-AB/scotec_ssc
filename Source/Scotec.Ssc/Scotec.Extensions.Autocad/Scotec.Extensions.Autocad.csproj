@@ -35,8 +35,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="AutoCAD.NET.Core" Version="24.2.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+	  <PackageReference Include="AutoCAD.NET.Core" Version="24.3.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>

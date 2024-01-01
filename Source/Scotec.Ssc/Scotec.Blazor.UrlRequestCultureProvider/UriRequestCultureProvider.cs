@@ -8,7 +8,7 @@ public class UriRequestCultureProvider : RequestCultureProvider
 {
     public UriRequestCultureProvider(IOptions<RequestLocalizationOptions> options)
     {
-        Options = options?.Value;
+        Options = options.Value;
     }
 
     public override Task<ProviderCultureResult?> DetermineProviderCultureResult(HttpContext httpContext)
@@ -34,7 +34,7 @@ public class UriRequestCultureProvider : RequestCultureProvider
                                  culture.TwoLetterISOLanguageName == segments[0])
                              ?? Thread.CurrentThread.CurrentUICulture;
 
-        if (requestCulture == null) 
+        if (requestCulture == null)
             return Task.FromResult<ProviderCultureResult?>(default);
         return Task.FromResult(new ProviderCultureResult(requestCulture.Name, requestCulture.Name))!;
     }
