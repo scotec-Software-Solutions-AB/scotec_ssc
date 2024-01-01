@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+	  <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
 	<Nullable>disable</Nullable>
 	<LangVersion>latest</LangVersion>
@@ -31,10 +31,10 @@
 
 	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
-		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt"/>
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="AWSSDK.S3" Version="3.7.101.45" />
+	  <PackageReference Include="AWSSDK.S3" Version="3.7.305.3" />
 	</ItemGroup>
 </Project>

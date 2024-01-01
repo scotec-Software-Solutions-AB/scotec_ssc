@@ -2,7 +2,7 @@
 
 namespace Scotec.Blazor.UrlRequestCultureProvider;
 
-public class BlazorNegociateBody
+public class BlazorNegotiateBody
 {
     [JsonPropertyName("negotiateVersion")] public int NegotiateVersion { get; set; }
 
