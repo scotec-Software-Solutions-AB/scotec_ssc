@@ -1,6 +1,13 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=4AEFEEFB3D4F41408A96492E3C5A0EAC/AbsolutePath/@EntryValue">D:\Projects\scotec\scotec_ssc\Scotec.Scc StyleGuide.DotSettings</s:String>
-	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=4AEFEEFB3D4F41408A96492E3C5A0EAC/RelativePath/@EntryValue">..\..\..\Scotec.Scc StyleGuide.DotSettings</s:String>
-	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=4AEFEEFB3D4F41408A96492E3C5A0EAC/@KeyIndexDefined">True</s:Boolean>
-	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File4AEFEEFB3D4F41408A96492E3C5A0EAC/@KeyIndexDefined">True</s:Boolean>
-	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File4AEFEEFB3D4F41408A96492E3C5A0EAC/RelativePriority/@EntryValue">1</s:Double></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=3413388182AA4044A1C026BAF27ED507/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=3413388182AA4044A1C026BAF27ED507/AbsolutePath/@EntryValue">C:\Projects\scotec\scotec_ssc\Scotec StyleGuide.DotSettings</s:String>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=3413388182AA4044A1C026BAF27ED507/RelativePath/@EntryValue">..\..\..\Scotec StyleGuide.DotSettings</s:String>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File3413388182AA4044A1C026BAF27ED507/@KeyIndexDefined">True</s:Boolean>
+	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File3413388182AA4044A1C026BAF27ED507/RelativePriority/@EntryValue">1</s:Double>
+	
+	
+	
+	
+	
+	
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Scotec/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

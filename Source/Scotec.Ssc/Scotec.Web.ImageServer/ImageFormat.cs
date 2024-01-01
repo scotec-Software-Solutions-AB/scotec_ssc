@@ -1,19 +1,18 @@
-﻿namespace Scotec.Web.ImageServer
+﻿namespace Scotec.Web.ImageServer;
+
+public enum ImageFormat
 {
-    public enum ImageFormat
-    {
-        None,
+    None,
 
-        Bmp,
-        
-        Gif,
+    Bmp,
 
-        Ico,
-        
-        Jpeg,
-        
-        Png,
+    Gif,
 
-        Webp
-    }
+    Ico,
+
+    Jpeg,
+
+    Png,
+
+    Webp
 }

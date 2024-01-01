@@ -1,13 +1,12 @@
-﻿namespace Scotec.Web.ImageServer
+﻿namespace Scotec.Web.ImageServer;
+
+public struct ImageRequest
 {
-    public struct ImageRequest
-    {
-        public string Path { get; init; }
+    public string Path { get; init; }
 
-        public int? Width { get; init; }
+    public int? Width { get; init; }
 
-        public int? Height { get; init; }
+    public int? Height { get; init; }
 
-        public ImageFormat? Format { get; init; } 
-    }
+    public ImageFormat? Format { get; init; }
 }

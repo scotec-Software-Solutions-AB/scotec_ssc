@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
 
@@ -15,11 +15,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="bunit" Version="1.16.2" />
-	  <PackageReference Include="Markdig" Version="0.31.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-	  <PackageReference Include="xunit" Version="2.5.0" />
+	  <PackageReference Include="bunit" Version="1.26.64" />
+	  <PackageReference Include="Markdig" Version="0.34.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+	  <PackageReference Include="xunit" Version="2.6.4" />
 	</ItemGroup>
 
 	<ItemGroup>

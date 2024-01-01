@@ -1,54 +1,57 @@
 ﻿using System.Drawing;
 using ImageMagick;
+using Scotec.Web.ImageServer.Provider;
 
-namespace Scotec.Web.ImageServer;
+namespace Scotec.Web.ImageServer.Processor;
 
 public class MagickImageProcessor : IImageProcessor
 {
     public async Task<ImageResponse> ProcessImageAsync(ImageRequest request, IImageProvider imageProvider)
     {
-        var source = imageProvider.GetImage(request.Path);
-
-        var format = GetImageType(request.Path);
-        using var image = new MagickImage(source, format);
-        image.Format = request.Format.HasValue ? Convert(request.Format.Value) : format;
-
-        if ((request.Width != null && request.Width != image.Width) ||
-            (request.Height != null && request.Height != image.Height))
+        try
         {
-            var newWidth = request.Width ?? image.Width * (request.Height / (decimal)image.Height);
-            var newHeight = request.Height ?? image.Height * (request.Width / (decimal)image.Width);
+            var source = await imageProvider.GetImageAsync(request.Path);
+            var format = GetImageType(request.Path);
 
-            var copyRect = CalculateCopyRegion(image.BaseWidth, image.BaseHeight, newWidth!.Value, newHeight!.Value);
+            using var image = new MagickImage(source, format);
+            image.Format = request.Format.HasValue ? Convert(request.Format.Value) : format;
 
-            var region = new MagickGeometry(copyRect.X, copyRect.Y, copyRect.Width, copyRect.Height)
+            if ((request.Width != null && request.Width != image.Width) ||
+                (request.Height != null && request.Height != image.Height))
             {
-                IgnoreAspectRatio = true,
-                Greater = true,
-                Less = true
+                var newWidth = request.Width ?? image.Width * (request.Height / (decimal)image.Height);
+                var newHeight = request.Height ?? image.Height * (request.Width / (decimal)image.Width);
+
+                var copyRect =
+                    CalculateCopyRegion(image.BaseWidth, image.BaseHeight, newWidth!.Value, newHeight!.Value);
+
+                var region = new MagickGeometry(copyRect.X, copyRect.Y, copyRect.Width, copyRect.Height)
+                {
+                    IgnoreAspectRatio = true,
+                    Greater = true,
+                    Less = true
+                };
+
+                image.Crop(region);
+                image.Density = new Density(96, 96);
+
+                image.Resize(request.Width ?? image.BaseWidth, request.Height ?? image.BaseHeight);
+            }
+
+            var response = new ImageResponse(request.Path)
+            {
+                Format = Convert(image.Format),
+                Width = request.Width,
+                Height = request.Height,
+                Image = image.ToByteArray(),
             };
 
-            image.Crop(region);
-            image.Density = new Density(96, 96);
-
-            image.Resize(request.Width ?? image.BaseWidth, request.Height ?? image.BaseHeight);
+            return response;
         }
-
-
-        var convertedImage = new MemoryStream();
-        await image.WriteAsync(convertedImage);
-        convertedImage.Position = 0;
-
-        var response = new ImageResponse
+        catch (Exception e) when (e is not ImageServerException)
         {
-            Path = request.Path,
-            Format = Convert(image.Format),
-            Width = request.Width,
-            Height = request.Height,
-            Image = convertedImage
-        };
-
-        return response;
+            throw new ImageServerException($"Error while processing image. Path:{request.Path}", e);
+        }
     }
 
     private static MagickFormat GetImageType(string path)
@@ -64,7 +67,7 @@ public class MagickImageProcessor : IImageProcessor
             ".ico" => MagickFormat.Ico,
             ".png" => MagickFormat.Png,
             ".webp" => MagickFormat.WebP,
-            _ => throw new ArgumentException($"Unsupported file format: {extension}")
+            _ => throw new ImageServerException($"Unsupported file format: {extension}")
         };
     }
 
@@ -72,9 +75,7 @@ public class MagickImageProcessor : IImageProcessor
     private MagickFormat Convert(ImageFormat format)
     {
         if (!Enum.TryParse(format.ToString(), true, out MagickFormat magickFormat))
-        {
-            throw new ArgumentException($"Unsupported image format: {format}");
-        }
+            throw new ImageServerException($"Unsupported image format: {format}");
 
         return magickFormat;
     }
@@ -82,9 +83,7 @@ public class MagickImageProcessor : IImageProcessor
     private ImageFormat Convert(MagickFormat format)
     {
         if (!Enum.TryParse(format.ToString(), true, out ImageFormat imageFormat))
-        {
-            throw new ArgumentException($"Unsupported image format: {format}");
-        }
+            throw new ImageServerException($"Unsupported image format: {format}");
 
         return imageFormat;
     }

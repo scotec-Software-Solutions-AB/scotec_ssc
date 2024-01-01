@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFrameworks>net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+	  <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <LangVersion>latest</LangVersion>
@@ -31,10 +31,10 @@
 
 	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
-		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt"/>
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 </Project>

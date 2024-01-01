@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
 
@@ -35,11 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Markdig" Version="0.31.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Scotec.Blazor.UrlRequestCultureProvider\Scotec.Blazor.UrlRequestCultureProvider.csproj" />
+	  <PackageReference Include="Markdig" Version="0.34.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
 	</ItemGroup>
 </Project>
