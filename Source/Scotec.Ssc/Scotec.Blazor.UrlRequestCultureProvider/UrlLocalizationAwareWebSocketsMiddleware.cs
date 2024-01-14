@@ -97,7 +97,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
         }
 
         var protocol = context.Request.IsHttps ? "https" : "http";
-        context.Response.Redirect($"{protocol}://{context.Request.Host}/{string.Join('/', segments)}", true);
+        context.Response.Redirect($"{protocol}://{context.Request.Host}/{string.Join('/', segments)}", false);
 
         return Task.CompletedTask;
     }
