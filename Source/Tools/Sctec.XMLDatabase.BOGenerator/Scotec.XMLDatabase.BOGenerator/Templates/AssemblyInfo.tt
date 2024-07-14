@@ -21,11 +21,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("<#= projectDescriptor.Name #> <#= projectNamePart #>")]
-[assembly: AssemblyDescription("SAF XMLDatabase Model")]
+[assembly: AssemblyDescription("XMLDatabase Model")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Scotec Informationssysteme GmbH")]
-[assembly: AssemblyProduct("Scotec Application Framework")]
-[assembly: AssemblyCopyright("Copyright © SYSTECS 2011")]
+[assembly: AssemblyCompany("scotec Software Solutions AB ")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("Copyright © 2023 scotec Software Solutions AB")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
