@@ -16,7 +16,7 @@ public class RequestCultureCircuitHandler : CircuitHandler
     public override async Task OnCircuitClosedAsync(Circuit circuit, CancellationToken cancellationToken)
     {
         await base.OnCircuitClosedAsync(circuit, cancellationToken);
-        if (string.IsNullOrEmpty(_connectionToken)) ;
+        if (!string.IsNullOrEmpty(_connectionToken)) ;
         {
             CultureByConnectionTokens.RemoveToken(_connectionToken);
         }
