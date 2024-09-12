@@ -36,6 +36,7 @@
 
 	<ItemGroup>
     <PackageReference Include="OMS.Deep" Version="3.0.1" />
+    <PackageReference Include="System.IO.Packaging" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
