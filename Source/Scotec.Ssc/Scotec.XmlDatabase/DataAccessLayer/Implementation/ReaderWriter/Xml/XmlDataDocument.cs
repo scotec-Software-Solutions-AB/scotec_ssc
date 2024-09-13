@@ -935,14 +935,9 @@ public sealed class XmlDataDocument : IDataDocument
 
         if (_xmlSchema == null)
         {
-            if (schemaFile.Scheme == "pack")
-            {
-                LoadSchema(schemaFile);
-            }
-            else
-            {
-                _xmlSchema = LoadSchema(schemaFile.LocalPath, schemas);
-            }
+            _xmlSchema = schemaFile.Scheme == "pack" 
+                ? LoadSchema(schemaFile) 
+                : LoadSchema(schemaFile.LocalPath, schemas);
         }
 
         var schemaSet = new XmlSchemaSet();
