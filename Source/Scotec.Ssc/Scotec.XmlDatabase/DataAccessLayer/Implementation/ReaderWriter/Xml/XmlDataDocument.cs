@@ -912,10 +912,8 @@ public sealed class XmlDataDocument : IDataDocument
         return schema;
     }
 
-    private static XmlSchema LoadSchema(Uri schemaFile)
+    private static XmlSchema LoadSchema(Uri schemaFile, Dictionary<string, XmlSchema> schemas)
     {
-        var schemas = new Dictionary<string, XmlSchema>();
-
         var assemblyName = PackUriHelper.GetPackageUri(schemaFile).LocalPath.Trim('/').Split(';').First();
         var partUri = PackUriHelper.GetPartUri(schemaFile).OriginalString.Trim('/');
 
@@ -927,7 +925,6 @@ public sealed class XmlDataDocument : IDataDocument
     ///     Loads all schema info for the given an included schemas.
     ///     The schema will be compiled if not already done.
     /// </summary>
-    /// <param name="schema"></param>
     //private void LoadSchemaInfo( XmlSchema schema )
     private void LoadSchemaInfo(Uri schemaFile)
     {
@@ -936,7 +933,7 @@ public sealed class XmlDataDocument : IDataDocument
         if (_xmlSchema == null)
         {
             _xmlSchema = schemaFile.Scheme == "pack" 
-                ? LoadSchema(schemaFile) 
+                ? LoadSchema(schemaFile, schemas) 
                 : LoadSchema(schemaFile.LocalPath, schemas);
         }
 
