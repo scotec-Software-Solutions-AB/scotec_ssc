@@ -1,8 +1,10 @@
 #region
 
 using System.ComponentModel;
+using System.IO;
 using System.IO.Packaging;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -36,6 +38,7 @@ public sealed class XmlDataDocument : IDataDocument
     private XmlSchema _xmlSchema;
     private NameTable _xmlSchemaFiles;
     private IDictionary<XmlQualifiedName, XmlSchemaType> _xmlSchemaTypes;
+    private readonly IDictionary<string, Stream> _rawSchemas = new Dictionary<string, Stream>();
 
     #region Contructor
 
@@ -845,7 +848,18 @@ public sealed class XmlDataDocument : IDataDocument
         InternalDirty = true;
     }
 
-    private static XmlSchema LoadSchema(Assembly assembly, string path, Dictionary<string, XmlSchema> schemas)
+    private static Stream CopyStream(Stream stream)
+    {
+        var memoryStream = new MemoryStream();
+        stream.CopyTo(memoryStream);
+
+        stream.Position = 0;
+        memoryStream.Position = 0;
+
+        return memoryStream;
+    }
+
+    private XmlSchema LoadSchema(Assembly assembly, string path, Dictionary<string, XmlSchema> schemas)
     {
         var fragments = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
         if (schemas.TryGetValue(fragments.Last().ToLower(), out var loadedSchema))
@@ -853,14 +867,17 @@ public sealed class XmlDataDocument : IDataDocument
             return loadedSchema;
         }
 
-        using var stream = GetSchema(assembly, string.Join(".", fragments));
-        using var textReader = new XmlTextReader(stream);
+        // Do not dispose the stream here. It will be used later.
+        var stream = GetSchema(assembly, string.Join(".", fragments));
+        // Copy the stream. Otherwise it would be closed by the text reader.
+        using var textReader = new XmlTextReader(CopyStream(stream) );
 
-        var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+        var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema};
         using var reader = XmlReader.Create(textReader, settings);
         var schema = XmlSchema.Read(reader, ValidationCallBack);
 
         schemas.Add(fragments.Last().ToLower(), schema);
+        _rawSchemas.Add(fragments.Last().ToLower(), stream);
 
         foreach (var include in schema.Includes.OfType<XmlSchemaInclude>())
         {
@@ -875,13 +892,17 @@ public sealed class XmlDataDocument : IDataDocument
 
         static Stream GetSchema(Assembly assembly, string resourceName)
         {
-            var stream = assembly.GetManifestResourceStream(resourceName);
+            using var stream = assembly.GetManifestResourceStream(resourceName);
             if (stream == null)
             {
                 throw new FileNotFoundException("Resource not found", resourceName);
             }
 
-            return stream;
+            var memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
+            memoryStream.Position = 0;
+
+            return memoryStream;
         }
     }
 
@@ -892,12 +913,20 @@ public sealed class XmlDataDocument : IDataDocument
             return loadedSchema;
         }
 
-        var textReader = new XmlTextReader(schemaFile);
-        var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+        using var fileStream = File.OpenRead(schemaFile);
+        // Do not dispose the stream here. It will be used later.
+        var stream = new MemoryStream();
+        fileStream.CopyTo(stream);
+        stream.Position = 0;
+
+        // Copy the stream. Otherwise it would be closed by the text reader.
+        var textReader = new XmlTextReader(CopyStream(stream) );
+        var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema, CloseInput = false};
         var reader = XmlReader.Create(textReader, settings);
         var schema = XmlSchema.Read(reader, ValidationCallBack);
 
         schemas.Add(schemaFile.ToLower(), schema);
+        _rawSchemas.Add(schemaFile.ToLower().ToLower(), stream);
 
         var schemaPath = Path.GetDirectoryName(schemaFile);
         foreach (var include in schema.Includes.OfType<XmlSchemaInclude>())
@@ -912,7 +941,7 @@ public sealed class XmlDataDocument : IDataDocument
         return schema;
     }
 
-    private static XmlSchema LoadSchema(Uri schemaFile, Dictionary<string, XmlSchema> schemas)
+    private XmlSchema LoadSchema(Uri schemaFile, Dictionary<string, XmlSchema> schemas)
     {
         var assemblyName = PackUriHelper.GetPackageUri(schemaFile).LocalPath.Trim('/').Split(';').First();
         var partUri = PackUriHelper.GetPartUri(schemaFile).OriginalString.Trim('/');
@@ -945,12 +974,15 @@ public sealed class XmlDataDocument : IDataDocument
 
         schemaSet.Compile();
 
-        foreach (var schema in schemas.Values)
+        foreach (var schema in schemas)
         {
             // Get the processing instructions.
             // The instructions contain information about the assembly and can be 
             // used to for reflection.
-            var reader = new XmlTextReader(schema.SourceUri);
+            var stream = _rawSchemas[schema.Key];
+            stream.Position = 0;
+
+            using var reader = new XmlTextReader(CopyStream(stream));
             var document = new XmlDocument();
             document.Load(reader);
 
@@ -970,20 +1002,20 @@ public sealed class XmlDataDocument : IDataDocument
                 }
             }
 
-            DataObjectFactory.AddSchemaReflectionInfo(schema, reflectionInfo);
+            DataObjectFactory.AddSchemaReflectionInfo(schema.Value, reflectionInfo);
 
             // Add all namespaces to the namespace manager.
-            var serializer = schema.Namespaces;
+            var serializer = schema.Value.Namespaces;
             var names = serializer.ToArray();
             foreach (var n in names)
             {
                 NamespaceManager.AddNamespace(n.Name, n.Namespace);
             }
 
-            _xmlSchemaFiles.Add(schema.SourceUri);
+            _xmlSchemaFiles.Add(schema.Value.SourceUri);
 
             // Load the type descriptions
-            LoadSchemaTypes(schema);
+            LoadSchemaTypes(schema.Value);
         }
     }
 
