@@ -35,4 +35,10 @@ public static class StringExtensions
 #endif
         ));
     }
+
+    public static string ExpandVariables(this string path)
+    {
+        return string.IsNullOrEmpty(path) ? path : Environment.ExpandEnvironmentVariables(path);
+    }
+
 }
