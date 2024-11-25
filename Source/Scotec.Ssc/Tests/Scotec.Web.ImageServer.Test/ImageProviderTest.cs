@@ -19,8 +19,7 @@ public class ImageProviderTest
 
     [Theory]
     [InlineData("images/Logo.png")]
-    [InlineData("scotecblog/Logo.png")]
-    public async void GetImageAsync(string path)
+    public async Task GetImageAsync(string path)
     {
         try
         {

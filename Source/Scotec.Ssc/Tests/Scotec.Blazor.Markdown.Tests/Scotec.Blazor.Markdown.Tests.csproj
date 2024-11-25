@@ -15,11 +15,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="bunit" Version="1.26.64" />
-	  <PackageReference Include="Markdig" Version="0.34.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-	  <PackageReference Include="xunit" Version="2.6.4" />
+	  <PackageReference Include="bunit" Version="1.36.0" />
+	  <PackageReference Include="Markdig" Version="0.38.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+	  <PackageReference Include="xunit" Version="2.9.2" />
 	</ItemGroup>
 
 	<ItemGroup>

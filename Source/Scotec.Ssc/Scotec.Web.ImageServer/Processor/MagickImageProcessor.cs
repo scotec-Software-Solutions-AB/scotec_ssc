@@ -25,7 +25,7 @@ public class MagickImageProcessor : IImageProcessor
                 var copyRect =
                     CalculateCopyRegion(image.BaseWidth, image.BaseHeight, newWidth!.Value, newHeight!.Value);
 
-                var region = new MagickGeometry(copyRect.X, copyRect.Y, copyRect.Width, copyRect.Height)
+                var region = new MagickGeometry(copyRect.X, copyRect.Y, (uint)copyRect.Width, (uint)copyRect.Height)
                 {
                     IgnoreAspectRatio = true,
                     Greater = true,
@@ -35,7 +35,7 @@ public class MagickImageProcessor : IImageProcessor
                 image.Crop(region);
                 image.Density = new Density(96, 96);
 
-                image.Resize(request.Width ?? image.BaseWidth, request.Height ?? image.BaseHeight);
+                image.Resize((uint?)request.Width ?? image.BaseWidth, (uint?)request.Height ?? image.BaseHeight);
             }
 
             var response = new ImageResponse(request.Path)
