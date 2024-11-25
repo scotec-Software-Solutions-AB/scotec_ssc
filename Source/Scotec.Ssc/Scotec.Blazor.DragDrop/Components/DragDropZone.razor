@@ -1,0 +1,48 @@
+﻿@inherits DragDropComponent
+@typeparam TItem
+
+
+<div @attributes="GetAttributes()"
+     @ondragover:preventDefault="true"
+     @ondragover="()=> { }"
+     @ondragenter:preventDefault="true"
+     @ondragenter="()=> { }"
+     @ondrop="(args)=>OnDrop(args)"
+     @ondrop:preventDefault="@CanDrop"
+     @ondrop:stopPropagation="@CanDrop"
+     @ondragenter:stopPropagation="true"
+     @ondragend:stopPropagation="true"
+     @ondragover:stopPropagation="true"
+     @ondragleave:stopPropagation="true"
+     @ondragstart:stopPropagation="@CanDrag">
+
+
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    @if (Items is not null && Template is not null)
+    {
+        @foreach (var item in Items)
+        {
+            <div draggable="true" class="@GetClassesForItem(item)"
+                 @ondragstart="()=>OnDragStart(item)"
+                 @ondragend="OnDragEnd"
+                 @ondragenter="(args)=>OnDragEnter(item)"
+                 @ondragleave="OnDragLeave">
+            
+                @Template(item)
+            </div>
+        }
+    }
+
+</div>
+
+@code {
+
+    private void Callback()
+    {
+        throw new NotImplementedException();
+    }
+
+}
