@@ -53,9 +53,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
                 when x.Contains("_framework")
                 => _next,
 
-            string[] { Length: 2 } x
-                when x[0] == "_blazor" && x[1] == "negotiate"
-                                       && httpContext.Request.Method == "POST"
+            ["_blazor", "negotiate"] when httpContext.Request.Method == "POST"
                 => BlazorNegotiate,
 
             // No path provided, so we need to redirect to a language specific uri such /de or /en. 
@@ -151,7 +149,7 @@ public class UrlLocalizationAwareWebSocketsMiddleware
             CultureByConnectionTokens.AddToken(root!.ConnectionToken, currentCulture);
         }
 
-        // Rewind the response body as if we hadn't upwrap-it
+        // Rewind the response body as if we hadn't unwrap-it
         await responseBody.CopyToAsync(originalResponseBodyStream);
         return;
 

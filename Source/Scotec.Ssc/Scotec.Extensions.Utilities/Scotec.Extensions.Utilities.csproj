@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
@@ -33,5 +33,9 @@
 	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
 		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 </Project>

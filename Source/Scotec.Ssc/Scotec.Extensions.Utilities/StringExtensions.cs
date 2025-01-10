@@ -2,6 +2,9 @@
 
 namespace Scotec.Extensions.Utilities;
 
+/// <summary>
+///     Provides extension methods for string manipulation and formatting.
+/// </summary>
 public static class StringExtensions
 {
 #if NETSTANDARD2_1_OR_GREATER
@@ -40,5 +43,4 @@ public static class StringExtensions
     {
         return string.IsNullOrEmpty(path) ? path : Environment.ExpandEnvironmentVariables(path);
     }
-
 }
