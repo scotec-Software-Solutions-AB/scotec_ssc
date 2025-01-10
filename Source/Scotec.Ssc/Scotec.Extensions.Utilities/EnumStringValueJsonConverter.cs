@@ -21,7 +21,7 @@ public class EnumStringValueJsonConverter : JsonConverter<Enum>
     /// </exception>
     public override void Write(Utf8JsonWriter writer, Enum value, JsonSerializerOptions options)
     {
-        value.ToStringValue();
+        writer.WriteStringValue(value.ToStringValue());
     }
 
     /// <summary>
