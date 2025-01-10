@@ -8,16 +8,36 @@ namespace Scotec.Extensions.Utilities;
 public static class EnumExtensions
 {
     /// <summary>
-    ///     Converts an enum field to its associated string value.
+    /// Converts an enum field of type <typeparamref name="TEnum" /> to its associated string value.
     /// </summary>
     /// <typeparam name="TEnum">The type of the enum.</typeparam>
     /// <param name="enumValue">The enum value to convert.</param>
-    /// <returns>The associated string value, or null if no attribute is found.</returns>
+    /// <returns>
+    /// The associated string value if the enum field is decorated with an 
+    /// <see cref="EnumStringValueAttribute" />, or the name of the enum field if no attribute is found.
+    /// </returns>
     public static string ToStringValue<TEnum>(this TEnum enumValue)
         where TEnum : Enum
     {
         var stringValue = enumValue.ToString();
-        var fieldInfo = typeof(TEnum).GetField(stringValue);
+        var fieldInfo = enumValue.GetType().GetField(stringValue);
+        var attribute = fieldInfo?.GetCustomAttribute<EnumStringValueAttribute>();
+
+        return attribute?.StringValue ?? stringValue;
+    }
+
+    /// <summary>
+    /// Converts an enum value to its associated string value.
+    /// </summary>
+    /// <param name="enumValue">The enum value to convert.</param>
+    /// <returns>
+    /// The associated string value if the enum field is decorated with an 
+    /// <see cref="EnumStringValueAttribute" />, or the name of the enum field if no attribute is found.
+    /// </returns>
+    public static string ToStringValue(Enum enumValue)
+    {
+        var stringValue = enumValue.ToString();
+        var fieldInfo = enumValue.GetType().GetField(stringValue);
         var attribute = fieldInfo?.GetCustomAttribute<EnumStringValueAttribute>();
 
         return attribute?.StringValue ?? stringValue;
