@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Scotec.Extensions.Utilities;
+namespace Scotec.Extensions.Utilities.Enums;
 
 /// <summary>
 /// Provides extension methods for working with enums, including converting between enums and their associated string values.
@@ -34,7 +34,7 @@ public static class EnumExtensions
     /// The associated string value if the enum field is decorated with an 
     /// <see cref="EnumStringValueAttribute" />, or the name of the enum field if no attribute is found.
     /// </returns>
-    public static string ToStringValue(Enum enumValue)
+    public static string ToStringValue(this Enum enumValue)
     {
         var stringValue = enumValue.ToString();
         var fieldInfo = enumValue.GetType().GetField(stringValue);

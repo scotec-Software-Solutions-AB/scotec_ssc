@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Scotec.Extensions.Utilities.Enums;
 using Xunit;
 
 namespace Scotec.Extensions.Utilities.Tests

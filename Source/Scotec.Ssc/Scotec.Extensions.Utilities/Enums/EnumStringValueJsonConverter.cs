@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Scotec.Extensions.Utilities;
+namespace Scotec.Extensions.Utilities.Enums;
 
 public class EnumStringValueJsonConverter : JsonConverter<Enum>
 {
