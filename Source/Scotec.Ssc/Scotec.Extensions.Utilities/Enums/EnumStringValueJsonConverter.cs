@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Scotec.Extensions.Utilities;
+namespace Scotec.Extensions.Utilities.Enums;
 
 public class EnumStringValueJsonConverter : JsonConverter<Enum>
 {
@@ -39,7 +39,7 @@ public class EnumStringValueJsonConverter : JsonConverter<Enum>
     /// </exception>
     public override Enum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var stringValue = reader.GetString() ?? throw new ArgumentNullException("reader.GetString()");
+        var stringValue = reader.GetString() ?? throw new InvalidOperationException("reader.GetString() must not return null.");
 
         return stringValue.ToEnumValue(typeToConvert);
     }

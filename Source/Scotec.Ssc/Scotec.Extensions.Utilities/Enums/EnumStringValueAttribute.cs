@@ -1,4 +1,4 @@
-﻿namespace Scotec.Extensions.Utilities;
+﻿namespace Scotec.Extensions.Utilities.Enums;
 
 /// <summary>
 /// An attribute used to associate a string value with an enum field.

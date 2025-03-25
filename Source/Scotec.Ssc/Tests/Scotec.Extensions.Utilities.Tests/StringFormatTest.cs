@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Scotec.Extensions.Utilities.Strings;
+using Xunit;
 
 namespace Scotec.Extensions.Utilities.Tests;
 
