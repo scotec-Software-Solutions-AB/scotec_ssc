@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Scotec.Extensions.Utilities.Enums;
 
-public class EnumStringValueJsonConverter : JsonConverter<Enum?>
+public class EnumStringValueJsonConverter : JsonConverter<Enum>
 {
     public override bool CanConvert(Type typeToConvert)
     {
@@ -19,16 +19,9 @@ public class EnumStringValueJsonConverter : JsonConverter<Enum?>
     /// <exception cref="ArgumentNullException">
     ///     Thrown when the <paramref name="writer" /> or <paramref name="value" /> is <c>null</c>.
     /// </exception>
-    public override void Write(Utf8JsonWriter writer, Enum? value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, Enum value, JsonSerializerOptions options)
     {
-        if (value is null)
-        {
-            writer.WriteNullValue();
-        }
-        else
-        {
-            writer.WriteStringValue(value.ToStringValue());
-        }
+        writer.WriteStringValue(value.ToStringValue());
     }
 
     /// <summary>
@@ -44,10 +37,10 @@ public class EnumStringValueJsonConverter : JsonConverter<Enum?>
     /// <exception cref="ArgumentException">
     ///     Thrown when the string value does not match any field in the specified enum type.
     /// </exception>
-    public override Enum? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override Enum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var stringValue = reader.GetString();// ?? throw new ArgumentNullException("reader.GetString()");
+        var stringValue = reader.GetString() ?? throw new InvalidOperationException("reader.GetString() must not return null.");
 
-        return stringValue?.ToEnumValue(typeToConvert);
+        return stringValue.ToEnumValue(typeToConvert);
     }
 }
