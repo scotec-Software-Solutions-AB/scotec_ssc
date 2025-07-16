@@ -13,6 +13,7 @@ Scotec.Identity.AzureActiveDirectory is a .NET library that provides authenticat
 Configure authentication options with your Azure AD application details and required scopes. Use the provided services to acquire tokens or integrate with Azure SDKs.
 
 ## Example: Using AuthSession with Azure Storage
+```csharp
 using Azure.Storage.Blobs;
 using Scotec.Identity.AzureActiveDirectory;
 
@@ -32,8 +33,9 @@ var credential = session.GetTokenCredential();
 
 // Use the credential with Azure BlobServiceClient
 var blobServiceClient = new BlobServiceClient(new Uri("https://<your-storage-account>.blob.core.windows.net/"), credential);
+```
 
-// Now you can use blobServiceClient to interact with Azure Blob Storage
+Now you can use blobServiceClient to interact with Azure Blob Storage
 Replace `<your-client-id>`, `<your-tenant-id>`, and `<your-storage-account>` with your actual Azure AD and storage account details.
 
 ## License
