@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0-windows</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Authors>$(CompanyName)</Authors>
+		<Company>$(CompanyName)</Company>
+		<Copyright>$(CompanyName)</Copyright>
+		<Description>Provides authentication and token management for Azure Active Directory using MSAL, supporting secure token caching and integration with Azure SDK clients.</Description>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IsPublishable>True</IsPublishable>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageIcon>Logo.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://www.scotec-software.com</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<RepositoryUrl>https://github.com/scotec-Software-Solutions-AB/scotec_ssc</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<SignAssembly>False</SignAssembly>
+		<Title>Scotec.Identity.AzureActiveDirectory</Title>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.74.0" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
+		<PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.74.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="readme.md" Pack="true" PackagePath="" />
+		<None Include="..\Logo.png" Pack="true" PackagePath="" />
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
+	</ItemGroup>
+
+</Project>
