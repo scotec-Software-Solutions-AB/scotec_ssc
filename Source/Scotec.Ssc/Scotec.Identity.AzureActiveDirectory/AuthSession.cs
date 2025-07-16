@@ -26,7 +26,7 @@ public sealed class AadAuthSession : IDisposable
     /// </remarks>
     public AadAuthSession(AuthOptions options)
     {
-        _authService = new AuthService(options.ClientId, options.TenantId, options.Scopes);
+        _authService = new AuthService(options.ClientId, options.TenantId, options.Scopes, options.TokenCache);
 
         // 1-minute polling timer
         _tokenTimer = new Timer { AutoReset = true };
