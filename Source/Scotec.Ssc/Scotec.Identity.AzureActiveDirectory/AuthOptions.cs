@@ -42,14 +42,4 @@ public class AuthOptions
     ///     redundant requests.
     /// </remarks>
     public TokenCache? TokenCache { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the time in seconds before token expiration when a refresh should be attempted.
-    /// </summary>
-    /// <remarks>
-    ///     This value determines how soon before the token's actual expiration the system should attempt to refresh the
-    ///     authentication token.
-    ///     A typical value might be 300 (5 minutes) to ensure seamless authentication without interruption.
-    /// </remarks>
-    public int TokenRefreshTime { get; set; }
 }

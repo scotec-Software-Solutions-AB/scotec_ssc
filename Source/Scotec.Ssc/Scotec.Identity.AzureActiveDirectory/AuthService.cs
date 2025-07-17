@@ -9,8 +9,7 @@ namespace Scotec.Identity.AzureActiveDirectory;
 /// <remarks>
 ///     This service encapsulates the MSAL public client application and exposes methods for acquiring and managing tokens,
 ///     including silent and interactive flows, as well as sign-out functionality. It also exposes a
-///     <see cref="TokenCredential" />
-///     for use with Azure SDK clients.
+///     <see cref="TokenCredential" /> for use with Azure SDK clients.
 /// </remarks>
 internal sealed class AuthService
 {
@@ -35,12 +34,11 @@ internal sealed class AuthService
         _pca = PublicClientApplicationBuilder
                .Create(clientId)
                .WithAuthority(AzureCloudInstance.AzurePublic, tenantId)
-               //.WithWindowsDesktopFeatures(new BrokerOptions(BrokerOptions.OperatingSystems.Windows){Title = "XXXXXXXXX"})
                .WithDefaultRedirectUri()
                .Build();
 
         tokenCache?.Enable(_pca.UserTokenCache);
-        TokenCredential = new MsalTokenCredential(_pca, _scopes);
+        TokenCredential = new MsalTokenCredential(this);
     }
 
     /// <summary>
@@ -52,32 +50,52 @@ internal sealed class AuthService
     public TokenCredential TokenCredential { get; }
 
     /// <summary>
-    ///     Acquires an authentication token for the configured scopes.
+    ///     Acquires an authentication token for the configured scopes using a silent flow.
     /// </summary>
     /// <returns>
     ///     An <see cref="AuthenticationResult" /> containing the access token and related information.
     /// </returns>
     /// <remarks>
     ///     Attempts to acquire a token silently using cached accounts. If user interaction is required,
-    ///     falls back to an interactive prompt.
+    ///     an exception is thrown and interactive authentication should be used.
     /// </remarks>
-    public async Task<AuthenticationResult> GetTokenAsync()
+    public async Task<AuthenticationResult> GetTokenSilentAsync()
     {
-        try
+        // Try to acquire token silently.
+        return await _pca
+                     .AcquireTokenSilent(_scopes, (await _pca.GetAccountsAsync()).FirstOrDefault())
+                     .ExecuteAsync();
+    }
+
+    /// <summary>
+    ///     Gets a value indicating whether a user is currently signed in.
+    /// </summary>
+    /// <remarks>
+    ///     Returns <c>true</c> if there are any accounts in the token cache; otherwise, <c>false</c>.
+    /// </remarks>
+    public bool IsSignedIn
+    {
+        get
         {
-            // Try to acquire token silently first
-            return await _pca
-                         .AcquireTokenSilent(_scopes, (await _pca.GetAccountsAsync()).FirstOrDefault())
-                         .ExecuteAsync();
+            var accounts = _pca.GetAccountsAsync().GetAwaiter().GetResult();
+            return accounts.Any();
         }
-        catch (MsalUiRequiredException)
-        {
-            // If silent acquisition fails, fall back to interactive acquisition
-            return await _pca.AcquireTokenInteractive(_scopes)
-                             .WithPrompt(Prompt.SelectAccount)
-                             //.WithUseEmbeddedWebView(true)
-                             .ExecuteAsync();
-        }
+    }
+
+    /// <summary>
+    ///     Acquires an authentication token for the configured scopes using an interactive flow.
+    /// </summary>
+    /// <returns>
+    ///     An <see cref="AuthenticationResult" /> containing the access token and related information.
+    /// </returns>
+    /// <remarks>
+    ///     Prompts the user to select an account and complete authentication interactively.
+    /// </remarks>
+    public async Task<AuthenticationResult> GetTokenInteractiveAsync()
+    {
+        return await _pca.AcquireTokenInteractive(_scopes)
+                       .WithPrompt(Prompt.SelectAccount)
+                       .ExecuteAsync();
     }
 
     /// <summary>

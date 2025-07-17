@@ -7,7 +7,7 @@ Scotec.Identity.AzureActiveDirectory is a .NET library that provides authenticat
 - Support for silent and interactive authentication flows
 - Secure, persistent token caching
 - Integration with Azure SDK clients via TokenCredential
-- Configurable authentication options (client ID, tenant ID, scopes, token cache, refresh time)
+- Configurable authentication options (client ID, tenant ID, scopes, token cache)
 
 ## Usage
 Configure authentication options with your Azure AD application details and required scopes. Use the provided services to acquire tokens or integrate with Azure SDKs.
