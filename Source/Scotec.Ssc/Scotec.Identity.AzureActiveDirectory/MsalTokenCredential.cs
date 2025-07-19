@@ -12,15 +12,17 @@ namespace Scotec.Identity.AzureActiveDirectory;
 /// </remarks>
 internal sealed class MsalTokenCredential : TokenCredential
 {
-    private readonly AuthService _authService;
+    private readonly AadAuthService _authService;
+    private readonly IAccount _account;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MsalTokenCredential" /> class.
     /// </summary>
     /// <param name="authService">The authentication service used to acquire tokens.</param>
-    internal MsalTokenCredential(AuthService authService)
+    internal MsalTokenCredential(AadAuthService authService, IAccount account)
     {
         _authService = authService;
+        _account = account;
     }
 
     /// <summary>
@@ -50,7 +52,7 @@ internal sealed class MsalTokenCredential : TokenCredential
     /// </remarks>
     public override async ValueTask<AccessToken> GetTokenAsync(TokenRequestContext context, CancellationToken cancellationToken)
     {
-        var result = await _authService.GetTokenSilentAsync();
+        var result = await _authService.GetTokenSilentAsync(_account);
 
         return new AccessToken(result.AccessToken, result.ExpiresOn);
     }

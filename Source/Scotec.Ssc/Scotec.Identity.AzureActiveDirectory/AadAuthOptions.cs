@@ -1,14 +1,14 @@
 ﻿namespace Scotec.Identity.AzureActiveDirectory;
 
 /// <summary>
-///     Represents authentication options for Azure Storage access.
+///     Represents authentication options for Azure Active Directory authentication.
 /// </summary>
 /// <remarks>
-///     This class encapsulates the necessary parameters for authenticating with Azure services,
-///     including client and tenant identifiers, required scopes, and an optional token cache.
-///     The <see cref="TokenCache" /> property can be used to persist tokens between sessions.
+///     Encapsulates parameters required for authenticating with Azure AD, including client and tenant IDs,
+///     required scopes, and an optional persistent token cache. The <see cref="TokenCache" /> property enables
+///     secure token persistence between sessions.
 /// </remarks>
-public class AuthOptions
+public class AadAuthOptions
 {
     /// <summary>
     ///     Gets or sets the client (application) ID used for authentication.
@@ -38,8 +38,19 @@ public class AuthOptions
     ///     Gets or sets the token cache used to persist authentication tokens.
     /// </summary>
     /// <remarks>
-    ///     This property is optional. If provided, it enables token caching to improve authentication performance and reduce
-    ///     redundant requests.
+    ///     Optional. If provided, enables secure, persistent token caching to improve authentication performance
+    ///     and reduce redundant requests.
     /// </remarks>
     public TokenCache? TokenCache { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether automatic sign-out is enabled.
+    /// </summary>
+    /// <remarks>
+    ///     When set to <c>true</c>, the authentication provider will automatically sign out the user
+    ///     under certain conditions, such as token expiration or explicit sign-out requests. This helps
+    ///     ensure that user sessions are properly managed and reduces the risk of unauthorized access
+    ///     due to stale authentication tokens.
+    /// </remarks>
+    public bool AutoSignOut { get; set; }
 }
