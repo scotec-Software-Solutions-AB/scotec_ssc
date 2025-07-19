@@ -11,7 +11,7 @@ namespace Scotec.Identity.AzureActiveDirectory;
 ///     supports both synchronous and asynchronous sign-in/sign-out flows, and exposes a <see cref="TokenCredential"/> for Azure SDK clients.
 ///     Optionally, can automatically sign out the user when disposed to ensure security and resource cleanup.
 /// </remarks>
-public sealed class AadAuthSession : IDisposable
+public sealed class AadAuthSession : IAadAuthSession, IDisposable
 {
     private readonly AadAuthService _authService;
     private readonly IAccount _account;

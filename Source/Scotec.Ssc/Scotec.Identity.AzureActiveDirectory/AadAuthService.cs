@@ -12,12 +12,12 @@ namespace Scotec.Identity.AzureActiveDirectory;
 ///     including silent and interactive flows, as well as sign-out functionality. It also exposes a
 ///     <see cref="TokenCredential" /> for use with Azure SDK clients.
 /// </remarks>
-public sealed class AadAuthService : IDisposable
+public sealed class AadAuthService : IAadAuthService, IDisposable
 {
     private readonly AadAuthOptions _options;
     private readonly IPublicClientApplication _pca;
     private readonly string[] _scopes;
-    private readonly ConcurrentDictionary<IAccount, AadAuthSession> _sessionCache = [];
+    private readonly ConcurrentDictionary<IAccount, IAadAuthSession> _sessionCache = [];
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="AadAuthService" /> class using explicit parameters.
@@ -86,7 +86,7 @@ public sealed class AadAuthService : IDisposable
     ///     Attempts to acquire a token silently using cached accounts. If user interaction is required,
     ///     an exception is thrown and interactive authentication should be used.
     /// </remarks>
-    internal async Task<AuthenticationResult> GetTokenSilentAsync(IAccount account)
+    public async Task<AuthenticationResult> GetTokenSilentAsync(IAccount account)
     {
         // Try to acquire token silently.
         try
@@ -110,7 +110,7 @@ public sealed class AadAuthService : IDisposable
     /// <remarks>
     ///     This method removes the specified account from the token cache, effectively signing out the user from the application.
     /// </remarks>
-    public async Task SignOutAsync(AadAuthSession session)
+    public async Task SignOutAsync(IAadAuthSession session)
     {
         //TODO: Remove session from cache if needed.
         await _pca.RemoveAsync(session.Account);
@@ -125,7 +125,7 @@ public sealed class AadAuthService : IDisposable
     ///     Attempts to acquire a token silently for the specified account. If silent authentication fails,
     ///     falls back to interactive authentication.
     /// </remarks>
-    public async Task<AadAuthSession> SignInAsync(IAccount? account)
+    public async Task<IAadAuthSession> SignInAsync(IAccount? account)
     {
         if (account is null)
         {
@@ -181,7 +181,7 @@ public sealed class AadAuthService : IDisposable
     /// <remarks>
     ///     This method always prompts the user to sign in, regardless of any cached accounts.
     /// </remarks>
-    public async Task<AadAuthSession> SignInAsync()
+    public async Task<IAadAuthSession> SignInAsync()
     {
         var result = await _pca.AcquireTokenInteractive(_scopes)
             .WithPrompt(Prompt.ForceLogin)

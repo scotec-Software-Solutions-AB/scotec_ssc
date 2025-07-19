@@ -12,14 +12,15 @@ namespace Scotec.Identity.AzureActiveDirectory;
 /// </remarks>
 internal sealed class MsalTokenCredential : TokenCredential
 {
-    private readonly AadAuthService _authService;
+    private readonly IAadAuthService _authService;
     private readonly IAccount _account;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MsalTokenCredential" /> class.
     /// </summary>
     /// <param name="authService">The authentication service used to acquire tokens.</param>
-    internal MsalTokenCredential(AadAuthService authService, IAccount account)
+    /// <param name="account">The Azure AD account for which the token will be acquired.</param>
+    internal MsalTokenCredential(IAadAuthService authService, IAccount account)
     {
         _authService = authService;
         _account = account;
