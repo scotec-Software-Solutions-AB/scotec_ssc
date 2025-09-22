@@ -125,7 +125,12 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
     ///     Attempts to acquire a token silently for the specified account. If silent authentication fails,
     ///     falls back to interactive authentication.
     /// </remarks>
-    public async Task<IAadAuthSession> SignInAsync(IAccount? account)
+    public Task<IAadAuthSession> SignInAsync(IAccount? account )
+    {
+        return SignInAsync(account, Prompt.NoPrompt);
+    }
+
+    public async Task<IAadAuthSession> SignInAsync(IAccount? account, Prompt prompt)
     {
         if (account is null)
         {
@@ -183,17 +188,24 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
     /// </remarks>
     public async Task<IAadAuthSession> SignInAsync()
     {
-        var result = await _pca.AcquireTokenInteractive(_scopes)
-            .WithPrompt(Prompt.ForceLogin)
-            .WithAccount(null) // No specific account, let user choose
-            .ExecuteAsync();
-
-        var signedIn = result.Account;
-        if (!_sessionCache.TryGetValue(signedIn, out var session))
+        try
         {
-            session = CreateSession(signedIn);
+            var result = await _pca.AcquireTokenInteractive(_scopes)
+                                   .WithPrompt(Prompt.ForceLogin)
+                                   .WithAccount(null) // No specific account, let user choose
+                                   .ExecuteAsync();
+
+            var signedIn = result.Account;
+            if (!_sessionCache.TryGetValue(signedIn, out var session))
+            {
+                session = CreateSession(signedIn);
+            }
+            return session;
         }
-        return session;
+        catch (Exception e)
+        {
+            throw;
+        }
     }
 
     /// <summary>
