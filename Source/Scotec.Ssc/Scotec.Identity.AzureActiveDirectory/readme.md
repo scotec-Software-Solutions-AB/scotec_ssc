@@ -49,4 +49,4 @@ Replace `<your-client-id>`, `<your-tenant-id>`, and `<your-storage-account>` wit
 ## License
 MIT License. See `license.txt` for details.
 
-For more information, visit the [Scotec Software Solutions website](https://www.scotec-software.com) or the [GitHub repository](https://github.com/scotec-Software-Solutions-AB/scotec_ssc).
+For more information, visit the [scotec website](https://www.scotec-software.com) or the [GitHub repository](https://github.com/scotec-Software-Solutions-AB/scotec_ssc).
