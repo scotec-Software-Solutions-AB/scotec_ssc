@@ -42,7 +42,7 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="AadAuthService" /> class using <see cref="AadAuthOptions"/>.
+    ///     Initializes a new instance of the <see cref="AadAuthService" /> class using <see cref="AadAuthOptions" />.
     /// </summary>
     /// <param name="options">The authentication options to use for configuration.</param>
     /// <remarks>
@@ -54,10 +54,10 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
         _scopes = options.Scopes;
 
         _pca = PublicClientApplicationBuilder
-            .Create(options.ClientId)
-            .WithAuthority(AzureCloudInstance.AzurePublic, options.TenantId)
-            .WithDefaultRedirectUri()
-            .Build();
+               .Create(options.ClientId)
+               .WithAuthority(AzureCloudInstance.AzurePublic, options.TenantId)
+               .WithDefaultRedirectUri()
+               .Build();
 
         options.TokenCache?.Enable(_pca.UserTokenCache);
     }
@@ -92,10 +92,10 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
         try
         {
             return await _pca
-                .AcquireTokenSilent(_scopes, account)
-                .ExecuteAsync();
+                         .AcquireTokenSilent(_scopes, account)
+                         .ExecuteAsync();
         }
-        catch(MsalUiRequiredException)
+        catch (MsalUiRequiredException)
         {
             _sessionCache.TryRemove(account, out _);
             throw;
@@ -108,7 +108,8 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
     /// <param name="session">The authentication session to sign out.</param>
     /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     /// <remarks>
-    ///     This method removes the specified account from the token cache, effectively signing out the user from the application.
+    ///     This method removes the specified account from the token cache, effectively signing out the user from the
+    ///     application.
     /// </remarks>
     public async Task SignOutAsync(IAadAuthSession session)
     {
@@ -120,12 +121,12 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
     ///     Signs in a user using the specified account, attempting silent authentication first.
     /// </summary>
     /// <param name="account">The account to sign in, or <c>null</c> to prompt for account selection.</param>
-    /// <returns>An <see cref="AadAuthSession"/> representing the authenticated session.</returns>
+    /// <returns>An <see cref="AadAuthSession" /> representing the authenticated session.</returns>
     /// <remarks>
     ///     Attempts to acquire a token silently for the specified account. If silent authentication fails,
     ///     falls back to interactive authentication.
     /// </remarks>
-    public Task<IAadAuthSession> SignInAsync(IAccount? account )
+    public Task<IAadAuthSession> SignInAsync(IAccount? account)
     {
         return SignInAsync(account, Prompt.NoPrompt);
     }
@@ -134,21 +135,21 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
     {
         if (account is null)
         {
-            return await SignInAsync();
+            return await SignInAsync(prompt);
         }
 
         AuthenticationResult result;
         try
         {
             result = await _pca.AcquireTokenSilent(_scopes, account)
-                .ExecuteAsync();
+                               .ExecuteAsync();
         }
         catch (MsalUiRequiredException)
         {
             result = await _pca.AcquireTokenInteractive(_scopes)
-                .WithPrompt(Prompt.NoPrompt)
-                .WithAccount(account)
-                .ExecuteAsync();
+                               .WithPrompt(prompt)
+                               .WithAccount(account)
+                               .ExecuteAsync();
         }
 
         var signedIn = result.Account;
@@ -156,6 +157,98 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
         {
             session = CreateSession(signedIn);
         }
+
+        return session;
+    }
+
+    /// <summary>
+    ///     Signs in a user interactively, prompting for account selection.
+    /// </summary>
+    /// <returns>An <see cref="AadAuthSession" /> representing the authenticated session.</returns>
+    /// <remarks>
+    ///     This method always prompts the user to sign in, regardless of any cached accounts.
+    /// </remarks>
+    public Task<IAadAuthSession> SignInAsync()
+    {
+        return SignInAsync(Prompt.ForceLogin);
+    }
+
+    public async Task<IAadAuthSession> SignInAsync(Prompt prompt)
+    {
+        var result = await _pca.AcquireTokenInteractive(_scopes)
+                               .WithPrompt(prompt)
+                               .WithAccount(null) // No specific account, let user choose
+                               .ExecuteAsync();
+
+        var signedIn = result.Account;
+        if (!_sessionCache.TryGetValue(signedIn, out var session))
+        {
+            session = CreateSession(signedIn);
+        }
+
+        return session;
+    }
+
+    /// <summary>
+    ///     Gets all accounts currently available in the token cache.
+    /// </summary>
+    /// <returns>An enumerable of <see cref="IAccount" /> objects.</returns>
+    /// <remarks>
+    ///     Returns all accounts that are present in the MSAL token cache.
+    /// </remarks>
+    public async Task<IEnumerable<IAccount>> GetAccountsAsync()
+    {
+        return await _pca.GetAccountsAsync();
+    }
+
+    /// <summary>
+    ///     Disposes the authentication service and releases resources.
+    /// </summary>
+    /// <remarks>
+    ///     If <see cref="AadAuthOptions.AutoSignOut" /> is enabled, this method signs out all active sessions.
+    /// </remarks>
+    public void Dispose()
+    {
+        DisposeAsync().GetAwaiter().GetResult();
+    }
+
+    /// <summary>
+    ///     Asynchronously disposes the authentication service and releases resources.
+    /// </summary>
+    /// <returns>A <see cref="Task" /> representing the asynchronous dispose operation.</returns>
+    /// <remarks>
+    ///     If <see cref="AadAuthOptions.AutoSignOut" /> is enabled, this method signs out all active sessions asynchronously.
+    /// </remarks>
+    public async Task DisposeAsync()
+    {
+        if (_options.AutoSignOut)
+        {
+            foreach (var session in _sessionCache)
+            {
+                await SignOutAsync(session.Value);
+            }
+        }
+    }
+
+    public async Task<IAadAuthSession?> SignInSilentAsync(IAccount account)
+    {
+        AuthenticationResult result;
+        try
+        {
+            result = await _pca.AcquireTokenSilent(_scopes, account)
+                               .ExecuteAsync();
+        }
+        catch (MsalUiRequiredException)
+        {
+            return null;
+        }
+
+        var signedIn = result.Account;
+        if (!_sessionCache.TryGetValue(signedIn, out var session))
+        {
+            session = CreateSession(signedIn);
+        }
+
         return session;
     }
 
@@ -163,7 +256,7 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
     ///     Creates a new authentication session for the specified account.
     /// </summary>
     /// <param name="signedIn">The signed-in account.</param>
-    /// <returns>An <see cref="AadAuthSession"/> for the account.</returns>
+    /// <returns>An <see cref="AadAuthSession" /> for the account.</returns>
     /// <remarks>
     ///     This method creates and caches a new authentication session for the given account.
     /// </remarks>
@@ -177,75 +270,5 @@ public sealed class AadAuthService : IAadAuthService, IDisposable
 
         _sessionCache[signedIn] = session;
         return session;
-    }
-
-    /// <summary>
-    ///     Signs in a user interactively, prompting for account selection.
-    /// </summary>
-    /// <returns>An <see cref="AadAuthSession"/> representing the authenticated session.</returns>
-    /// <remarks>
-    ///     This method always prompts the user to sign in, regardless of any cached accounts.
-    /// </remarks>
-    public async Task<IAadAuthSession> SignInAsync()
-    {
-        try
-        {
-            var result = await _pca.AcquireTokenInteractive(_scopes)
-                                   .WithPrompt(Prompt.ForceLogin)
-                                   .WithAccount(null) // No specific account, let user choose
-                                   .ExecuteAsync();
-
-            var signedIn = result.Account;
-            if (!_sessionCache.TryGetValue(signedIn, out var session))
-            {
-                session = CreateSession(signedIn);
-            }
-            return session;
-        }
-        catch (Exception e)
-        {
-            throw;
-        }
-    }
-
-    /// <summary>
-    ///     Gets all accounts currently available in the token cache.
-    /// </summary>
-    /// <returns>An enumerable of <see cref="IAccount"/> objects.</returns>
-    /// <remarks>
-    ///     Returns all accounts that are present in the MSAL token cache.
-    /// </remarks>
-    public async Task<IEnumerable<IAccount>> GetAccountsAsync()
-    {
-        return await _pca.GetAccountsAsync();
-    }
-
-    /// <summary>
-    ///     Disposes the authentication service and releases resources.
-    /// </summary>
-    /// <remarks>
-    ///     If <see cref="AadAuthOptions.AutoSignOut"/> is enabled, this method signs out all active sessions.
-    /// </remarks>
-    public void Dispose()
-    {
-        DisposeAsync().GetAwaiter().GetResult();
-    }
-
-    /// <summary>
-    ///     Asynchronously disposes the authentication service and releases resources.
-    /// </summary>
-    /// <returns>A <see cref="Task"/> representing the asynchronous dispose operation.</returns>
-    /// <remarks>
-    ///     If <see cref="AadAuthOptions.AutoSignOut"/> is enabled, this method signs out all active sessions asynchronously.
-    /// </remarks>
-    public async Task DisposeAsync()
-    {
-        if (_options.AutoSignOut)
-        {
-            foreach (var session in _sessionCache)
-            {
-                await SignOutAsync(session.Value);
-            }
-        }
     }
 }

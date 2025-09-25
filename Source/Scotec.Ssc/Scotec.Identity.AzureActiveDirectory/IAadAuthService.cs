@@ -19,7 +19,8 @@ public interface IAadAuthService : IDisposable
     /// </summary>
     /// <param name="account">The account for which to acquire the token.</param>
     /// <returns>
-    ///     A <see cref="Task{AuthenticationResult}"/> representing the asynchronous operation, with the authentication result.
+    ///     A <see cref="Task{AuthenticationResult}" /> representing the asynchronous operation, with the authentication
+    ///     result.
     /// </returns>
     Task<AuthenticationResult> GetTokenSilentAsync(IAccount account);
 
@@ -37,11 +38,17 @@ public interface IAadAuthService : IDisposable
     /// <returns>An <see cref="AadAuthSession" /> representing the authenticated session.</returns>
     Task<IAadAuthSession> SignInAsync(IAccount? account);
 
+    Task<IAadAuthSession> SignInAsync(IAccount? account, Prompt prompt);
+
+    Task<IAadAuthSession?> SignInSilentAsync(IAccount account);
+
     /// <summary>
     ///     Signs in a user interactively, prompting for account selection.
     /// </summary>
     /// <returns>An <see cref="AadAuthSession" /> representing the authenticated session.</returns>
     Task<IAadAuthSession> SignInAsync();
+
+    Task<IAadAuthSession> SignInAsync(Prompt prompt);
 
     /// <summary>
     ///     Gets all accounts currently available in the token cache.
