@@ -1,5 +1,4 @@
 ﻿using Azure.Core;
-using Microsoft.Identity.Client;
 
 namespace Scotec.Identity.AzureActiveDirectory;
 
@@ -12,18 +11,11 @@ namespace Scotec.Identity.AzureActiveDirectory;
 /// </remarks>
 internal sealed class MsalTokenCredential : TokenCredential
 {
-    private readonly IAadAuthService _authService;
-    private readonly IAccount _account;
+    private readonly IAadAuthSession _authSession;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MsalTokenCredential" /> class.
-    /// </summary>
-    /// <param name="authService">The authentication service used to acquire tokens.</param>
-    /// <param name="account">The Azure AD account for which the token will be acquired.</param>
-    internal MsalTokenCredential(IAadAuthService authService, IAccount account)
+    internal MsalTokenCredential(IAadAuthSession authSession)
     {
-        _authService = authService;
-        _account = account;
+        _authSession = authSession;
     }
 
     /// <summary>
@@ -53,7 +45,7 @@ internal sealed class MsalTokenCredential : TokenCredential
     /// </remarks>
     public override async ValueTask<AccessToken> GetTokenAsync(TokenRequestContext context, CancellationToken cancellationToken)
     {
-        var result = await _authService.GetTokenSilentAsync(_account);
+        var result = await _authSession.GetTokenSilentAsync();
 
         return new AccessToken(result.AccessToken, result.ExpiresOn);
     }
