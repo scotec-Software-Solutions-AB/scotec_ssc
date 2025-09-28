@@ -19,11 +19,6 @@ public interface IAadAuthSession : IDisposable
     bool AutoSignOut { get; set; }
 
     /// <summary>
-    ///     Gets the <see cref="TokenCredential"/> for Azure SDK authentication.
-    /// </summary>
-    TokenCredential TokenCredential { get; }
-
-    /// <summary>
     ///     Asynchronously disposes the session and releases resources.
     /// </summary>
     /// <returns>A task representing the asynchronous dispose operation.</returns>
@@ -53,7 +48,7 @@ public interface IAadAuthSession : IDisposable
     ///     A <see cref="Task{AuthenticationResult}" /> representing the asynchronous operation, with the authentication
     ///     result.
     /// </returns>
-    Task<AuthenticationResult> GetTokenSilentAsync();
+    Task<AuthenticationResult?> GetTokenSilentAsync();
 
     /// <summary>
     ///     Signs in a user using the specified account, attempting silent authentication first.
@@ -69,6 +64,7 @@ public interface IAadAuthSession : IDisposable
     Task<IAccount?> SignInAsync(Prompt prompt);
     
     Task<IAccount?> SignInSilentAsync();
+
     Task<IAccount?> SignInSilentAsync(IAccount account);
 
     /// <summary>
@@ -77,4 +73,5 @@ public interface IAadAuthSession : IDisposable
     /// <returns>An enumerable of <see cref="IAccount" /> objects.</returns>
     Task<IEnumerable<IAccount>> GetAccountsAsync();
 
+    public TokenCredential? GetTokenCredential();
 }

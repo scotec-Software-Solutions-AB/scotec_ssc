@@ -1,5 +1,8 @@
-﻿using Azure.Core;
+﻿using System.Diagnostics;
+using Azure.Core;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Client.Broker;
+using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace Scotec.Identity.AzureActiveDirectory;
 
@@ -25,13 +28,33 @@ public sealed class AadAuthSession : IAadAuthSession
         _options = options;
         _scopes = options.Scopes;
 
+        var brokerOptions = new BrokerOptions(BrokerOptions.OperatingSystems.Windows);
         _pca = PublicClientApplicationBuilder
                .Create(options.ClientId)
                .WithAuthority(AzureCloudInstance.AzurePublic, options.TenantId)
                .WithDefaultRedirectUri()
+               .WithBroker(brokerOptions)
                .Build();
 
+        MsalCacheHelper cacheHelper = CreateCacheHelperAsync().GetAwaiter().GetResult();
+
+        // Let the cache helper handle MSAL's cache, otherwise the user will be prompted to sign-in every time.
+        cacheHelper.RegisterCache(_pca.UserTokenCache);
+
         options.TokenCache?.Enable(_pca.UserTokenCache);
+    }
+
+    private async Task<MsalCacheHelper> CreateCacheHelperAsync()
+    {
+        // Since this is for WPF application, only Windows storage is configured
+        var storageProperties = new StorageCreationPropertiesBuilder(
+                "BIM.FamilyManager", MsalCacheHelper.UserRootDirectory)
+            .Build();
+
+        var cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties, new TraceSource("MSAL.CacheTrace"))
+                                                           .ConfigureAwait(false);
+
+        return cacheHelper;
     }
 
     public bool IsSignedIn => Account is not null;
@@ -72,14 +95,19 @@ public sealed class AadAuthSession : IAadAuthSession
 
         return null;
     }
-    public Task<IAccount?> SignInSilentAsync(IAccount account)
+    public async Task<IAccount?> SignInSilentAsync(IAccount account)
     {
-        throw new NotImplementedException();
-    }
+        var result = await _pca.AcquireTokenSilent(_scopes, account)
+                       .ExecuteAsync();
 
-    public Task<AuthenticationResult> GetTokenSilentAsync(IAccount account)
-    {
-        throw new NotImplementedException();
+        if (result.Account is not null)
+        {
+            Account = result.Account;
+
+            return result.Account;
+        }
+
+        return null;
     }
 
     public Task<IAccount?> SignInAsync(IAccount? account)
@@ -116,7 +144,11 @@ public sealed class AadAuthSession : IAadAuthSession
 
     public async Task<IEnumerable<IAccount>> GetAccountsAsync()
     {
-        return await _pca.GetAccountsAsync();
+        var accounts = ( await _pca.GetAccountsAsync()).ToList();
+        accounts.Add(PublicClientApplication.OperatingSystemAccount);
+
+        return accounts;
+
     }
 
     /// <summary>
@@ -136,14 +168,6 @@ public sealed class AadAuthSession : IAadAuthSession
     /// </remarks>
     public bool AutoSignOut { get; set; }
 
-    /// <summary>
-    ///     Gets the <see cref="TokenCredential" /> for Azure SDK authentication.
-    /// </summary>
-    /// <remarks>
-    ///     Exposes a credential compatible with Azure SDK clients, allowing integration with Azure services that require
-    ///     authentication.
-    /// </remarks>
-    public TokenCredential TokenCredential { get; }
 
     /// <summary>
     ///     Disposes the session and releases resources.
@@ -214,15 +238,21 @@ public sealed class AadAuthSession : IAadAuthSession
                 return null;
             }
 
-            return await _pca
+            var result =  await _pca
                          .AcquireTokenSilent(_scopes, Account)
                          .ExecuteAsync();
+            return result;
         }
         catch (MsalUiRequiredException)
         {
             Account = null;
             throw;
         }
+    }
+
+    public TokenCredential? GetTokenCredential()
+    {
+        return IsSignedIn ? new MsalTokenCredential(this) : null;
     }
 
     ~AadAuthSession()

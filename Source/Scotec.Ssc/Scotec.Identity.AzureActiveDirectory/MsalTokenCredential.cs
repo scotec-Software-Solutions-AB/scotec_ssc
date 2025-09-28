@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using System.Security.Authentication;
+using Azure.Core;
 
 namespace Scotec.Identity.AzureActiveDirectory;
 
@@ -46,6 +47,11 @@ internal sealed class MsalTokenCredential : TokenCredential
     public override async ValueTask<AccessToken> GetTokenAsync(TokenRequestContext context, CancellationToken cancellationToken)
     {
         var result = await _authSession.GetTokenSilentAsync();
+
+        if (result == null || string.IsNullOrEmpty(result.AccessToken))
+        {
+            throw new AuthenticationException("Silent token acquisition failed. Interactive authentication is required.");
+        }
 
         return new AccessToken(result.AccessToken, result.ExpiresOn);
     }
