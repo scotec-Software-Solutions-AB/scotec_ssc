@@ -18,7 +18,7 @@
 		<IsPackable>true</IsPackable>
 		<PackageIcon>Logo.png</PackageIcon>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://www.scotec-software.com</PackageProjectUrl>
+		<PackageProjectUrl>https://www.scotec.com</PackageProjectUrl>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<RepositoryUrl>https://github.com/scotec-Software-Solutions-AB/scotec_ssc</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>

@@ -1,14 +1,7 @@
-﻿#region
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-#endregion
-
-
 namespace Scotec.Events.WeakEvents;
-
-#region delegates
 
 public delegate void EventHandlerOfTUnregisterCallback<TEventArgs>(EventHandler<TEventArgs> eventHandler)
     where TEventArgs : EventArgs;
@@ -16,10 +9,6 @@ public delegate void EventHandlerOfTUnregisterCallback<TEventArgs>(EventHandler<
 public delegate void EventHandlerUnregisterCallback(EventHandler eventHandler);
 
 public delegate void PropertyChangedEventHandlerUnregisterCallback(PropertyChangedEventHandler eventHandler);
-
-#endregion delegates
-
-#region interfaces
 
 public interface IWeakEventHandler
 {
@@ -37,10 +26,6 @@ public interface IWeakPropertyChangedEventHandler
     PropertyChangedEventHandler Handler { get; }
 }
 
-#endregion interfaces
-
-#region WeakEventHandler<T>
-
 public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
     where T : class
 {
@@ -52,7 +37,9 @@ public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
     public WeakEventHandler(EventHandler eventHandler, EventHandlerUnregisterCallback unregister)
     {
         if (eventHandler == null)
+        {
             throw new ArgumentNullException(nameof(eventHandler));
+        }
 
         _targetRef = new WeakReference(eventHandler);
         _openHandler =
@@ -63,32 +50,30 @@ public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
 
     public EventHandler Handler => Invoke;
 
-
-    #region IDisposable Members
-
     public void Dispose()
     {
         UnregisterHandler();
     }
 
-    #endregion
-
-
-    #region IWeakEventHandler Members
-
     EventHandler IWeakEventHandler.Handler => _handler;
-
-    #endregion
-
 
     private void Invoke(object sender, EventArgs e)
     {
+        if (_targetRef is null)
+        {
+            return;
+        }
+        
         var subject = (T)_targetRef.Target;
 
         if (subject != null)
+        {
             _openHandler(subject, RuntimeHelpers.GetObjectValue(sender), e);
+        }
         else
+        {
             UnregisterHandler();
+        }
     }
 
     public static implicit operator EventHandler(WeakEventHandler<T> weakEventHandler)
@@ -114,17 +99,8 @@ public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
         return _handler;
     }
 
-
-    #region Nested type: OpenEventHandler
-
     private delegate void OpenEventHandler(T subject, object sender, EventArgs e);
-
-    #endregion
 }
-
-#endregion //WeakEventHandler<T>
-
-#region WeakEventHandler<T, TEventArgs>
 
 public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>, IDisposable
     where TEventArgs : EventArgs
@@ -135,10 +111,12 @@ public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>, ID
     private EventHandlerOfTUnregisterCallback<TEventArgs> _unregister;
 
     public WeakEventHandler(EventHandler<TEventArgs> eventHandler,
-        EventHandlerOfTUnregisterCallback<TEventArgs> unregister)
+                            EventHandlerOfTUnregisterCallback<TEventArgs> unregister)
     {
         if (eventHandler == null)
+        {
             throw new ArgumentNullException(nameof(eventHandler));
+        }
 
         _targetRef = new WeakReference(RuntimeHelpers.GetObjectValue(eventHandler.Target));
         _openHandler =
@@ -147,32 +125,25 @@ public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>, ID
         _unregister = unregister;
     }
 
-
-    #region IDisposable Members
-
     public void Dispose()
     {
         UnregisterHandler();
     }
 
-    #endregion
-
-
-    #region IWeakEventHandler<TEventArgs> Members
-
     public EventHandler<TEventArgs> Handler { get; private set; }
-
-    #endregion
-
 
     private void Invoke(object sender, TEventArgs e)
     {
         var subject = (T)_targetRef.Target;
 
         if (subject != null)
+        {
             _openHandler(subject, RuntimeHelpers.GetObjectValue(sender), e);
+        }
         else
+        {
             UnregisterHandler();
+        }
     }
 
     public static implicit operator EventHandler<TEventArgs>(WeakEventHandler<T, TEventArgs> weakEventHandler)
@@ -198,17 +169,8 @@ public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>, ID
         return Handler;
     }
 
-
-    #region Nested type: OpenEventHandler
-
     private delegate void OpenEventHandler(T subject, object sender, TEventArgs e);
-
-    #endregion
 }
-
-#endregion //WeakEventHandler<T, TEventArgs>
-
-#region WeakPropertyChangedEventHandler<T>
 
 public class WeakPropertyChangedEventHandler<T> : IWeakPropertyChangedEventHandler, IDisposable
     where T : class
@@ -218,10 +180,12 @@ public class WeakPropertyChangedEventHandler<T> : IWeakPropertyChangedEventHandl
     private PropertyChangedEventHandlerUnregisterCallback _unregister;
 
     public WeakPropertyChangedEventHandler(PropertyChangedEventHandler eventHandler,
-        PropertyChangedEventHandlerUnregisterCallback unregister)
+                                           PropertyChangedEventHandlerUnregisterCallback unregister)
     {
         if (eventHandler == null)
+        {
             throw new ArgumentNullException(nameof(eventHandler));
+        }
 
         _targetRef = new WeakReference(RuntimeHelpers.GetObjectValue(eventHandler.Target));
         _openHandler =
@@ -232,32 +196,25 @@ public class WeakPropertyChangedEventHandler<T> : IWeakPropertyChangedEventHandl
 
     public PropertyChangedEventHandler Handler { get; private set; }
 
-
-    #region IDisposable Members
-
     public void Dispose()
     {
         UnregisterHandler();
     }
 
-    #endregion
-
-
-    #region IWeakPropertyChangedEventHandler Members
-
     PropertyChangedEventHandler IWeakPropertyChangedEventHandler.Handler => Handler;
-
-    #endregion
-
 
     private void Invoke(object sender, PropertyChangedEventArgs e)
     {
         var subject = (T)_targetRef.Target;
 
         if (subject != null)
+        {
             _openHandler(subject, RuntimeHelpers.GetObjectValue(sender), e);
+        }
         else
+        {
             UnregisterHandler();
+        }
     }
 
     public static implicit operator PropertyChangedEventHandler(WeakPropertyChangedEventHandler<T> weakEventHandler)
@@ -283,89 +240,98 @@ public class WeakPropertyChangedEventHandler<T> : IWeakPropertyChangedEventHandl
         return Handler;
     }
 
-
-    #region Nested type: OpenEventHandler
-
     private delegate void OpenEventHandler(T subject, object sender, PropertyChangedEventArgs e);
-
-    #endregion
 }
-
-#endregion //WeakPropertyChangedEventHandler<T>
 
 public static class EventHandlerUtils
 {
     public static void AddWeak(this INotifyPropertyChanged obj, PropertyChangedEventHandler handler)
     {
-        obj.PropertyChanged += handler.MakeWeak(eh => obj.PropertyChanged -= handler);
+        obj.PropertyChanged += handler.MakeWeak(eh => obj.PropertyChanged -= eh);
     }
 
     public static PropertyChangedEventHandler MakeWeak(this PropertyChangedEventHandler eventHandler,
-        PropertyChangedEventHandlerUnregisterCallback unregister)
+                                                       PropertyChangedEventHandlerUnregisterCallback unregister)
     {
         if (eventHandler == null)
+        {
             throw new ArgumentNullException(nameof(eventHandler));
+        }
 
         if (eventHandler.Method.IsStatic || eventHandler.Target == null)
-            throw new ArgumentException(@"Only instance methods are supported.", nameof(eventHandler));
+        {
+            throw new ArgumentException("Only instance methods are supported.", nameof(eventHandler));
+        }
 
         var constructorInfo =
             typeof(WeakPropertyChangedEventHandler<>).MakeGenericType(eventHandler.Method.DeclaringType)
-                .GetConstructor(new[]
-                {
-                    typeof(PropertyChangedEventHandler),
-                    typeof(PropertyChangedEventHandlerUnregisterCallback)
-                });
+                                                     .GetConstructor([
+                                                         typeof(PropertyChangedEventHandler),
+                                                         typeof(PropertyChangedEventHandlerUnregisterCallback)
+                                                     ]);
 
         if (constructorInfo == null)
+        {
             throw new Exception("Could not create weak event handler.");
+        }
 
-        return ((IWeakPropertyChangedEventHandler)constructorInfo.Invoke(new object[] { eventHandler, unregister }))
+        return ((IWeakPropertyChangedEventHandler)constructorInfo.Invoke([eventHandler, unregister]))
             .Handler;
     }
 
     public static EventHandler<TEventArgs> MakeWeak<TEventArgs>(this EventHandler<TEventArgs> eventHandler,
-        EventHandlerOfTUnregisterCallback<TEventArgs> unregister)
+                                                                EventHandlerOfTUnregisterCallback<TEventArgs> unregister)
         where TEventArgs : EventArgs
     {
         if (eventHandler == null)
+        {
             throw new ArgumentNullException(nameof(eventHandler));
+        }
 
         if (eventHandler.Method.IsStatic || eventHandler.Target == null)
             // ReSharper disable once LocalizableElement
-            throw new ArgumentException(@"Only instance methods are supported.", nameof(eventHandler));
+        {
+            throw new ArgumentException("Only instance methods are supported.", nameof(eventHandler));
+        }
 
         var constructorInfo =
             typeof(WeakEventHandler<,>).MakeGenericType(eventHandler.Method.DeclaringType, typeof(TEventArgs))
-                .GetConstructor(new[]
-                {
-                    typeof(EventHandler<TEventArgs>),
-                    typeof(EventHandlerOfTUnregisterCallback<TEventArgs>)
-                });
+                                       .GetConstructor([
+                                           typeof(EventHandler<TEventArgs>),
+                                           typeof(EventHandlerOfTUnregisterCallback<TEventArgs>)
+                                       ]);
 
         if (constructorInfo == null)
+        {
             throw new Exception("Could not create weak event handler.");
+        }
 
-        return ((IWeakEventHandler<TEventArgs>)constructorInfo.Invoke(new object[] { eventHandler, unregister }))
+        return ((IWeakEventHandler<TEventArgs>)constructorInfo.Invoke([eventHandler, unregister]))
             .Handler;
     }
 
     public static EventHandler MakeWeak(this EventHandler eventHandler, EventHandlerUnregisterCallback unregister)
     {
         if (eventHandler == null)
+        {
             throw new ArgumentNullException(nameof(eventHandler));
+        }
 
         if (eventHandler.Method.IsStatic || eventHandler.Target == null)
             // ReSharper disable once LocalizableElement
-            throw new ArgumentException(@"Only instance methods are supported.", nameof(eventHandler));
+        {
+            throw new ArgumentException("Only instance methods are supported.", nameof(eventHandler));
+        }
 
         var constructorInfo =
             typeof(WeakEventHandler<>).MakeGenericType(eventHandler.Method.DeclaringType)
-                .GetConstructor(new[] { typeof(EventHandler), typeof(EventHandlerUnregisterCallback) });
+                                      .GetConstructor([typeof(EventHandler), typeof(EventHandlerUnregisterCallback)]);
 
         if (constructorInfo == null)
+        {
             throw new Exception("Could not create weak event handler.");
+        }
 
-        return ((IWeakEventHandler)constructorInfo.Invoke(new object[] { eventHandler, unregister })).Handler;
+        return ((IWeakEventHandler)constructorInfo.Invoke([eventHandler, unregister])).Handler;
     }
 }
