@@ -29,7 +29,6 @@ public interface IWeakPropertyChangedEventHandler
 public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
     where T : class
 {
-    private EventHandler _handler;
     private OpenEventHandler _openHandler;
     private WeakReference _targetRef;
     private EventHandlerUnregisterCallback _unregister;
@@ -44,18 +43,18 @@ public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
         _targetRef = new WeakReference(eventHandler);
         _openHandler =
             (OpenEventHandler)Delegate.CreateDelegate(typeof(OpenEventHandler), null, eventHandler.Method);
-        _handler = Invoke;
+        Handler = Invoke;
         _unregister = unregister;
     }
 
-    public EventHandler Handler => Invoke;
+    public EventHandler Handler { get; private set; }
 
     public void Dispose()
     {
         UnregisterHandler();
     }
 
-    EventHandler IWeakEventHandler.Handler => _handler;
+    EventHandler IWeakEventHandler.Handler => Handler;
 
     private void Invoke(object sender, EventArgs e)
     {
@@ -78,25 +77,25 @@ public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
 
     public static implicit operator EventHandler(WeakEventHandler<T> weakEventHandler)
     {
-        return weakEventHandler?._handler;
+        return weakEventHandler?.Handler;
     }
 
     private void UnregisterHandler()
     {
         if (_unregister != null)
         {
-            _unregister(_handler);
+            _unregister(Handler);
             _unregister = null;
         }
 
         _targetRef = null;
         _openHandler = null;
-        _handler = null;
+        Handler = null;
     }
 
     public EventHandler ToEventHandler()
     {
-        return _handler;
+        return Handler;
     }
 
     private delegate void OpenEventHandler(T subject, object sender, EventArgs e);
@@ -134,6 +133,11 @@ public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>, ID
 
     private void Invoke(object sender, TEventArgs e)
     {
+        if (_targetRef is null)
+        {
+            return;
+        }
+
         var subject = (T)_targetRef.Target;
 
         if (subject != null)
@@ -205,6 +209,11 @@ public class WeakPropertyChangedEventHandler<T> : IWeakPropertyChangedEventHandl
 
     private void Invoke(object sender, PropertyChangedEventArgs e)
     {
+        if (_targetRef is null)
+        {
+            return;
+        }
+
         var subject = (T)_targetRef.Target;
 
         if (subject != null)
