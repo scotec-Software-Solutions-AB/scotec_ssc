@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Web.ImageServer.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scotec.Smtp.Service.Test", "Scotec.Smtp.Service.Test\Scotec.Smtp.Service.Test.csproj", "{C0784BFC-0F58-478A-B240-C7BA6FD679E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scotec.Identity.AzureActiveDirectory", "Scotec.Identity.AzureActiveDirectory\Scotec.Identity.AzureActiveDirectory.csproj", "{C9947ECE-633C-4D0A-8CF3-B5888C4F88C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,10 @@ Global
 		{C0784BFC-0F58-478A-B240-C7BA6FD679E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0784BFC-0F58-478A-B240-C7BA6FD679E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0784BFC-0F58-478A-B240-C7BA6FD679E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9947ECE-633C-4D0A-8CF3-B5888C4F88C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9947ECE-633C-4D0A-8CF3-B5888C4F88C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9947ECE-633C-4D0A-8CF3-B5888C4F88C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9947ECE-633C-4D0A-8CF3-B5888C4F88C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

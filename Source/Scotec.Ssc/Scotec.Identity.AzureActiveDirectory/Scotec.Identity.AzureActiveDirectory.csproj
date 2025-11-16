@@ -3,17 +3,19 @@
 	<PropertyGroup>
 		<TargetFrameworks>net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
+		<EnableWindowsTargeting>True</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<Authors>$(CompanyName)</Authors>
 		<Company>$(CompanyName)</Company>
 		<Copyright>$(CompanyName)</Copyright>
-		<Description>Mail service.</Description>
+		<Description>Provides authentication and token management for Azure Active Directory using MSAL, supporting secure token caching and integration with Azure SDK clients.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPublishable>True</IsPublishable>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<PackageIcon>Logo.png</PackageIcon>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://www.scotec-software.com</PackageProjectUrl>
@@ -21,7 +23,7 @@
 		<RepositoryUrl>https://github.com/scotec-Software-Solutions-AB/scotec_ssc</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<SignAssembly>False</SignAssembly>
-		<Title>Scotec.Smtp.Service</Title>
+		<Title>Scotec.Identity.AzureActiveDirectory</Title>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -30,19 +32,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Azure.Core" Version="1.47.1" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.77.1" />
+		<PackageReference Include="Microsoft.Identity.Client.Broker" Version="4.77.1" />
+		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.77.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="readme.md" Pack="true" PackagePath="" />
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
 		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Devity.NETCore.MailKit" Version="2.2.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Scotec.Extensions.Linq\Scotec.Extensions.Linq.csproj" />
 	</ItemGroup>
 
 </Project>
