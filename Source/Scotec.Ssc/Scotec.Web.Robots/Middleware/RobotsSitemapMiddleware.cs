@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using Scotec.Web.Robots.Sitemap;
+using System.Linq;
 
 namespace Scotec.Web.Robots.Middleware;
 
@@ -53,8 +54,7 @@ public class RobotsSitemapMiddleware
     private static string ExtractCulture(string path)
     {
         var segments = path.Split("/");
-        return segments.Reverse()
-                       .FirstOrDefault(segment => CultureInfo.GetCultures(CultureTypes.AllCultures)
-                        .Any(culture => string.Compare(segment, culture.Name, StringComparison.InvariantCultureIgnoreCase) == 0), string.Empty);
+        return segments.LastOrDefault(segment => CultureInfo.GetCultures(CultureTypes.AllCultures)
+                                                               .Any(culture => string.Compare(segment, culture.Name, StringComparison.InvariantCultureIgnoreCase) == 0), string.Empty);
     }
 }
