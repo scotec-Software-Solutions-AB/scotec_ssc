@@ -1,6 +1,5 @@
 ﻿
 using Xunit;
-using Xunit.Sdk;
 
 namespace Scotec.Math.Tests
 {

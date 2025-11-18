@@ -1,7 +1,5 @@
 ﻿using Scotec.Web.ImageServer.Server;
 using Xunit;
-using Xunit.Abstractions;
-using Xunit.DependencyInjection;
 
 namespace Scotec.Web.ImageServer.Test;
 
@@ -9,16 +7,16 @@ public class CacheTest
 {
     private readonly ITestOutputHelper _output;
 
-    public CacheTest(IImageServer imageServer, ITestOutputHelperAccessor outputAccessor)
+    public CacheTest(IImageServer imageServer, ITestOutputHelper output)
     {
-        _output = outputAccessor.Output;
+        _output = output;
         ImageServer = imageServer;
     }
 
     private IImageServer ImageServer { get; }
 
     [Fact]
-    public async void GetImagesAsync()
+    public async Task GetImagesAsync()
     {
         try
         {

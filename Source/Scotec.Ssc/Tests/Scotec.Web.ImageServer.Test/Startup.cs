@@ -7,8 +7,11 @@ namespace Scotec.Web.ImageServer.Test;
 
 public class Startup
 {
-    public void ConfigureServices(IServiceCollection services)
+    public IServiceProvider ServiceProvider { get; private set; }
+    
+    public Startup()
     {
+        var services = new ServiceCollection();
         var config = new ConfigurationBuilder()
                      .SetBasePath(AppContext.BaseDirectory)
                      .AddJsonFile("appsettings.json", false, true)
@@ -20,5 +23,7 @@ public class Startup
                 .AddAzureBlobStorageImageProvider("scotecblog");
 
         services.AddSingleton<IWebHostEnvironment, WebHostEnvironmentMock>();
+
+        ServiceProvider = services.BuildServiceProvider();
     }
 }
