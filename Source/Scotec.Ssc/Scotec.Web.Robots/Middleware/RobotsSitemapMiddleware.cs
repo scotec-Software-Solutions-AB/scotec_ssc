@@ -55,8 +55,6 @@ public class RobotsSitemapMiddleware
         var segments = path.Split("/");
         return segments.Reverse()
                        .FirstOrDefault(segment => CultureInfo.GetCultures(CultureTypes.AllCultures)
-                                                             .Any(culture =>
-                                                                 string.Compare(segment, culture.Name, StringComparison.InvariantCultureIgnoreCase) == 0),
-                           string.Empty);
+                        .Any(culture => string.Compare(segment, culture.Name, StringComparison.InvariantCultureIgnoreCase) == 0), string.Empty);
     }
 }
