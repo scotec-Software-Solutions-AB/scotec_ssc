@@ -1,18 +1,17 @@
 ﻿using Scotec.Web.ImageServer.Server;
 using Xunit;
-using Xunit.Abstractions;
-using Xunit.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Scotec.Web.ImageServer.Test;
 
-public class ImageProviderTest
+public class ImageProviderTest : IClassFixture<Startup>
 {
     private readonly ITestOutputHelper _output;
 
-    public ImageProviderTest(IImageServer imageServer, ITestOutputHelperAccessor outputAccessor)
+    public ImageProviderTest(Startup startup)
     {
-        _output = outputAccessor.Output;
-        ImageServer = imageServer;
+        
+        ImageServer = startup.ServiceProvider.GetService<IImageServer>();
     }
 
     private IImageServer ImageServer { get; }
