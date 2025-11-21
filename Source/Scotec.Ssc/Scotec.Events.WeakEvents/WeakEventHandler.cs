@@ -3,29 +3,43 @@ using System.Runtime.CompilerServices;
 
 namespace Scotec.Events.WeakEvents;
 
+// Using WeakEventHandler requires all events to be implemented using the add/remove pattern.
+// This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries.
+// Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics.
+// For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.
+
+// Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.
+
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public delegate void EventHandlerOfTUnregisterCallback<TEventArgs>(EventHandler<TEventArgs> eventHandler)
     where TEventArgs : EventArgs;
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public delegate void EventHandlerUnregisterCallback(EventHandler eventHandler);
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public delegate void PropertyChangedEventHandlerUnregisterCallback(PropertyChangedEventHandler eventHandler);
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public interface IWeakEventHandler
 {
     EventHandler Handler { get; }
 }
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public interface IWeakEventHandler<TEventArgs>
     where TEventArgs : EventArgs
 {
     EventHandler<TEventArgs> Handler { get; }
 }
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public interface IWeakPropertyChangedEventHandler
 {
     PropertyChangedEventHandler Handler { get; }
 }
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
     where T : class
 {
@@ -101,6 +115,7 @@ public class WeakEventHandler<T> : IWeakEventHandler, IDisposable
     private delegate void OpenEventHandler(T subject, object sender, EventArgs e);
 }
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>, IDisposable
     where TEventArgs : EventArgs
     where T : class
@@ -176,6 +191,7 @@ public class WeakEventHandler<T, TEventArgs> : IWeakEventHandler<TEventArgs>, ID
     private delegate void OpenEventHandler(T subject, object sender, TEventArgs e);
 }
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public class WeakPropertyChangedEventHandler<T> : IWeakPropertyChangedEventHandler, IDisposable
     where T : class
 {
@@ -252,6 +268,7 @@ public class WeakPropertyChangedEventHandler<T> : IWeakPropertyChangedEventHandl
     private delegate void OpenEventHandler(T subject, object sender, PropertyChangedEventArgs e);
 }
 
+[Obsolete("Using WeakEventHandler requires all events to be implemented using the add/remove pattern. This approach is suboptimal because it restricts usage to your own event implementations and cannot be applied to events in existing libraries. Additionally, it forces the event source to support weak events, rather than allowing the observer to choose weak event semantics. For greater flexibility and compatibility, prefer WeakEventManager, which enables observers to use weak event patterns even with standard .NET events.")]
 public static class EventHandlerUtils
 {
     public static void AddWeak(this INotifyPropertyChanged obj, PropertyChangedEventHandler handler)
