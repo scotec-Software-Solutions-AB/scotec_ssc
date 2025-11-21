@@ -3,38 +3,40 @@ using System.Reflection;
 
 namespace Scotec.Events.WeakEvents;
 
-//public delegate void MyEventHandler<in TObject, in TEventArgs>(TObject sender, TEventArgs i)
-//    where TObject : class
-//    where TEventArgs : EventArgs;
-
-public static class StaticWeakEventManager
-{
-    private static readonly WeakEventManager Instance = new();
-
-    public static void AddWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
-        where TObject : class
-        where TEventArgs : EventArgs
-    {
-        Instance.AddWeakHandler(source, eventName, handler);
-    }
-
-    public static void RemoveWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
-        where TObject : class
-        where TEventArgs : EventArgs
-    {
-        Instance.RemoveWeakHandler(source, eventName, handler);
-    }
-
-    public static void CleanupDeadHandlers()
-    {
-        Instance.CleanupDeadHandlers();
-    }
-}
-
-
 public class WeakEventManager : IDisposable
 {
     private readonly ConcurrentDictionary<HandlerKey, List<Delegate>> _handlerDelegates = new();
+
+    public void Dispose()
+    {
+        foreach (var kvp in _handlerDelegates)
+        {
+            var key = kvp.Key;
+            var list = kvp.Value;
+
+            lock (list)
+            {
+                var source = key.SourceRef.Target;
+                var eventInfo = source?.GetType().GetEvent(key.EventName);
+
+                if (eventInfo != null && source != null)
+                {
+                    foreach (var handler in list)
+                    {
+                        eventInfo.RemoveEventHandler(source, handler);
+                    }
+                }
+            }
+        }
+
+        _handlerDelegates.Clear();
+    }
+
+    public void AddWeakHandler<TObject>(TObject source, string eventName, Action<TObject, EventArgs> handler)
+        where TObject : class
+    {
+        AddWeakHandler<TObject, EventArgs>(source, eventName, handler);
+    }
 
     public void AddWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
         where TObject : class
@@ -51,9 +53,7 @@ public class WeakEventManager : IDisposable
         var weakTarget = target != null ? new WeakReference(target) : null;
         var key = new HandlerKey(source, eventName, handler);
 
-        Action<TObject, TEventArgs>? handlerDelegate = null!;
-
-        void WeakHandler(TObject s, TEventArgs e)
+        var handlerDelegate = new EventHandler<TEventArgs>((s, e) =>
         {
             if (weakTarget == null)
             {
@@ -67,9 +67,7 @@ public class WeakEventManager : IDisposable
             {
                 TryRemoveHandlerDelegate(source, key, eventInfo);
             }
-        }
-
-        handlerDelegate = WeakHandler;
+        });
 
         eventInfo.AddEventHandler(source, handlerDelegate);
 
@@ -89,7 +87,11 @@ public class WeakEventManager : IDisposable
             // Remove the last registered handler
             lock (list)
             {
+#if NETSTANDARD2_1_OR_GREATER
                 var handlerDelegate = list[^1];
+#else
+                var handlerDelegate = list.Last();
+#endif
                 list.Remove(handlerDelegate);
                 eventInfo.RemoveEventHandler(source, handlerDelegate);
 
@@ -100,6 +102,12 @@ public class WeakEventManager : IDisposable
                 }
             }
         }
+    }
+
+    public void RemoveWeakHandler<TObject>(TObject source, string eventName, Action<TObject, EventArgs> handler)
+        where TObject : class
+    {
+        RemoveWeakHandler<TObject, EventArgs>(source, eventName, handler);
     }
 
     public void RemoveWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
@@ -131,7 +139,9 @@ public class WeakEventManager : IDisposable
                     // For each delegate, check if its target is dead
                     var target = d.Target;
                     if (target is null)
+                    {
                         return false; // static method, always alive
+                    }
 
                     // If target is a WeakReference, check IsAlive and if the key's HandlerTargetRef is dead
                     return key.HandlerTargetRef != null && (key.HandlerTargetRef.Target == null || !key.HandlerTargetRef.IsAlive);
@@ -144,29 +154,5 @@ public class WeakEventManager : IDisposable
                 }
             }
         }
-    }
-
-    public void Dispose()
-    {
-        foreach (var kvp in _handlerDelegates)
-        {
-            var key = kvp.Key;
-            var list = kvp.Value;
-
-            lock (list)
-            {
-                var source = key.SourceRef.Target;
-                var eventInfo = source?.GetType().GetEvent(key.EventName);
-
-                if (eventInfo != null && source != null)
-                {
-                    foreach (var handler in list)
-                    {
-                        eventInfo.RemoveEventHandler(source, handler);
-                    }
-                }
-            }
-        }
-        _handlerDelegates.Clear();
     }
 }
