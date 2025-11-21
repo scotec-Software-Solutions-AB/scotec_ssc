@@ -26,8 +26,10 @@ namespace Scotec.Events.WeakEvents.Test
             weakEventManager.RemoveWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
             sender.RaiseEvent();
 
-        }
+            RunTest(sender);
+            sender.RaiseEvent();
 
+        }
 
         private void TestOnMyEvent(Sender sender, EventArgs e)
         {
@@ -36,12 +38,15 @@ namespace Scotec.Events.WeakEvents.Test
         {
         }
 
+        static void RunTest(Sender sender)
+        {
+            var o = new Observer(sender);
+            sender.RaiseEvent();
+
+        }
     }
 
-
-
-
-    public class Sender()
+    public class Sender
     {
         public event EventHandler<EventArgs>? MyEvent;
         public event EventHandler<MyEventArgs>? MyEvent2;
@@ -53,13 +58,12 @@ namespace Scotec.Events.WeakEvents.Test
             MyEvent2?.Invoke(this, new MyEventArgs());
         }
     }
-
-
+    
     public class Observer
     {
         public Observer(Sender test)
         {
-            //StaticWeakEventManager.AddWeakHandler<Sender, EventArgs>(test, nameof(Sender.MyEvent), OnMyEvent);
+            StaticWeakEventManager.AddWeakHandler<Sender, EventArgs>(test, nameof(Sender.MyEvent), OnMyEvent);
         }
 
         private void OnMyEvent(Sender sender, EventArgs e)
@@ -71,6 +75,4 @@ namespace Scotec.Events.WeakEvents.Test
 
         }
     }
-
-
 }
