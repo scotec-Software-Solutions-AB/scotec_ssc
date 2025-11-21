@@ -30,12 +30,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="StaticWeakEventManager.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
-		<None Include="StaticWeakEventManager.cs" />
 		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
 	</ItemGroup>
 
