@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Collections.Concurrent; // Add for thread-safe dictionary
 using Microsoft.Identity.Client;
 
 namespace Scotec.Identity.AzureActiveDirectory;
@@ -13,14 +14,23 @@ namespace Scotec.Identity.AzureActiveDirectory;
 /// </remarks>
 public sealed class AadAuthService : IAadAuthService
 {
-    /// <summary>
-    ///     Stores authentication sessions keyed by tenant and client identifiers.
-    /// </summary>
-    /// <remarks>
-    ///     Each session is uniquely identified by a combination of tenant ID and client ID.
-    ///     This allows the service to manage multiple independent authentication contexts.
-    /// </remarks>
-    private readonly Dictionary<string, IAadAuthSession> _sessions = new();
+    // Use ConcurrentDictionary for thread-safe session management
+    private readonly ConcurrentDictionary<string, IAadAuthSession> _sessions = new();
+
+    public async Task<IAadAuthSession> RegisterAppAsync(AadAuthOptions options, bool trySignIn, CancellationToken cancellationToken)
+    {
+        var key = CreateKey(options.TenantId, options.ClientId);
+
+        // Atomically get or add the session
+        var session = _sessions.GetOrAdd(key, _ => new AadAuthSession(options));
+
+        if (trySignIn && !session.IsSignedIn)
+        {
+            await session.SignInSilentAsync(cancellationToken);
+        }
+
+        return session;
+    }
 
     /// <summary>
     ///     Attempts to retrieve an existing authentication session for the specified tenant and client.
@@ -61,11 +71,9 @@ public sealed class AadAuthService : IAadAuthService
 
         if (!_sessions.TryGetValue(key, out var session))
         {
-            session = new AadAuthSession(options);
-            _sessions[key] = session;
+            session = await RegisterAppAsync(options, true, cancellationToken);
         }
 
-        await session.SignInSilentAsync(cancellationToken);
         return session;
     }
 
@@ -93,8 +101,7 @@ public sealed class AadAuthService : IAadAuthService
 
         if (!_sessions.TryGetValue(key, out var session))
         {
-            session = new AadAuthSession(options);
-            _sessions[key] = session;
+            session = await RegisterAppAsync(options, false, cancellationToken);
         }
 
         await session.SignInAsync(configure, cancellationToken);

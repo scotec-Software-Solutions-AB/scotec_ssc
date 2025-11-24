@@ -142,8 +142,8 @@ internal sealed class AadAuthSession : IAadAuthSession
         return accounts;
     }
 
-    public event Func<IAccount, Task> SignedOut;
-    public event Func<IAccount, Task> SignedIn;
+    public event EventHandler<EventArgs>? SignedOut;
+    public event EventHandler<EventArgs>? SignedIn;
 
     /// <summary>
     ///     Gets the Azure AD account associated with this session.
@@ -244,56 +244,51 @@ internal sealed class AadAuthSession : IAadAuthSession
         }
     }
 
-    private async Task RaiseEvents(IAccount? currentAccount)
+    private Task RaiseEvents(IAccount? currentAccount)
     {
         if (currentAccount != Account)
         {
-            await OnSignedOut(currentAccount);
+            OnSignedOut();
 
         }
-        await OnSignedIn(Account);
+        OnSignedIn();
+        return Task.CompletedTask;
     }
 
-    private async Task OnSignedIn(IAccount? account)
+    private void OnSignedIn()
     {
-        if (account is null)
-        {
-            return;
-        }
+        SignedIn?.Invoke(this, EventArgs.Empty);
 
-        var handlers = SignedIn;
-        if (handlers == null)
-        {
-            return;
-        }
 
-        // Call each subscriber asynchronously and wait for all
-        var tasks = handlers.GetInvocationList()
-                            .Cast<Func<IAccount, Task>>()
-                            .Select(h => h(account));
+        //// Call each subscriber asynchronously and wait for all
+        //var tasks = handlers.GetInvocationList()
+        //                    .Cast<Func<IAccount, Task>>()
+        //                    .Select(h => h(account));
 
-        await Task.WhenAll(tasks);
+        //await Task.WhenAll(tasks);
     }
-    
-    private async Task OnSignedOut(IAccount? account)
+
+    private void OnSignedOut()
     {
-        if (account is null)
-        {
-            return;
-        }
-        
-        var handlers = SignedOut;
-        if (handlers == null)
-        {
-            return;
-        }
+        SignedIn?.Invoke(this, EventArgs.Empty);
+        //// Call each subscriber asynchronously and wait for all
+        //var tasks = handlers.GetInvocationList()
+        //                    .Cast<Func<IAccount, Task>>()
+        //                    .Select(h =>
+        //                    {
+        //                        try
+        //                        {
+        //                            return h(account);
+        //                        }
+        //                        catch (Exception e)
+        //                        {
+        //                            //TODO: Log exception
+        //                            return Task.FromException(e);
+        //                        }
+                                
+        //                    });
 
-        // Call each subscriber asynchronously and wait for all
-        var tasks = handlers.GetInvocationList()
-                            .Cast<Func<IAccount, Task>>()
-                            .Select(h => h(account));
-
-        await Task.WhenAll(tasks);
+        //await Task.WhenAll(tasks);
     }
 
     public TokenCredential? GetTokenCredential()

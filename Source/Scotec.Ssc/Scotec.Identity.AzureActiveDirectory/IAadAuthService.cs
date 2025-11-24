@@ -13,6 +13,9 @@ namespace Scotec.Identity.AzureActiveDirectory;
 /// </remarks>
 public interface IAadAuthService : IDisposable, IAsyncDisposable
 {
+    Task<IAadAuthSession> RegisterAppAsync(AadAuthOptions options, bool trySignIn, CancellationToken cancellationToken);
+
+
     /// <summary>
     ///     Attempts to retrieve an existing authentication session for the specified tenant and client.
     /// </summary>
