@@ -16,7 +16,7 @@ public static class StaticWeakEventManager
         where TObject : class
         where TEventArgs : EventArgs
     {
-        Instance.AddWeakHandler<TObject, TEventArgs>(source, eventName, handler);
+       // Instance.AddWeakHandler<TObject, TEventArgs>(source, eventName, handler);
     }
 
     public static void RemoveWeakHandler<TObject>(TObject source, string eventName, Action<TObject, EventArgs> handler)

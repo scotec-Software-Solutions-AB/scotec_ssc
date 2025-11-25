@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace Scotec.Events.WeakEvents;
@@ -33,8 +32,7 @@ public class WeakEventManager : IDisposable
         _handlerDelegates.Clear();
     }
 
-
-    public void AddWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
+    public IDisposable AddWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
         where TObject : class
         where TEventArgs : EventArgs
     {
@@ -48,7 +46,7 @@ public class WeakEventManager : IDisposable
         var method = handler.Method;
         var weakTarget = target != null ? new WeakReference(target) : null;
         var key = new HandlerKey(source, eventName, handler);
-        
+
         var action = new Action<object, TEventArgs>((s, e) =>
         {
             if (weakTarget == null)
@@ -65,12 +63,6 @@ public class WeakEventManager : IDisposable
             }
         });
 
-        // Create a dynamic method matching the TEventHandler signature
-        //var eventHandlerType = typeof(TEventHandler);
-        //var invokeMethod = eventHandlerType.GetMethod("Invoke");
-        //var parameters = invokeMethod.GetParameters();
-        
-        //var handlerDelegate = Delegate.CreateDelegate(typeof(TEventHandler), action.Target, action.Method);
         var handlerDelegate = Delegate.CreateDelegate(eventInfo.EventHandlerType, action.Target, action.Method);
         eventInfo.AddEventHandler(source, handlerDelegate);
 
@@ -80,6 +72,8 @@ public class WeakEventManager : IDisposable
         {
             list.Add(handlerDelegate);
         }
+
+        return new WeakEventRemover(() => TryRemoveHandlerDelegate(source, key, eventInfo));
     }
 
     private void TryRemoveHandlerDelegate<TObject>(TObject source, HandlerKey key, EventInfo eventInfo)
@@ -155,6 +149,26 @@ public class WeakEventManager : IDisposable
                 {
                     _handlerDelegates.TryRemove(key, out _);
                 }
+            }
+        }
+    }
+
+    public sealed class WeakEventRemover : IDisposable
+    {
+        private readonly Action _removeAction;
+        private bool _disposed;
+
+        internal WeakEventRemover(Action removeAction)
+        {
+            _removeAction = removeAction;
+        }
+
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _removeAction?.Invoke();
+                _disposed = true;
             }
         }
     }

@@ -11,6 +11,13 @@ namespace Scotec.Events.WeakEvents.Test
 
     }
 
+    public static class Extension
+    {
+        public static void AddWeak(this Delegate handlerDelegate)
+        {
+
+        }
+    }
 
     public class WeakEventManagerTest
     {
@@ -20,18 +27,17 @@ namespace Scotec.Events.WeakEvents.Test
             var sender = new Sender();
 
             var weakEventManager = new WeakEventManager();
-            //var weakEventManager = new WeakEventManager<PropertyChangedEventHandler>();
 
-            //weakEventManager.AddWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
-            //weakEventManager.AddWeakHandler<Sender, PropertyChangedEventArgs, PropertyChangedEventHandler>(sender, nameof(Sender.MyEvent2), TestOnMyEvent2);
+            weakEventManager.AddWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
+            weakEventManager.AddWeakHandler<Sender, PropertyChangedEventArgs>(sender, nameof(Sender.MyEvent2), TestOnMyEvent2);
             weakEventManager.AddWeakHandler<Sender, MyEventArgs>(sender, nameof(Sender.MyEvent3), TestOnMyEvent3);
 
             sender.RaiseEvent();
 
-            //weakEventManager.RemoveWeakHandler<Sender, MyEventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
-            //sender.RaiseEvent();
-            //weakEventManager.RemoveWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
-            //sender.RaiseEvent();
+            weakEventManager.RemoveWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
+            weakEventManager.RemoveWeakHandler<Sender, PropertyChangedEventArgs>(sender, nameof(Sender.MyEvent2), TestOnMyEvent2);
+            weakEventManager.RemoveWeakHandler<Sender, MyEventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent3);
+            sender.RaiseEvent();
 
             RunTest(sender);
             GC.Collect();
@@ -68,7 +74,7 @@ namespace Scotec.Events.WeakEvents.Test
 
         public void RaiseEvent()
         {
-            MyEvent?.Invoke(this, new EventArgs());
+            MyEvent?.Invoke(this, EventArgs.Empty);
             MyEvent2?.Invoke(this, new PropertyChangedEventArgs("Test"));
             MyEvent3?.Invoke(this, new MyEventArgs());
         }
