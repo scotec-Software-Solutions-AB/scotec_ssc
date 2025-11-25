@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace Scotec.Events.WeakEvents;
@@ -32,15 +33,11 @@ public class WeakEventManager : IDisposable
         _handlerDelegates.Clear();
     }
 
-    public void AddWeakHandler<TObject>(TObject source, string eventName, Action<TObject, EventArgs> handler)
-        where TObject : class
-    {
-        AddWeakHandler<TObject, EventArgs>(source, eventName, handler);
-    }
 
-    public void AddWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
+    public void AddWeakHandler<TObject, TEventArgs, TEventHandler>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
         where TObject : class
         where TEventArgs : EventArgs
+        where TEventHandler : Delegate
     {
         var eventInfo = source.GetType().GetEvent(eventName);
         if (eventInfo == null)
@@ -69,6 +66,7 @@ public class WeakEventManager : IDisposable
             }
         });
 
+        
         eventInfo.AddEventHandler(source, handlerDelegate);
 
         var list = _handlerDelegates.GetOrAdd(key, _ => new List<Delegate>());
