@@ -12,12 +12,11 @@ public static class StaticWeakEventManager
         //Instance.AddWeakHandler(source, eventName, handler);
     }
 
-    public static void AddWeakHandler<TObject, TEventArgs, TEventHandler>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
+    public static void AddWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
         where TObject : class
         where TEventArgs : EventArgs
-        where TEventHandler : Delegate
     {
-        Instance.AddWeakHandler<TObject, TEventArgs, TEventHandler>(source, eventName, handler);
+        Instance.AddWeakHandler<TObject, TEventArgs>(source, eventName, handler);
     }
 
     public static void RemoveWeakHandler<TObject>(TObject source, string eventName, Action<TObject, EventArgs> handler)

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using Xunit;
 
 namespace Scotec.Events.WeakEvents.Test
 {
+    public delegate void MyEventHandler(Sender sender, MyEventArgs args);
+
     public class MyEventArgs : EventArgs
     {
 
@@ -14,19 +17,26 @@ namespace Scotec.Events.WeakEvents.Test
         [Fact]
         public void Test()
         {
-            var weakEventManager = new WeakEventManager();
-            
             var sender = new Sender();
-            weakEventManager.AddWeakHandler(sender, nameof(Sender.MyEvent), TestOnMyEvent);
-            weakEventManager.AddWeakHandler<Sender, MyEventArgs>(sender, nameof(Sender.MyEvent2), TestOnMyEvent2);
+
+            var weakEventManager = new WeakEventManager();
+            //var weakEventManager = new WeakEventManager<PropertyChangedEventHandler>();
+
+            //weakEventManager.AddWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
+            //weakEventManager.AddWeakHandler<Sender, PropertyChangedEventArgs, PropertyChangedEventHandler>(sender, nameof(Sender.MyEvent2), TestOnMyEvent2);
+            weakEventManager.AddWeakHandler<Sender, MyEventArgs>(sender, nameof(Sender.MyEvent3), TestOnMyEvent3);
+
             sender.RaiseEvent();
 
-            weakEventManager.RemoveWeakHandler<Sender, MyEventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
-            sender.RaiseEvent();
-            weakEventManager.RemoveWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
-            sender.RaiseEvent();
+            //weakEventManager.RemoveWeakHandler<Sender, MyEventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
+            //sender.RaiseEvent();
+            //weakEventManager.RemoveWeakHandler<Sender, EventArgs>(sender, nameof(Sender.MyEvent), TestOnMyEvent);
+            //sender.RaiseEvent();
 
             RunTest(sender);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
             sender.RaiseEvent();
 
         }
@@ -34,7 +44,11 @@ namespace Scotec.Events.WeakEvents.Test
         private void TestOnMyEvent(Sender sender, EventArgs e)
         {
         }
-        private void TestOnMyEvent2(Sender sender, MyEventArgs e)
+        private void TestOnMyEvent2(Sender sender, PropertyChangedEventArgs e)
+        {
+        }
+
+        private void TestOnMyEvent3(Sender sender, MyEventArgs e)
         {
         }
 
@@ -49,13 +63,14 @@ namespace Scotec.Events.WeakEvents.Test
     public class Sender
     {
         public event EventHandler<EventArgs>? MyEvent;
-        public event EventHandler<MyEventArgs>? MyEvent2;
-        //public event MyEventHandler<Sender, EventArgs>? MyEvent2;
+        public event PropertyChangedEventHandler? MyEvent2;
+        public event MyEventHandler? MyEvent3;
 
         public void RaiseEvent()
         {
             MyEvent?.Invoke(this, new EventArgs());
-            MyEvent2?.Invoke(this, new MyEventArgs());
+            MyEvent2?.Invoke(this, new PropertyChangedEventArgs("Test"));
+            MyEvent3?.Invoke(this, new MyEventArgs());
         }
     }
     

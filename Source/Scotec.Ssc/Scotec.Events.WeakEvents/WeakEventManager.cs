@@ -34,10 +34,9 @@ public class WeakEventManager : IDisposable
     }
 
 
-    public void AddWeakHandler<TObject, TEventArgs, TEventHandler>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
+    public void AddWeakHandler<TObject, TEventArgs>(TObject source, string eventName, Action<TObject, TEventArgs> handler)
         where TObject : class
         where TEventArgs : EventArgs
-        where TEventHandler : Delegate
     {
         var eventInfo = source.GetType().GetEvent(eventName);
         if (eventInfo == null)
@@ -49,8 +48,8 @@ public class WeakEventManager : IDisposable
         var method = handler.Method;
         var weakTarget = target != null ? new WeakReference(target) : null;
         var key = new HandlerKey(source, eventName, handler);
-
-        var handlerDelegate = new EventHandler<TEventArgs>((s, e) =>
+        
+        var action = new Action<object, TEventArgs>((s, e) =>
         {
             if (weakTarget == null)
             {
@@ -66,7 +65,13 @@ public class WeakEventManager : IDisposable
             }
         });
 
+        // Create a dynamic method matching the TEventHandler signature
+        //var eventHandlerType = typeof(TEventHandler);
+        //var invokeMethod = eventHandlerType.GetMethod("Invoke");
+        //var parameters = invokeMethod.GetParameters();
         
+        //var handlerDelegate = Delegate.CreateDelegate(typeof(TEventHandler), action.Target, action.Method);
+        var handlerDelegate = Delegate.CreateDelegate(eventInfo.EventHandlerType, action.Target, action.Method);
         eventInfo.AddEventHandler(source, handlerDelegate);
 
         var list = _handlerDelegates.GetOrAdd(key, _ => new List<Delegate>());
