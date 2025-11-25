@@ -1,6 +1,4 @@
-﻿#if NETSTANDARD2_1_OR_GREATER
-
-namespace Scotec.Events.WeakEvents;
+﻿namespace Scotec.Events.WeakEvents;
 
 public static class StaticWeakEventManager
 {
@@ -37,5 +35,3 @@ public static class StaticWeakEventManager
         Instance.CleanupDeadHandlers();
     }
 }
-
-#endif
