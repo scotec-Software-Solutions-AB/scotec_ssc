@@ -199,6 +199,10 @@ internal sealed class AadAuthSession : IAadAuthSession
 
     public async Task<AuthenticationResult?> GetTokenSilentAsync(CancellationToken cancellationToken)
     {
+        if (_options.ClientId is null || _options.TenantId is null)
+        {
+            return null;
+        }
         // If we have a valid token and the account is still in the cache, return it
         if (_authenticationResult is not null && _authenticationResult.ExpiresOn > DateTimeOffset.UtcNow.AddMinutes(5)
                                               && Account != null)
@@ -246,49 +250,26 @@ internal sealed class AadAuthSession : IAadAuthSession
 
     private Task RaiseEvents(IAccount? currentAccount)
     {
-        if (currentAccount != Account)
+        if ((currentAccount is null && Account is null) || currentAccount != Account)
         {
             OnSignedOut();
-
         }
-        OnSignedIn();
+        
+        if(Account is not null&& currentAccount != Account)
+        {
+            OnSignedIn();
+        }
         return Task.CompletedTask;
     }
 
     private void OnSignedIn()
     {
         SignedIn?.Invoke(this, EventArgs.Empty);
-
-
-        //// Call each subscriber asynchronously and wait for all
-        //var tasks = handlers.GetInvocationList()
-        //                    .Cast<Func<IAccount, Task>>()
-        //                    .Select(h => h(account));
-
-        //await Task.WhenAll(tasks);
     }
 
     private void OnSignedOut()
     {
-        SignedIn?.Invoke(this, EventArgs.Empty);
-        //// Call each subscriber asynchronously and wait for all
-        //var tasks = handlers.GetInvocationList()
-        //                    .Cast<Func<IAccount, Task>>()
-        //                    .Select(h =>
-        //                    {
-        //                        try
-        //                        {
-        //                            return h(account);
-        //                        }
-        //                        catch (Exception e)
-        //                        {
-        //                            //TODO: Log exception
-        //                            return Task.FromException(e);
-        //                        }
-                                
-        //                    });
-
-        //await Task.WhenAll(tasks);
+        SignedOut?.Invoke(this, EventArgs.Empty);
     }
 
     public TokenCredential? GetTokenCredential()
@@ -335,8 +316,8 @@ internal sealed class AadAuthSession : IAadAuthSession
             };
 
             _pca = PublicClientApplicationBuilder
-                   .Create(_options.ClientId)
-                   .WithAuthority(AzureCloudInstance.AzurePublic, _options.TenantId)
+                   .Create(_options.ClientId!.Value.ToString("D"))
+                   .WithAuthority(AzureCloudInstance.AzurePublic, _options.TenantId!.Value.ToString("D"))
                    .WithBroker(brokerOptions)
                    .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
                    //.WithDefaultRedirectUri()

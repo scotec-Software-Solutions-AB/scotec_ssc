@@ -31,7 +31,7 @@ public interface IAadAuthService : IDisposable, IAsyncDisposable
     ///     Use this method to check if a session is already available before attempting to sign in or create a new session.
     ///     This helps avoid redundant authentication flows and improves performance by reusing existing sessions.
     /// </remarks>
-    public bool TryGetSession(string tenantId, string clientId, [NotNullWhen(true)] out IAadAuthSession? session);
+    public bool TryGetSession(Guid tenantId, Guid clientId, [NotNullWhen(true)] out IAadAuthSession? session);
 
     /// <summary>
     ///     Signs in a user interactively using the provided authentication options.
