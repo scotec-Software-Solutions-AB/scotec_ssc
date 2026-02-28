@@ -377,6 +377,7 @@ internal sealed class AadAuthSession : IAadAuthSession
             }
         }
 
+        await RaiseEvents(Account);
         return _authenticationResult;
     }
 
