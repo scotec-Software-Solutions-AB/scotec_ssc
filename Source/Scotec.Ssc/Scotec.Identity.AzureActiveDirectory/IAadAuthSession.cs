@@ -13,9 +13,9 @@ namespace Scotec.Identity.AzureActiveDirectory;
 ///     Implementations may optionally sign out the user when disposed to ensure security and resource cleanup.
 /// </remarks>
 public interface IAadAuthSession : IDisposable, IAsyncDisposable
-{
-    event Func<IAccount, Task> SignedOut;
-    event Func<IAccount, Task> SignedIn;
+{ 
+    event EventHandler<EventArgs> SignedOut;
+    event EventHandler<EventArgs> SignedIn;
 
     /// <summary>
     ///     Gets the Azure AD account associated with this session.

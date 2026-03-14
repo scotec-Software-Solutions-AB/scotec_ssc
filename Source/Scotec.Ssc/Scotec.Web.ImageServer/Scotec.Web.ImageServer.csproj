@@ -37,8 +37,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0-beta.1" />
-	  <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.9.1" />
+	  <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
+	  <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.10.3" />
 	</ItemGroup>
 
 	<ItemGroup>

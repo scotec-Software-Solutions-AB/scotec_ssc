@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 
@@ -15,6 +15,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IsPublishable>True</IsPublishable>
 		<PackageIcon>Logo.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://www.scotec-software.com</PackageProjectUrl>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -31,7 +32,8 @@
 
 	<ItemGroup>
 		<None Include="..\Logo.png" Pack="true" PackagePath="" />
-		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt"/>
+		<None Include="README.md" Pack="true" PackagePath="" />
+		<Content Include="..\..\..\license.txt" Link="license.txt" Pack="true" PackagePath="license.txt" />
 	</ItemGroup>
 
 </Project>

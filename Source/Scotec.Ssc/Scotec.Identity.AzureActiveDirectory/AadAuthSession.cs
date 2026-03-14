@@ -22,7 +22,9 @@ internal sealed class AadAuthSession : IAadAuthSession
     private static readonly SemaphoreSlim PcaLock = new(1, 1);
     private readonly AadAuthOptions _options;
     private readonly string[] _scopes;
+
     private AuthenticationResult? _authenticationResult;
+    
     private IPublicClientApplication? _pca;
 
     internal AadAuthSession(AadAuthOptions options)
@@ -58,17 +60,13 @@ internal sealed class AadAuthSession : IAadAuthSession
                 builder = configure(builder);
             }
 
-            _authenticationResult = await builder.ExecuteAsync(cancellationToken);
+            AuthenticationResult = await builder.ExecuteAsync(cancellationToken);
         }
         catch
         {
-            _authenticationResult = null;
+            AuthenticationResult = null;
         }
-        finally
-        {
-            await RaiseEvents(currentAccount);
-        }
-        return _authenticationResult;
+        return AuthenticationResult;
     }
 
     public async Task<AuthenticationResult?> SignInSilentAsync(CancellationToken cancellationToken)
@@ -103,7 +101,7 @@ internal sealed class AadAuthSession : IAadAuthSession
         AuthenticationResult? result = null;
         try
         {
-            _authenticationResult = await pca.AcquireTokenSilent(_scopes, account)
+            AuthenticationResult = await pca.AcquireTokenSilent(_scopes, account)
                               .ExecuteAsync(cancellationToken);
         }
         catch (MsalUiRequiredException)
@@ -125,11 +123,10 @@ internal sealed class AadAuthSession : IAadAuthSession
         }
         finally
         {
-            _authenticationResult = result?.Account is not null ? result : null;
-            await RaiseEvents(currentAccount);
+            AuthenticationResult = result?.Account is not null ? result : null;
         }
 
-        return _authenticationResult;
+        return AuthenticationResult;
     }
 
     public async Task<IEnumerable<IAccount>> GetAccountsAsync()
@@ -142,8 +139,8 @@ internal sealed class AadAuthSession : IAadAuthSession
         return accounts;
     }
 
-    public event Func<IAccount, Task> SignedOut;
-    public event Func<IAccount, Task> SignedIn;
+    public event EventHandler<EventArgs>? SignedOut;
+    public event EventHandler<EventArgs>? SignedIn;
 
     /// <summary>
     ///     Gets the Azure AD account associated with this session.
@@ -151,7 +148,7 @@ internal sealed class AadAuthSession : IAadAuthSession
     /// <remarks>
     ///     The account represents the signed-in user for this authentication session.
     /// </remarks>
-    public IAccount? Account => _authenticationResult?.Account;
+    public IAccount? Account => AuthenticationResult?.Account;
 
     /// <summary>
     ///     Gets or sets a value indicating whether to automatically sign out when the session is disposed.
@@ -193,17 +190,20 @@ internal sealed class AadAuthSession : IAadAuthSession
             await pca.RemoveAsync(currentAccount);
         }
 
-        _authenticationResult = null;
-        await RaiseEvents(currentAccount);
+        AuthenticationResult = null;
     }
 
     public async Task<AuthenticationResult?> GetTokenSilentAsync(CancellationToken cancellationToken)
     {
+        if (_options.ClientId is null || _options.TenantId is null)
+        {
+            return null;
+        }
         // If we have a valid token and the account is still in the cache, return it
-        if (_authenticationResult is not null && _authenticationResult.ExpiresOn > DateTimeOffset.UtcNow.AddMinutes(5)
+        if (AuthenticationResult is not null && AuthenticationResult.ExpiresOn > DateTimeOffset.UtcNow.AddMinutes(5)
                                               && Account != null)
         {
-            return _authenticationResult;
+            return AuthenticationResult;
         }
 
         // Try to acquire token silently.
@@ -222,78 +222,59 @@ internal sealed class AadAuthSession : IAadAuthSession
                                .AcquireTokenSilent(_scopes, Account)
                                .ExecuteAsync(cancellationToken);
 
-            _authenticationResult = result.Account is not null ? result : null;
+            AuthenticationResult = result.Account is not null ? result : null;
 
-            return _authenticationResult;
+            return AuthenticationResult;
         }
         catch (MsalUiRequiredException)
         {
-            _authenticationResult = null;
-            await RaiseEvents(currentAccount);
+            AuthenticationResult = null;
             throw;
         }
         catch
         {
-            _authenticationResult = null;
-            await RaiseEvents(currentAccount);
+            AuthenticationResult = null;
             throw;
         }
-        finally
+    }
+
+    private AuthenticationResult? AuthenticationResult
+    {
+        get => _authenticationResult;
+        set
         {
-            await RaiseEvents(currentAccount);
+            var currentAuthenticationResult = _authenticationResult;
+            var currentAccount = currentAuthenticationResult?.Account;
+            
+            _authenticationResult = value;
+
+            RaiseEvents(currentAccount);
+
         }
     }
 
-    private async Task RaiseEvents(IAccount? currentAccount)
+    private Task RaiseEvents(IAccount? currentAccount)
     {
-        if (currentAccount != Account)
+        if ((currentAccount is null && Account is null) || currentAccount != Account)
         {
-            await OnSignedOut(currentAccount);
-
-        }
-        await OnSignedIn(Account);
-    }
-
-    private async Task OnSignedIn(IAccount? account)
-    {
-        if (account is null)
-        {
-            return;
-        }
-
-        var handlers = SignedIn;
-        if (handlers == null)
-        {
-            return;
-        }
-
-        // Call each subscriber asynchronously and wait for all
-        var tasks = handlers.GetInvocationList()
-                            .Cast<Func<IAccount, Task>>()
-                            .Select(h => h(account));
-
-        await Task.WhenAll(tasks);
-    }
-    
-    private async Task OnSignedOut(IAccount? account)
-    {
-        if (account is null)
-        {
-            return;
+            OnSignedOut();
         }
         
-        var handlers = SignedOut;
-        if (handlers == null)
+        if(Account is not null && currentAccount != Account)
         {
-            return;
+            OnSignedIn();
         }
+        return Task.CompletedTask;
+    }
 
-        // Call each subscriber asynchronously and wait for all
-        var tasks = handlers.GetInvocationList()
-                            .Cast<Func<IAccount, Task>>()
-                            .Select(h => h(account));
+    private void OnSignedIn()
+    {
+        SignedIn?.Invoke(this, EventArgs.Empty);
+    }
 
-        await Task.WhenAll(tasks);
+    private void OnSignedOut()
+    {
+        SignedOut?.Invoke(this, EventArgs.Empty);
     }
 
     public TokenCredential? GetTokenCredential()
@@ -340,8 +321,8 @@ internal sealed class AadAuthSession : IAadAuthSession
             };
 
             _pca = PublicClientApplicationBuilder
-                   .Create(_options.ClientId)
-                   .WithAuthority(AzureCloudInstance.AzurePublic, _options.TenantId)
+                   .Create(_options.ClientId!.Value.ToString("D"))
+                   .WithAuthority(AzureCloudInstance.AzurePublic, _options.TenantId!.Value.ToString("D"))
                    .WithBroker(brokerOptions)
                    .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
                    //.WithDefaultRedirectUri()
@@ -381,13 +362,13 @@ internal sealed class AadAuthSession : IAadAuthSession
         var accounts = account is not null ? [account] : Account is not null ? [Account] : (await GetAccountsAsync()).ToList();
 
         // If we have a valid token and the account is still in the cache, return it
-        if (_authenticationResult is not null && _authenticationResult.ExpiresOn > DateTimeOffset.UtcNow.AddMinutes(5)
+        if (AuthenticationResult is not null && AuthenticationResult.ExpiresOn > DateTimeOffset.UtcNow.AddMinutes(5)
                                               && Account != null && accounts.Contains(Account))
         {
-            return _authenticationResult;
+            return AuthenticationResult;
         }
 
-        _authenticationResult = null;
+        AuthenticationResult = null;
         var pca = await GetPublicClientApplicationAsync(cancellationToken);
         foreach (var testAccount in accounts)
         {
@@ -396,13 +377,15 @@ internal sealed class AadAuthSession : IAadAuthSession
 
             if (result.Account is not null)
             {
-                _authenticationResult = result;
+                AuthenticationResult = result;
                 break;
             }
         }
 
-        return _authenticationResult;
+        return AuthenticationResult;
     }
+    
+    
 
     ~AadAuthSession()
     {

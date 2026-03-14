@@ -16,7 +16,7 @@ public class AadAuthOptions
     /// <remarks>
     ///     This value is required and should correspond to the registered application's client ID in Azure AD.
     /// </remarks>
-    public required string ClientId { get; set; }
+    public required Guid? ClientId { get; set; }
 
     /// <summary>
     ///     Gets or sets the tenant ID associated with the Azure Active Directory.
@@ -24,7 +24,7 @@ public class AadAuthOptions
     /// <remarks>
     ///     This value is required and should match the Azure AD tenant where the application is registered.
     /// </remarks>
-    public required string TenantId { get; set; }
+    public required Guid? TenantId { get; set; }
 
     /// <summary>
     ///     Gets or sets the scopes required for authentication.
