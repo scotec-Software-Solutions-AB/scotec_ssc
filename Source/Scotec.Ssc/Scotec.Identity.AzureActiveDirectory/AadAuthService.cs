@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Collections.Concurrent;
-using System.Data; // Add for thread-safe dictionary
+﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Identity.Client;
 
 namespace Scotec.Identity.AzureActiveDirectory;
@@ -20,11 +19,7 @@ public sealed class AadAuthService : IAadAuthService
 
     public async Task<IAadAuthSession> RegisterAppAsync(AadAuthOptions options, bool trySignIn, CancellationToken cancellationToken)
     {
-        if (options.ClientId is null || options.TenantId is null)
-        {
-            throw new ArgumentException("Client ID and temant ID must not be null.");
-        }
-        var key = CreateKey(options.TenantId.Value, options.ClientId.Value);
+        var key = CreateKey(options.TenantId, options.ClientId);
 
         // Atomically get or add the session
         var session = _sessions.GetOrAdd(key, _ => new AadAuthSession(options));
@@ -52,7 +47,7 @@ public sealed class AadAuthService : IAadAuthService
     /// </remarks>
     public bool TryGetSession(Guid tenantId, Guid clientId, [NotNullWhen(true)] out IAadAuthSession? session)
     {
-        var key = CreateKey(tenantId, clientId);
+        var key = CreateKey(tenantId, clientId);        
         return _sessions.TryGetValue(key, out session);
     }
 
@@ -72,12 +67,7 @@ public sealed class AadAuthService : IAadAuthService
     /// </remarks>
     public async Task<IAadAuthSession?> SignInSilentAsync(AadAuthOptions options, CancellationToken cancellationToken)
     {
-        if (options.TenantId is null || options.ClientId is null)
-        {
-            throw new ArgumentException("Tenant ID and client ID must not be null");
-        }
-        
-        var key = CreateKey(options.TenantId.Value, options.ClientId.Value);
+        var key = CreateKey(options.TenantId, options.ClientId);
 
         if (!_sessions.TryGetValue(key, out var session))
         {
@@ -107,12 +97,7 @@ public sealed class AadAuthService : IAadAuthService
         Func<AcquireTokenInteractiveParameterBuilder, AcquireTokenInteractiveParameterBuilder>? configure = null,
         CancellationToken cancellationToken = default)
     {
-        if (options.TenantId is null || options.ClientId is null)
-        {
-            throw new ArgumentException("Tenant ID and client ID must not be null");
-        }
-
-        var key = CreateKey(options.TenantId.Value, options.ClientId.Value);
+        var key = CreateKey(options.TenantId, options.ClientId);
 
         if (!_sessions.TryGetValue(key, out var session))
         {

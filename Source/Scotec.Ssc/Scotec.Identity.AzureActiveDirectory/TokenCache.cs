@@ -65,9 +65,13 @@ public class TokenCache
                 var data = ProtectedData.Unprotect(encrypted, null, DataProtectionScope.CurrentUser);
                 args.TokenCache.DeserializeMsalV3(data);
             }
-            catch
+            catch (CryptographicException)
             {
-                // Exception ignored; treating the token cache as empty.
+                // Decryption failed (e.g., cache was written by a different user/machine); treat as empty.
+            }
+            catch (IOException)
+            {
+                // File read error; treat cache as empty.
             }
         }
     }
