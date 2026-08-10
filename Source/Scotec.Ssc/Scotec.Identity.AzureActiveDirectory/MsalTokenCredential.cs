@@ -30,13 +30,10 @@ internal sealed class MsalTokenCredential : TokenCredential
     /// </remarks>
     public override AccessToken GetToken(TokenRequestContext context, CancellationToken cancellationToken)
     {
-        return Task.Run(() =>
-        {
-            return GetTokenAsync(context, cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
-
-        }, cancellationToken).GetAwaiter().GetResult();
-
-
+        // Task.Run offloads to a thread-pool thread (no SynchronizationContext), preventing
+        // deadlocks when called from a UI thread (WPF/WinForms) that blocks on GetResult().
+        return Task.Run(async () => await GetTokenAsync(context, cancellationToken), cancellationToken)
+                   .GetAwaiter().GetResult();
     }
 
     /// <summary>

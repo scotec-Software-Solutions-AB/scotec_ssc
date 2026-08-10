@@ -16,7 +16,7 @@ public class AadAuthOptions
     /// <remarks>
     ///     This value is required and should correspond to the registered application's client ID in Azure AD.
     /// </remarks>
-    public required Guid? ClientId { get; set; }
+    public required Guid ClientId { get; set; }
 
     /// <summary>
     ///     Gets or sets the tenant ID associated with the Azure Active Directory.
@@ -24,7 +24,7 @@ public class AadAuthOptions
     /// <remarks>
     ///     This value is required and should match the Azure AD tenant where the application is registered.
     /// </remarks>
-    public required Guid? TenantId { get; set; }
+    public required Guid TenantId { get; set; }
 
     /// <summary>
     ///     Gets or sets the scopes required for authentication.
@@ -53,4 +53,22 @@ public class AadAuthOptions
     ///     due to stale authentication tokens.
     /// </remarks>
     public bool AutoSignOut { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the title displayed in the broker (WAM) sign-in dialog.
+    /// </summary>
+    /// <remarks>
+    ///     This should be set to the name of the consuming application so the sign-in dialog
+    ///     identifies the correct application to the user.
+    /// </remarks>
+    public string? BrokerTitle { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the name used for the persistent MSAL token cache file.
+    /// </summary>
+    /// <remarks>
+    ///     Each application should use a unique value to ensure token cache isolation.
+    ///     Defaults to the application's client ID string if not set.
+    /// </remarks>
+    public string? TokenCacheName { get; set; }
 }

@@ -20,11 +20,13 @@ namespace Scotec.Identity.AzureActiveDirectory;
 internal sealed class AadAuthSession : IAadAuthSession
 {
     private static readonly SemaphoreSlim PcaLock = new(1, 1);
+    // Guards _authenticationResult for concurrent reads/writes across async sign-in paths
+    private static readonly object AuthResultLock = new();
     private readonly AadAuthOptions _options;
     private readonly string[] _scopes;
 
     private AuthenticationResult? _authenticationResult;
-    
+
     private IPublicClientApplication? _pca;
 
     internal AadAuthSession(AadAuthOptions options)
@@ -38,7 +40,7 @@ internal sealed class AadAuthSession : IAadAuthSession
     public Task<AuthenticationResult?> SignInAsync(Func<AcquireTokenInteractiveParameterBuilder, AcquireTokenInteractiveParameterBuilder>? configure = null,
                                                    CancellationToken cancellationToken = default)
     {
-        return SignInAsync(Prompt.ForceLogin, configure, cancellationToken);
+        return SignInAsync(Prompt.SelectAccount, configure, cancellationToken);
     }
 
     public async Task<AuthenticationResult?> SignInAsync(
@@ -62,7 +64,12 @@ internal sealed class AadAuthSession : IAadAuthSession
 
             AuthenticationResult = await builder.ExecuteAsync(cancellationToken);
         }
-        catch
+        catch (OperationCanceledException)
+        {
+            AuthenticationResult = null;
+            throw;
+        }
+        catch (MsalException)
         {
             AuthenticationResult = null;
         }
@@ -117,7 +124,11 @@ internal sealed class AadAuthSession : IAadAuthSession
 
             result = await builder.ExecuteAsync(cancellationToken);
         }
-        catch
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (MsalException)
         {
             result = null;
         }
@@ -195,10 +206,6 @@ internal sealed class AadAuthSession : IAadAuthSession
 
     public async Task<AuthenticationResult?> GetTokenSilentAsync(CancellationToken cancellationToken)
     {
-        if (_options.ClientId is null || _options.TenantId is null)
-        {
-            return null;
-        }
         // If we have a valid token and the account is still in the cache, return it
         if (AuthenticationResult is not null && AuthenticationResult.ExpiresOn > DateTimeOffset.UtcNow.AddMinutes(5)
                                               && Account != null)
@@ -240,31 +247,39 @@ internal sealed class AadAuthSession : IAadAuthSession
 
     private AuthenticationResult? AuthenticationResult
     {
-        get => _authenticationResult;
+        get
+        {
+            lock (AuthResultLock)
+            {
+                return _authenticationResult;
+            }
+        }
         set
         {
-            var currentAuthenticationResult = _authenticationResult;
-            var currentAccount = currentAuthenticationResult?.Account;
-            
-            _authenticationResult = value;
+            IAccount? currentAccount;
+            lock (AuthResultLock)
+            {
+                currentAccount = _authenticationResult?.Account;
+                _authenticationResult = value;
+            }
 
             RaiseEvents(currentAccount);
-
         }
     }
 
-    private Task RaiseEvents(IAccount? currentAccount)
+    private void RaiseEvents(IAccount? currentAccount)
     {
-        if ((currentAccount is null && Account is null) || currentAccount != Account)
+        var newAccount = Account;
+
+        if (currentAccount is not null && newAccount is null)
         {
             OnSignedOut();
         }
-        
-        if(Account is not null && currentAccount != Account)
+
+        if (newAccount is not null && currentAccount != newAccount)
         {
             OnSignedIn();
         }
-        return Task.CompletedTask;
     }
 
     private void OnSignedIn()
@@ -317,12 +332,12 @@ internal sealed class AadAuthSession : IAadAuthSession
 
             var brokerOptions = new BrokerOptions(BrokerOptions.OperatingSystems.Windows)
             {
-                Title = "BIM Family Manager - Azure Storage Sign-in"
+                Title = _options.BrokerTitle
             };
 
             _pca = PublicClientApplicationBuilder
-                   .Create(_options.ClientId!.Value.ToString("D"))
-                   .WithAuthority(AzureCloudInstance.AzurePublic, _options.TenantId!.Value.ToString("D"))
+                   .Create(_options.ClientId.ToString("D"))
+                   .WithAuthority(AzureCloudInstance.AzurePublic, _options.TenantId.ToString("D"))
                    .WithBroker(brokerOptions)
                    .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
                    //.WithDefaultRedirectUri()
@@ -345,9 +360,9 @@ internal sealed class AadAuthSession : IAadAuthSession
 
     private async Task<MsalCacheHelper> CreateCacheHelperAsync()
     {
-        // Since this is for WPF application, only Windows storage is configured
+        var cacheName = _options.TokenCacheName ?? _options.ClientId.ToString("D");
         var storageProperties = new StorageCreationPropertiesBuilder(
-                "BIM.FamilyManager", MsalCacheHelper.UserRootDirectory)
+                cacheName, MsalCacheHelper.UserRootDirectory)
             .Build();
 
         var cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties, new TraceSource("MSAL.CacheTrace"))
@@ -372,13 +387,24 @@ internal sealed class AadAuthSession : IAadAuthSession
         var pca = await GetPublicClientApplicationAsync(cancellationToken);
         foreach (var testAccount in accounts)
         {
-            var result = await pca.AcquireTokenSilent(_scopes, testAccount)
-                                  .ExecuteAsync(cancellationToken);
-
-            if (result.Account is not null)
+            try
             {
-                AuthenticationResult = result;
-                break;
+                var result = await pca.AcquireTokenSilent(_scopes, testAccount)
+                                      .ExecuteAsync(cancellationToken);
+
+                if (result.Account is not null)
+                {
+                    AuthenticationResult = result;
+                    break;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (MsalUiRequiredException)
+            {
+                // Silent acquisition not possible for this account; try the next one.
             }
         }
 
@@ -387,11 +413,4 @@ internal sealed class AadAuthSession : IAadAuthSession
     
     
 
-    ~AadAuthSession()
-    {
-        if (AutoSignOut)
-        {
-            SignOut();
-        }
     }
-}
