@@ -1,16 +1,17 @@
 ﻿using Scotec.Web.ImageServer.Server;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Scotec.Web.ImageServer.Test;
 
-public class CacheTest
+public class CacheTest : IClassFixture<Startup>
 {
     private readonly ITestOutputHelper _output;
 
-    public CacheTest(IImageServer imageServer, ITestOutputHelper output)
+    public CacheTest(Startup startup, ITestOutputHelper output)
     {
         _output = output;
-        ImageServer = imageServer;
+        ImageServer = startup.ServiceProvider.GetRequiredService<IImageServer>();
     }
 
     private IImageServer ImageServer { get; }

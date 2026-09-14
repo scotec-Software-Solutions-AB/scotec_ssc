@@ -1,0 +1,10 @@
+<Project>
+
+  <!-- The test projects use xunit.v3, which runs on Microsoft.Testing.Platform rather than
+	   VSTest. Without this switch "dotnet test" discovers no tests at all and still reports
+	   success, so a broken or empty test run would pass silently in CI. -->
+  <PropertyGroup>
+	<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+  </PropertyGroup>
+
+</Project>
