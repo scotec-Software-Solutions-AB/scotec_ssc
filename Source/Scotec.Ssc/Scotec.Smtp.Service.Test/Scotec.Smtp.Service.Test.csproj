@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NETCore.MailKit" />
+    <!-- Referenced explicitly to keep the transitive MailKit/MimeKit above the vulnerable 4.11.0. -->
+    <PackageReference Include="MailKit" />
+    <PackageReference Include="MimeKit" />
   </ItemGroup>
 
   <ItemGroup>

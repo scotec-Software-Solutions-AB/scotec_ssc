@@ -8,10 +8,10 @@ public class ImageProviderTest : IClassFixture<Startup>
 {
     private readonly ITestOutputHelper _output;
 
-    public ImageProviderTest(Startup startup)
+    public ImageProviderTest(Startup startup, ITestOutputHelper output)
     {
-        
-        ImageServer = startup.ServiceProvider.GetService<IImageServer>();
+        _output = output;
+        ImageServer = startup.ServiceProvider.GetRequiredService<IImageServer>();
     }
 
     private IImageServer ImageServer { get; }

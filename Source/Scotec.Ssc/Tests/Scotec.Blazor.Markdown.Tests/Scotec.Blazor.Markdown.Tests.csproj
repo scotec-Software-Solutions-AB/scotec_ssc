@@ -16,10 +16,8 @@
 
 	<ItemGroup>
 	  <PackageReference Include="bunit" />
-	  <PackageReference Include="Markdig" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+	  <!-- Referenced explicitly to keep the transitive AngleSharp above the vulnerable 1.1.2. -->
+	  <PackageReference Include="AngleSharp" />
 	  <PackageReference Include="Microsoft.NET.Test.Sdk" />
 	  <PackageReference Include="xunit.v3" />
 	</ItemGroup>

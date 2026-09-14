@@ -2,94 +2,57 @@
 
   <PropertyGroup>
 	<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+	<CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
-  <!-- Microsoft ships its runtime and ASP.NET Core packages in lockstep with the target framework.
-	   net10.0 uses the 10.x line, every older target framework (net8.0, netstandard2.x) stays on 8.x. -->
+  <!-- All shipping libraries target net8.0/netstandard2.0, so a single version lane covers
+	   every project. Test projects additionally run on net10.0, where these 8.0.x assets are
+	   used unchanged by the newer runtime. Versions are the lowest that still build and scan
+	   clean; only entries actually referenced by a project in Scotec.Ssc.sln are declared. -->
 
-  <ItemGroup Label="Microsoft.Extensions (net10.0)" Condition="$(TargetFramework.StartsWith('net10.0'))">
-	<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.9" />
-	<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.9" />
-	<PackageVersion Include="System.Text.Json" Version="10.0.9" />
-	<PackageVersion Include="System.IO.Packaging" Version="10.0.0" />
-	<PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Label="Microsoft.Extensions (net8.0 / netstandard)" Condition="!$(TargetFramework.StartsWith('net10.0'))">
-	<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
-	<PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
-	<PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.1" />
-	<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
-	<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-	<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-	<PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
-	<PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.1" />
-	<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
-	<PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
+  <ItemGroup Label="Microsoft.Extensions">
+	<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+	<PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+	<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
 	<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-	<PackageVersion Include="System.Text.Json" Version="9.0.0" />
 	<PackageVersion Include="System.IO.Packaging" Version="8.0.1" />
-	<PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
   </ItemGroup>
 
   <ItemGroup Label="ASP.NET Core / Blazor">
 	<PackageVersion Include="Markdig" Version="0.39.1" />
   </ItemGroup>
 
-  <!-- Azure.Core 1.61.0 requires Microsoft.Extensions 10.x, so net8.0 stays on the
-	   Azure.Core 1.4x line which still builds against the 8.x dependencies. -->
-  <ItemGroup Label="Azure (net10.0)" Condition="$(TargetFramework.StartsWith('net10.0'))">
-	<PackageVersion Include="Azure.Core" Version="1.61.0" />
-	<PackageVersion Include="Azure.Storage.Blobs" Version="12.29.1" />
-  </ItemGroup>
-
-  <ItemGroup Label="Azure (net8.0 / netstandard)" Condition="!$(TargetFramework.StartsWith('net10.0'))">
+  <ItemGroup Label="Azure">
 	<PackageVersion Include="Azure.Core" Version="1.44.1" />
 	<PackageVersion Include="Azure.Storage.Blobs" Version="12.23.0" />
   </ItemGroup>
 
   <ItemGroup Label="AWS / Identity">
 	<PackageVersion Include="AWSSDK.S3" Version="3.7.410.11" />
-	<PackageVersion Include="Microsoft.Identity.Client" Version="4.87.0" />
 	<PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.87.0" />
 	<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.87.0" />
   </ItemGroup>
 
-  <!-- Third party packages below are framework agnostic (netstandard2.0/net8.0 assets are also
-	   valid for net10.0), so a single version covers all target frameworks. -->
   <ItemGroup Label="Third party">
-	<PackageVersion Include="AutoCAD.NET.Core" Version="24.3.0" />
-	<PackageVersion Include="Devity.NETCore.MailKit" Version="2.2.2" />
 	<PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.16.0" />
-	<PackageVersion Include="NETCore.MailKit" Version="2.1.0" />
 	<PackageVersion Include="OMS.Deep" Version="3.0.1" />
-	<PackageVersion Include="Scotec.T4Generator" Version="0.1.0" />
   </ItemGroup>
 
-  <!-- Transitive dependencies pinned to non vulnerable versions (CentralPackageTransitivePinningEnabled).
-	   MailKit/MimeKit come in via the *.MailKit wrapper packages, AngleSharp via bunit. -->
-  <ItemGroup Label="Pinned transitive dependencies">
+  <!-- MailKit/MimeKit are consumed directly by Scotec.Smtp.Service; the version is kept current
+	   because 4.11.0 and earlier are vulnerable. AngleSharp (via bunit) and System.Text.Json (via
+	   the Microsoft.Extensions.Configuration stack) are transitive only, and since transitive
+	   pinning is disabled the consuming projects must reference them explicitly to raise them
+	   above the vulnerable versions. -->
+  <ItemGroup Label="Security driven dependencies">
 	<PackageVersion Include="AngleSharp" Version="1.8.1" />
 	<PackageVersion Include="MailKit" Version="4.18.0" />
 	<PackageVersion Include="MimeKit" Version="4.18.0" />
+	<PackageVersion Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup Label="Testing">
 	<PackageVersion Include="bunit" Version="1.37.7" />
-	<PackageVersion Include="coverlet.collector" Version="6.0.0" />
 	<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
-	<PackageVersion Include="xunit" Version="2.5.3" />
-	<PackageVersion Include="xunit.runner.visualstudio" Version="2.5.3" />
 	<PackageVersion Include="xunit.v3" Version="3.2.2" />
   </ItemGroup>
 

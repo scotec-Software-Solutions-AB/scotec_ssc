@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
 
@@ -35,9 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <FrameworkReference Include="Microsoft.AspNetCore.App" />
 	  <PackageReference Include="Markdig" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 	</ItemGroup>
 </Project>
