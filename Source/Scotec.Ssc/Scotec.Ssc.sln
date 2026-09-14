@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32825.248
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12112.369 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scotec.Extensions.Linq", "Scotec.Extensions.Linq\Scotec.Extensions.Linq.csproj", "{BADE9B46-56B5-4E4C-B819-BEE265C8D343}"
 EndProject
