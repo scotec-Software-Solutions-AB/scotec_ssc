@@ -84,7 +84,7 @@ public class WeakEventManager : IDisposable
             // Remove the last registered handler
             lock (list)
             {
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET8_0_OR_GREATER
                 var handlerDelegate = list[^1];
 #else
                 var handlerDelegate = list.Last();

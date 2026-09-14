@@ -86,14 +86,18 @@ public static class EnumExtensions
             }
         }
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NET8_0_OR_GREATER
         if (Enum.TryParse(enumType, stringValue, out var value))
         {
             return (Enum)value;
         }
 #else
-        return (Enum)Enum.Parse(enumType, stringValue);
-
+        // netstandard2.0 has no non-generic Enum.TryParse, so probe the defined names instead
+        // of letting Enum.Parse throw. This keeps the failure semantics identical on all targets.
+        if (Array.IndexOf(Enum.GetNames(enumType), stringValue) >= 0)
+        {
+            return (Enum)Enum.Parse(enumType, stringValue);
+        }
 #endif
         throw new ArgumentException($"No enum field with string value '{stringValue}' found in {enumType.Name}.");
     }

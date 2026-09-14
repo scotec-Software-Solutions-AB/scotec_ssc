@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -35,8 +35,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Devity.NETCore.MailKit" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<!-- Referenced explicitly to keep the transitive MailKit/MimeKit above the vulnerable 4.11.0. -->
+		<PackageReference Include="MailKit" />
+		<PackageReference Include="MimeKit" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
 	</ItemGroup>
